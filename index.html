@@ -10,7 +10,7 @@
   --t:#00e8cc;--g:#e0b44a;
   --bg:#050508;
   --tx:rgba(255,255,255,.65);--txd:rgba(255,255,255,.35);--w:rgba(255,255,255,.92);
-  --lytica:#FF6B6B;--loria:#4AEDC4;--maxoral:#C59AFF;--fasolati-green:#A8C686;
+  --lytica:#FF6B6B;--lithos:#c9a84c;--loria:#4AEDC4;--maxoral:#C59AFF;--fasolati-green:#A8C686;
   --font:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'SF Mono','Fira Code','Consolas',monospace;
 }
@@ -505,6 +505,7 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
       <div class="topnav-drop">
         <div class="dd-tag" style="color:var(--t)">Oral Therapeutics</div>
         <div class="dd-item" data-open-products="lytica"><div class="dd-title" style="color:var(--lytica)">Lytica™</div><div class="dd-desc">Enzyme + phage biofilm intervention</div></div>
+        <div class="dd-item" data-open-products="lithos"><div class="dd-title" style="color:var(--lithos)">Lithos™</div><div class="dd-desc">Biomimetic enamel remineralization</div></div>
         <div class="dd-item" data-open-products="loria"><div class="dd-title" style="color:var(--loria)">Loria™</div><div class="dd-desc">Dual-weight HA mucosal barrier system</div></div>
         <div class="dd-divider"></div>
         <div class="dd-tag" style="color:var(--g)">Gut Restoration</div>
@@ -562,7 +563,7 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
       <div class="topnav-drop" style="min-width:220px">
         <div class="dd-item" data-open-shop><div class="dd-title" style="color:var(--loria)">Loria™ Daily Rinse</div><div class="dd-desc">● Available now — order or subscribe</div></div>
         <div class="dd-divider"></div>
-        <div class="dd-item" data-open-shop><div class="dd-title">Lytica™ · Gut Stack</div><div class="dd-desc">Coming soon — join the waitlist</div></div>
+        <div class="dd-item" data-open-shop><div class="dd-title">Lithos™ · Lytica™ · Gut Stack</div><div class="dd-desc">Coming soon — join the waitlist</div></div>
         <div class="dd-item" data-open-shop><div class="dd-title">Fasolati Engine</div><div class="dd-desc">Beta access — request invite</div></div>
       </div>
     </div>
@@ -587,7 +588,7 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
   <div class="menu-inner">
     <div class="menu-col">
       <div class="menu-col-label tn">Products & Platform</div>
-      <div class="menu-item" data-products="lytica"><div class="mi-title">Professional Products</div><div class="mi-desc">Lytica, Loria — clinician-grade oral therapeutics</div></div>
+      <div class="menu-item" data-products="lytica"><div class="mi-title">Professional Products</div><div class="mi-desc">Lytica, Lithos, Loria — clinician-grade oral therapeutics</div></div>
       <div class="menu-item" data-products="fasolati-tier"><div class="mi-title">Everyday Home Products</div><div class="mi-desc">OTC-grade daily maintenance for mouth and gut health</div></div>
       <div class="menu-item" data-scroll="s4" data-close><div class="mi-title">Health Dashboard</div><div class="mi-desc">Biomarker tracking, three-vector scoring, and SciAgent</div></div>
       <div class="menu-item" data-close href="https://claude.ai/public/artifacts/4bb92b11-5a4b-4fb9-bd72-46cab7f1b752" target="_blank"><div class="mi-title">Launch Engine UI</div><div class="mi-desc">Open the interactive Fasolati Engine interface</div></div>
@@ -620,6 +621,18 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
       </div>
       <div class="prod-targets"><h4 style="color:var(--lytica)">Clinical Targets</h4><div class="pt" style="--c:var(--lytica)"><span>Active periodontal disease — stages III and IV</span></div><div class="pt" style="--c:var(--lytica)"><span>Peri-implantitis — biofilm on titanium surfaces</span></div><div class="pt" style="--c:var(--lytica)"><span>Post-surgical infection control</span></div><div class="pt" style="--c:var(--lytica)"><span>Refractory cases non-responsive to SRP + antibiotics</span></div></div>
     </div>
+    <div class="prod" id="p-lithos">
+      <div class="prod-head"><span class="prod-name" style="color:var(--lithos)">Lithos</span><span class="prod-badge" style="color:var(--lithos);border-color:rgba(201,168,76,.3)">Structural Regeneration</span></div>
+      <p class="prod-tagline">From Greek lithos — stone. What teeth are meant to be. Rebuild, don't just protect.</p>
+      <p class="prod-body">Tooth enamel is the hardest tissue in the human body — hierarchically organized hydroxyapatite nanocrystals — but it does not self-repair. Once lost, fluoride varnishes slow damage; they cannot rebuild. Lithos changes the equation by mimicking the original developmental process: the amelogenin protein matrix that guided enamel formation in the first place. Built on Professor Alvaro Mata's elastin-like recombinamer (ELR) technology from the University of Nottingham, published in Nature Communications. Not amorphous mineral deposition — organized crystallographic reconstruction from the lattice up.</p>
+      <div class="prod-mechs">
+        <div class="prod-mech"><h4 style="color:var(--lithos)">ELR Scaffold</h4><p>Elastin-like recombinamers mimic amelogenin — the developmental protein that controls enamel crystal growth. Intrinsically disordered, they self-assemble into ordered supramolecular matrix when triggered by calcium and drying. Biomimetic scaffold guides epitaxial mineralization: new apatite crystals grow in exact crystallographic orientation as existing enamel.</p></div>
+        <div class="prod-mech"><h4 style="color:var(--lithos)">Epitaxial Crystal Growth</h4><p>ELR coating triggers hydroxyapatite nucleation using Ca²⁺ and PO₄³⁻ already in saliva. Crystals extend directly from existing enamel — continuous lattice alignment confirmed by electron microscopy. Not a patch. Integrated tissue. Nanoindentation: mechanically identical to healthy enamel.</p></div>
+        <div class="prod-mech"><h4 style="color:var(--lithos)">Proven Durability</h4><p>Tested against simulated year of electric toothbrush abrasion, chewing, grinding, acid exposure. Regenerated enamel showed superior resistance to wear, fracture, and acid attack versus natural enamel. Works in real human saliva regardless of individual mineral content and pH.</p></div>
+        <div class="prod-mech"><h4 style="color:var(--lithos)">Clinical Application</h4><p>Prophylaxis → acid etch (37% phosphoric acid, 30s) → water wash → air dry → ELR solution deposited (3–4 minutes). Crystal growth within one week. Single application. Gel persists through brushing and eating. Integrates with Gengyve's HA carrier for mucosal compatibility.</p></div>
+      </div>
+      <div class="prod-targets"><h4 style="color:var(--lithos)">Clinical Targets</h4><div class="pt" style="--c:var(--lithos)"><span>Early caries intervention — rebuild, don't fill</span></div><div class="pt" style="--c:var(--lithos)"><span>Erosive tooth wear — acid damage reversal</span></div><div class="pt" style="--c:var(--lithos)"><span>Post-whitening sensitivity — restore demineralized surface</span></div><div class="pt" style="--c:var(--lithos)"><span>Molar incisor hypomineralization (MIH) — developmental enamel defects</span></div><div class="pt" style="--c:var(--lithos)"><span>Post-orthodontic white spot lesions</span></div></div>
+    </div>
     <div class="prod" id="p-loria">
       <div class="prod-head"><span class="prod-name" style="color:var(--loria)">Loria</span><span class="prod-badge" style="color:var(--loria);border-color:rgba(74,237,196,.3)">Molecular Purification</span></div>
       <p class="prod-tagline">From Latin luere — to purify. The original Fasolati formulation. Physical barrier, heal, hydrate, and hold.</p>
@@ -640,13 +653,15 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
     </div>
     <div class="prod">
       <div class="prod-head"><span class="prod-name" style="color:var(--t)">The Therapeutic Cascade</span></div>
-      <p class="prod-tagline">Lytica and Loria are not two separate products. They are a clinical protocol.</p>
+      <p class="prod-tagline">Lytica, Lithos, and Loria are not three separate products. They are a clinical protocol.</p>
       <div class="cascade">
-        <div class="cascade-step"><span class="cascade-num" style="color:var(--lytica)">1</span><div class="cascade-content"><h4 style="color:var(--lytica)">Lytica Hunts</h4><p>Clear the active infection. Breach the biofilm. Eliminate keystone pathogens. Reset the ecology.</p></div></div>
+        <div class="cascade-step"><span class="cascade-num" style="color:var(--lytica)">1</span><div class="cascade-content"><h4 style="color:var(--lytica)">Lytica Hunts</h4><p>Clear the active infection. Breach the biofilm. Eliminate keystone pathogens. Reset the ecology. You can't rebuild on a contaminated foundation.</p></div></div>
         <div class="cascade-arrow">↓</div>
-        <div class="cascade-step"><span class="cascade-num" style="color:var(--loria)">2</span><div class="cascade-content"><h4 style="color:var(--loria)">Loria Purifies</h4><p>Maintain the ecology daily. Disrupt biofilm reformation. Barrier, heal, hydrate, hold. Indefinitely.</p></div></div>
+        <div class="cascade-step"><span class="cascade-num" style="color:var(--lithos)">2</span><div class="cascade-content"><h4 style="color:var(--lithos)">Lithos Rebuilds</h4><p>Restore the hard tissue. ELR-scaffolded epitaxial mineralization grows new enamel in native crystal orientation. Structural regeneration from the lattice up.</p></div></div>
+        <div class="cascade-arrow">↓</div>
+        <div class="cascade-step"><span class="cascade-num" style="color:var(--loria)">3</span><div class="cascade-content"><h4 style="color:var(--loria)">Loria Maintains</h4><p>Maintain the ecology and protect the rebuilt surface. Barrier, heal, hydrate, hold. Daily. Indefinitely. The habit loop that locks in the gains.</p></div></div>
       </div>
-      <p class="prod-body" style="margin-top:28px">DSOs deploy this as a complete system of care. Lytica is the high-margin intervention. Loria is the recurring subscription revenue stream.</p>
+      <p class="prod-body" style="margin-top:28px">DSOs deploy this as a complete system of care. Lytica is the acute intervention. Lithos is the high-margin structural rebuild. Loria is the recurring subscription revenue stream.</p>
     </div>
   </div>
 </div>
@@ -792,9 +807,9 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
       </div>
 
       <!-- Role-specific value props -->
-      <div class="role-value" id="rv-clinician"><h4>For Clinicians</h4><p>Get early access to Lytica and Loria professional products. Integrate the Fasolati Engine into your practice workflow. See how oral-systemic protocols reduce inflammatory markers in your patient population.</p></div>
+      <div class="role-value" id="rv-clinician"><h4>For Clinicians</h4><p>Get early access to Lytica, Lithos, and Loria professional products. Integrate the Fasolati Engine into your practice workflow. See how oral-systemic protocols reduce inflammatory markers in your patient population.</p></div>
       <div class="role-value" id="rv-investor" style="border-left-color:var(--g)"><h4>For Investors</h4><p>Fasolati sits at the intersection of oral health ($50B), gut health ($71B), and AI-driven precision medicine. We're building the operating system for inflammation prevention — the largest addressable cause of death globally.</p></div>
-      <div class="role-value" id="rv-dso" style="border-left-color:var(--t)"><h4>For DSO Partners</h4><p>Deploy the full Lytica → Loria therapeutic cascade across your network. New high-margin intervention revenue plus recurring Fasolati subscriptions that increase patient lifetime value.</p></div>
+      <div class="role-value" id="rv-dso" style="border-left-color:var(--t)"><h4>For DSO Partners</h4><p>Deploy the full Lytica → Lithos → Loria therapeutic cascade across your network. New high-margin intervention revenue plus recurring Fasolati subscriptions that increase patient lifetime value.</p></div>
       <div class="role-value" id="rv-researcher" style="border-left-color:var(--g)"><h4>For Researchers</h4><p>Access de-identified longitudinal data from the Fasolati platform. Collaborate on oral-systemic, microbiome, and biomarker studies with real-world evidence from active patient populations.</p></div>
       <div class="role-value" id="rv-general"><h4>Stay Connected</h4><p>Get updates on product launches, research findings, and partnership opportunities as the Fasolati node network expands.</p></div>
 
@@ -851,6 +866,17 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
       <div class="sp-cta">
         <a class="btn bp" href="#" style="flex-shrink:0">Order Loria™</a>
         <span style="font-size:.72rem;color:var(--txd)">Free shipping on subscription · Cancel anytime</span>
+      </div>
+    </div>
+
+    <!-- LITHOS — COMING SOON -->
+    <div class="shop-product">
+      <span class="sp-badge soon">Coming Soon — Professional Application</span>
+      <div class="sp-name" style="color:var(--lithos)">Lithos™ Enamel Regeneration System</div>
+      <p class="sp-tagline">Biomimetic enamel reconstruction powered by ELR scaffold technology. Single in-office application. Crystal growth within one week. Ask your dentist about Lithos.</p>
+      <p class="sp-body">Structural regeneration using elastin-like recombinamers that template epitaxial hydroxyapatite crystal growth in native enamel orientation. Not a coating — integrated tissue, mechanically identical to healthy enamel. Available through the Maxoral professional channel.</p>
+      <div class="sp-cta">
+        <div class="sp-waitlist"><input type="email" placeholder="your@email.com" id="wl-lithos"><button onclick="joinWaitlist('lithos',this)">Get Notified</button></div>
       </div>
     </div>
 
@@ -929,8 +955,8 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
         <div class="ab-tl"><span class="ab-year" style="color:var(--t)">2006–2015</span><h4>Clinical Foundation</h4><p>Nearly a decade of oral and maxillofacial surgery across thousands of cases. Pattern recognition: the mouth-body disconnect in clinical practice is systemic, not anecdotal. The problem isn't knowledge — it's infrastructure.</p></div>
         <div class="ab-tl"><span class="ab-year" style="color:var(--g)">2016–2019</span><h4>Oral Formulation Development</h4><p>Development of the dual-weight hyaluronic acid platform. First prototypes of what would become Loria — a chlorhexidine replacement that heals instead of kills. Early clinical validation of the mucosal barrier approach.</p></div>
         <div class="ab-tl"><span class="ab-year" style="color:var(--t)">2020–2022</span><h4>From Product to Platform</h4><p>The realization that a single oral rinse wasn't enough. The mouth-gut-systemic framework takes shape. Partnerships with Magisnat (nutraceuticals), phage therapy researchers, and the Mata lab at Nottingham for enamel regeneration.</p></div>
-        <div class="ab-tl"><span class="ab-year" style="color:var(--g)">2023–2024</span><h4>Fasolati Architecture</h4><p>The platform crystallizes: two oral product lines (Lytica, Loria), three gut products (Magisnat, Biolumen, Monch Monch), two distribution tiers (Maxoral Rx, Fasolati OTC), and the SciAgent AI engine tying it all together.</p></div>
-        <div class="ab-tl"><span class="ab-year" style="color:var(--t)">2025</span><h4>ELR Breakthrough</h4><p>Mata's ELR enamel regeneration technology published in Nature Communications. A significant advance in biomimetic enamel reconstruction research.</p></div>
+        <div class="ab-tl"><span class="ab-year" style="color:var(--g)">2023–2024</span><h4>Fasolati Architecture</h4><p>The platform crystallizes: three oral product lines (Lytica, Lithos, Loria), three gut products (Magisnat, Biolumen, Monch Monch), two distribution tiers (Maxoral Rx, Fasolati OTC), and the SciAgent AI engine tying it all together.</p></div>
+        <div class="ab-tl"><span class="ab-year" style="color:var(--t)">2025</span><h4>ELR Breakthrough &amp; Lithos</h4><p>Mata's ELR enamel regeneration technology published in Nature Communications. Lithos product line activated around ELR scaffold: biomimetic enamel regrowth from the crystal lattice up. The remineralization hero enters the therapeutic cascade.</p></div>
         <div class="ab-tl"><span class="ab-year" style="color:var(--g)">2026</span><h4>Node Network Launch</h4><p>Loria goes to market. Fasolati Engine enters beta. DSO partnerships activate. The node network goes from architecture to operating system. The unlit corner starts to glow.</p></div>
       </div>
     </div>
@@ -986,7 +1012,7 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
     <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">Key Concepts</div>
       <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Chronic inflammation as primary death mechanism</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">The paradigm shift. Inflammation isn't a side effect of disease — it IS the disease mechanism. From atherosclerotic plaque formation to tumor microenvironment signaling to neuroinflammatory cascades in Alzheimer's, the same mediators (IL-6, TNF-α, CRP) drive the pathology. Fasolati treats the body as a network where inflammation propagates from origin nodes. Control the nodes, control the network.</div>
       <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">hs-CRP as early warning</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">hs-CRP is produced by the liver in response to IL-6 signaling — a systemic alarm bell. SciAgent AI integrates hs-CRP trends with oral biomarker data (pocket depth, bleeding on probing) and gut markers (zonulin, calprotectin) to detect inflammatory acceleration early — when intervention is still cheap and effective.</div>
-      <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Mouth and Gut as controllable origin nodes</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">The mouth harbors 700+ bacterial species in biofilm communities millimeters from the bloodstream. The gut epithelium is a single cell layer separating trillions of microbes from systemic circulation. Fasolati's architecture — Lytica and Loria for the mouth; Magisnat, Biolumen, Monch Monch for the gut — targets the two highest-leverage intervention points in human health.</div>
+      <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Mouth and Gut as controllable origin nodes</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">The mouth harbors 700+ bacterial species in biofilm communities millimeters from the bloodstream. The gut epithelium is a single cell layer separating trillions of microbes from systemic circulation. Fasolati's architecture — Lytica, Lithos, and Loria for the mouth; Magisnat, Biolumen, Monch Monch for the gut — targets the two highest-leverage intervention points in human health.</div>
     </div>
   </div></div>
 
@@ -1000,12 +1026,14 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
     </div>
     <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">Oral Therapeutic Stack</div>
       <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Lytica: Enzyme and Phage hunt/clear</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Lytica™ — precision ecological rescue. Stage 1: dispersin B and DNase I enzymatically degrade the biofilm's extracellular polymeric matrix. Stage 2: targeted bacteriophages against P. gingivalis, A. actinomycetemcomitans, T. forsythia selectively eliminate keystone pathogens while preserving commensals. Not a broad-spectrum kill — ecological surgery.</div>
+      <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Lithos: Biomimetic enamel remineralization</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Lithos™ — structural regeneration. Alvaro Mata's elastin-like recombinamer (ELR) technology provides a biomimetic scaffold that templates epitaxial hydroxyapatite crystal growth directly from existing enamel. New crystals form in native crystallographic orientation — not amorphous deposition, but true lattice-continuous reconstruction. Single application, one-week crystal growth, mechanically identical to healthy enamel. The missing middle step: after Lytica clears the ecology, Lithos rebuilds the hard tissue before Loria seals and maintains.</div>
       <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Loria: Biofilm barrier and rinse</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Loria™ — dual-weight hyaluronic acid mucosal barrier. High-MW HA (1.2–1.8 MDa) blocks bacterial adhesion and LPS translocation. Low-MW HA (20–200 kDa) stimulates fibroblast proliferation and accelerates wound healing. Castor oil delivery for sustained release. The daily habit loop that holds ecological gains.</div>
       <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Maxoral: Professional Rx interventions</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Maxoral™ — clinical authority channel. Higher-concentration therapeutic rinses, prescription-strength phage cocktails, advanced HA delivery for in-office application. FDA-regulated claims dispensed through dental and periodontal practices. Clinical efficacy for complex cases plus professional endorsement that builds trust in the Fasolati ecosystem.</div>
       <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Fasolati: Consumer OTC habit loops</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Fasolati™ consumer products — clinical-grade science translated into daily OTC habit loops. Maintenance rinses, daily biofilm management, Fasolati Engine app integration. Behavioral anchors that maintain ecological gains while generating continuous biomarker data back into the SciAgent AI platform.</div>
     </div>
     <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">Therapeutic Cascade</div>
       <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Hunt: Lytica</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Phase 1. Enzymatic biofilm disruption followed by phage-mediated pathogen elimination. Ecological rescue for a dysbiotic oral microbiome. You can't rebuild on a contaminated foundation. Lytica creates the clean slate.</div>
+      <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Rebuild: Lithos</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Phase 2. ELR-scaffolded epitaxial mineralization. Restore hard tissue in native crystal orientation. The structural bridge between ecological rescue and daily maintenance.</div>
       <div class="pill" onclick="togglePill(this)"><span class="pill-dot"></span><span style="flex:1">Maintain: Loria</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Phase 3. Daily mucosal barrier protection, sustained HA delivery, biofilm management. Where the habit loop lives, adherence meets data collection, and the Fasolati Engine gets continuous signal for AI-driven protocol optimization.</div>
     </div>
   </div></div>
@@ -1070,7 +1098,7 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
   <h2 class="s-title mo mo-d1">The Mouth</h2>
   <p class="s-intro mo mo-d2">The periodontal pocket is not a local nuisance; it is a vascularized wound that leaks inflammatory signals and pathogens into systemic circulation, liver, endothelium, placenta, and brain.</p>
   <div class="gl mo mo-d2"><div class="mb">Periodontitis behaves as a systemic inflammatory disease with local manifestations.</div><div class="mb">Oral pathogens like P. gingivalis are found in atherosclerotic plaques, brain tissue, and placental tissue.</div><div class="mb">Pocket epithelium is thin, ulcerated, and bathed in high‑load biofilm—an engineered portal of entry.</div></div>
-  <div class="sub mo mo-d3"><h3>The Oral Node: Therapeutics Platform</h3><p class="sl">A surgeon‑engineered oral therapeutics line that treats the mouth as a controllable origin node of systemic inflammation.</p><div class="mb gd">Three product lines: daily ecology control, episodic rescue, and professional‑grade interventions.</div><div class="mb gd">Two distribution tiers: consumer and clinician, wired into the same data layer.</div><div class="mb gd">One precision architecture: the right intervention at the right node, gated by protocol, not marketing.</div></div>
+  <div class="sub mo mo-d3"><h3>The Oral Node: Therapeutics Platform</h3><p class="sl">A surgeon‑engineered oral therapeutics line that treats the mouth as a controllable origin node of systemic inflammation.</p><div class="mb gd">Three product lines: episodic rescue, structural regeneration, and daily ecology control — plus professional‑grade interventions through Maxoral.</div><div class="mb gd">Two distribution tiers: consumer and clinician, wired into the same data layer.</div><div class="mb gd">One precision architecture: the right intervention at the right node, gated by protocol, not marketing.</div></div>
 </div></section>
 
 <section class="fs" id="s3"><div class="fs-inner">
@@ -1094,7 +1122,7 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
   <p class="s-num tn mo">05 — The Network</p>
   <h2 class="s-title mo mo-d1">Fasolati Node Network</h2>
   <p class="s-intro mo mo-d2">Fasolati is not a single product. It is a network of nodes—oral, gut, systemic—plugged into a shared data and protocol layer.</p>
-  <div><div class="ni mo mo-d1"><strong class="tc">Loria / Maxoral</strong> — oral ecology and pocket control.</div><div class="ni mo mo-d2"><strong class="gc">Magisnat / Biolumen / Monch Monch</strong> — gut barrier and metabolic inputs.</div><div class="ni mo mo-d3"><strong class="tc">Noxx</strong> — nitric oxide and vascular surveillance.</div><div class="ni mo mo-d4"><strong class="gc">FasolatiCascade and future nodes</strong> — the framework to add new interventions without breaking the architecture.</div></div>
+  <div><div class="ni mo mo-d1"><strong class="tc">Lytica / Lithos / Loria / Maxoral</strong> — the full oral therapeutic cascade.</div><div class="ni mo mo-d2"><strong class="gc">Magisnat / Biolumen / Monch Monch</strong> — gut barrier and metabolic inputs.</div><div class="ni mo mo-d3"><strong class="tc">Noxx</strong> — nitric oxide and vascular surveillance.</div><div class="ni mo mo-d4"><strong class="gc">FasolatiCascade and future nodes</strong> — the framework to add new interventions without breaking the architecture.</div></div>
   <div class="mo" style="text-align:center;margin-top:32px"><a class="btn bs" href="https://claude.ai/public/artifacts/fddec7f6-4bf5-4888-b8a3-89bd80287d18" target="_blank" style="cursor:pointer">View Full Fasolati Deep Dive →</a></div>
 </div></section>
 
@@ -1164,7 +1192,7 @@ function joinWaitlist(product,btn){
   if(!email||!email.includes('@')){input.style.borderColor='rgba(255,107,107,.5)';return}
   btn.textContent='Saving...';btn.disabled=true;
 
-  const productLabels={lytica:'Lytica Waitlist',gut:'Gut Stack Waitlist',engine:'Engine Beta Waitlist'};
+  const productLabels={lytica:'Lytica Waitlist',lithos:'Lithos Waitlist',gut:'Gut Stack Waitlist',engine:'Engine Beta Waitlist'};
   const portalId='243149587';
   const formId=window.FASOLATI_WAITLIST_FORM_ID||'5a5c96a7-ca42-496a-b530-a76a99879e14';
 
