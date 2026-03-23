@@ -1,0 +1,1419 @@
+From 030139a4d5ac773420c1a55553874cc96762a53b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 23 Mar 2026 23:37:34 +0000
+Subject: [PATCH] Wire all 44 frontend API routes to real FastAPI backend
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Replace every mock/stub Next.js API route with a real proxy to the
+FastAPI backend. Previously, all frontend routes returned hardcoded
+fake data — now they forward requests to the backend preserving
+method, headers, query params, body, and auth tokens.
+
+Changes:
+- Add frontend/src/lib/backend-proxy.ts — shared proxy utility that
+  forwards requests to BACKEND_URL (default http://localhost:8000)
+- Replace all 44 route files under frontend/src/app/api/v1/ to use
+  proxyToBackend() instead of returning mock data
+- Chat route uses stream: true for SSE passthrough
+- Dynamic routes ([id], [service]) pass context for param resolution
+- File uploads (CSV import) forward raw body with content-type
+- Add BACKEND_URL to .env.example documentation
+- BACKEND_URL already configured in docker-compose.yml as http://backend:8000
+
+The frontend is now a true client of the backend API, not a demo shell.
+
+https://claude.ai/code/session_013VPx1ByRZU684nEDpz5cu6
+---
+ .env.example                                  |   4 +
+ .../api/v1/analytics/bounce-daily/route.ts    |  15 +-
+ .../v1/analytics/channel-breakdown/route.ts   |  11 +-
+ .../app/api/v1/analytics/dashboard/route.ts   |  12 +-
+ .../api/v1/analytics/deliverability/route.ts  |  15 +-
+ .../api/v1/analytics/outreach-daily/route.ts  |  15 +-
+ .../api/v1/analytics/recent-activity/route.ts |  16 +-
+ .../api/v1/analytics/response-trends/route.ts |  14 +-
+ .../analytics/sequence-performance/route.ts   |  11 +-
+ .../app/api/v1/analytics/sequences/route.ts   |  15 +-
+ frontend/src/app/api/v1/auth/login/route.ts   |  16 +-
+ frontend/src/app/api/v1/auth/me/route.ts      |  27 +---
+ frontend/src/app/api/v1/chat/history/route.ts |  11 +-
+ frontend/src/app/api/v1/chat/route.ts         |  16 +-
+ frontend/src/app/api/v1/chat/sync/route.ts    |  11 +-
+ .../app/api/v1/compliance/audit/[id]/route.ts |  22 +--
+ .../src/app/api/v1/compliance/check/route.ts  |   7 +-
+ .../app/api/v1/compliance/consent/route.ts    |   7 +-
+ .../src/app/api/v1/compliance/dnc/route.ts    |  24 +--
+ .../src/app/api/v1/compliance/revoke/route.ts |   7 +-
+ .../src/app/api/v1/deals/pipelines/route.ts   |  20 +--
+ .../api/v1/deliverability/domains/route.ts    |  23 +--
+ .../app/api/v1/deliverability/warmup/route.ts |  10 +-
+ .../app/api/v1/insights/proactive/route.ts    |  34 +---
+ .../src/app/api/v1/leads/[id]/deals/route.ts  |  33 +---
+ frontend/src/app/api/v1/leads/[id]/route.ts   |  26 +--
+ .../src/app/api/v1/leads/import/csv/route.ts  |  11 +-
+ frontend/src/app/api/v1/leads/route.ts        |  29 +---
+ frontend/src/app/api/v1/presets/route.ts      |  30 +---
+ .../api/v1/sequences/[id]/analytics/route.ts  |  24 +--
+ .../v1/sequences/[id]/channel-health/route.ts |  13 +-
+ .../app/api/v1/sequences/[id]/enroll/route.ts |   9 +-
+ .../api/v1/sequences/[id]/monitor/route.ts    |  32 +---
+ .../src/app/api/v1/sequences/[id]/route.ts    |  38 ++---
+ .../app/api/v1/sequences/[id]/steps/route.ts  |  23 +--
+ .../app/api/v1/sequences/[id]/visual/route.ts |  21 +--
+ .../app/api/v1/sequences/generate/route.ts    |  16 +-
+ .../api/v1/sequences/replies/inbox/route.ts   |  34 +---
+ frontend/src/app/api/v1/sequences/route.ts    |  52 +-----
+ .../v1/settings/api-keys/[service]/route.ts   |  18 +--
+ .../src/app/api/v1/settings/api-keys/route.ts |  10 +-
+ .../v1/settings/integration-status/route.ts   |  17 +-
+ .../app/api/v1/settings/onboarding/route.ts   |   7 +-
+ .../src/app/api/v1/templates/preview/route.ts |  13 +-
+ frontend/src/app/api/v1/templates/route.ts    |  20 +--
+ frontend/src/lib/backend-proxy.ts             | 153 ++++++++++++++++++
+ 46 files changed, 377 insertions(+), 615 deletions(-)
+ create mode 100644 frontend/src/lib/backend-proxy.ts
+
+diff --git a/.env.example b/.env.example
+index 3444646..74aacc1 100644
+--- a/.env.example
++++ b/.env.example
+@@ -101,6 +101,10 @@ NEXTAUTH_URL=https://app.gengyveusa.com
+ # 64-character random string: openssl rand -hex 32
+ NEXTAUTH_SECRET=<random-64-char-string>
+ 
++# Backend API URL (server-side proxy target — do not use NEXT_PUBLIC_ prefix)
++# In Docker: http://backend:8000 | Local dev: http://localhost:8000
++BACKEND_URL=http://backend:8000
++
+ # ------------------------------------------------------------
+ # Docker / CI — set automatically in CI, optional locally
+ # ------------------------------------------------------------
+diff --git a/frontend/src/app/api/v1/analytics/bounce-daily/route.ts b/frontend/src/app/api/v1/analytics/bounce-daily/route.ts
+index b3ee13c..234c31e 100644
+--- a/frontend/src/app/api/v1/analytics/bounce-daily/route.ts
++++ b/frontend/src/app/api/v1/analytics/bounce-daily/route.ts
+@@ -1,13 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { date: "2026-03-16", bounced: 5, sent: 312 },
+-    { date: "2026-03-17", bounced: 3, sent: 345 },
+-    { date: "2026-03-18", bounced: 7, sent: 298 },
+-    { date: "2026-03-19", bounced: 2, sent: 356 },
+-    { date: "2026-03-20", bounced: 4, sent: 287 },
+-    { date: "2026-03-21", bounced: 1, sent: 120 },
+-    { date: "2026-03-22", bounced: 2, sent: 85 },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/analytics/channel-breakdown/route.ts b/frontend/src/app/api/v1/analytics/channel-breakdown/route.ts
+index 1757e41..234c31e 100644
+--- a/frontend/src/app/api/v1/analytics/channel-breakdown/route.ts
++++ b/frontend/src/app/api/v1/analytics/channel-breakdown/route.ts
+@@ -1,9 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { name: "Email", value: 68 },
+-    { name: "LinkedIn", value: 22 },
+-    { name: "SMS", value: 10 },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/analytics/dashboard/route.ts b/frontend/src/app/api/v1/analytics/dashboard/route.ts
+index ff15844..234c31e 100644
+--- a/frontend/src/app/api/v1/analytics/dashboard/route.ts
++++ b/frontend/src/app/api/v1/analytics/dashboard/route.ts
+@@ -1,10 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    total_leads: 2847,
+-    active_consents: 1923,
+-    touches_sent: 14562,
+-    response_rate: 0.187,
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/analytics/deliverability/route.ts b/frontend/src/app/api/v1/analytics/deliverability/route.ts
+index e6f9f27..234c31e 100644
+--- a/frontend/src/app/api/v1/analytics/deliverability/route.ts
++++ b/frontend/src/app/api/v1/analytics/deliverability/route.ts
+@@ -1,13 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    total_sent: 14562,
+-    total_bounced: 218,
+-    bounce_rate: 0.015,
+-    spam_complaints: 3,
+-    spam_rate: 0.0002,
+-    warmup_active: 2,
+-    warmup_completed: 5,
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/analytics/outreach-daily/route.ts b/frontend/src/app/api/v1/analytics/outreach-daily/route.ts
+index 86744f7..234c31e 100644
+--- a/frontend/src/app/api/v1/analytics/outreach-daily/route.ts
++++ b/frontend/src/app/api/v1/analytics/outreach-daily/route.ts
+@@ -1,13 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { day: "Mon", email: 245, sms: 38, linkedin: 62 },
+-    { day: "Tue", email: 312, sms: 45, linkedin: 78 },
+-    { day: "Wed", email: 287, sms: 52, linkedin: 71 },
+-    { day: "Thu", email: 356, sms: 48, linkedin: 85 },
+-    { day: "Fri", email: 298, sms: 41, linkedin: 68 },
+-    { day: "Sat", email: 120, sms: 15, linkedin: 22 },
+-    { day: "Sun", email: 85, sms: 10, linkedin: 18 },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/analytics/recent-activity/route.ts b/frontend/src/app/api/v1/analytics/recent-activity/route.ts
+index ff26d8a..234c31e 100644
+--- a/frontend/src/app/api/v1/analytics/recent-activity/route.ts
++++ b/frontend/src/app/api/v1/analytics/recent-activity/route.ts
+@@ -1,14 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { id: 1, text: "Imported 150 leads from HubSpot CSV", time: "2 minutes ago", type: "lead" },
+-    { id: 2, text: "Sequence \"Cold Outreach — SaaS\" enrolled 42 new leads", time: "15 minutes ago", type: "sequence" },
+-    { id: 3, text: "Consent granted: sarah.chen@acmetech.io (email)", time: "28 minutes ago", type: "consent" },
+-    { id: 4, text: "Bounce detected: invalid@oldcompany.com", time: "1 hour ago", type: "bounce" },
+-    { id: 5, text: "Domain warmup completed: outreach.fortressflow.com", time: "2 hours ago", type: "warmup" },
+-    { id: 6, text: "New lead enriched: Marcus Rivera — VP Sales, TechCorp", time: "3 hours ago", type: "lead" },
+-    { id: 7, text: "Sequence \"Re-engagement\" reply rate hit 14%", time: "4 hours ago", type: "sequence" },
+-    { id: 8, text: "DNC list updated: +3 entries from compliance scan", time: "5 hours ago", type: "consent" },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/analytics/response-trends/route.ts b/frontend/src/app/api/v1/analytics/response-trends/route.ts
+index 41ca924..234c31e 100644
+--- a/frontend/src/app/api/v1/analytics/response-trends/route.ts
++++ b/frontend/src/app/api/v1/analytics/response-trends/route.ts
+@@ -1,12 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { week: "W1", rate: 0.12 },
+-    { week: "W2", rate: 0.14 },
+-    { week: "W3", rate: 0.15 },
+-    { week: "W4", rate: 0.18 },
+-    { week: "W5", rate: 0.17 },
+-    { week: "W6", rate: 0.19 },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/analytics/sequence-performance/route.ts b/frontend/src/app/api/v1/analytics/sequence-performance/route.ts
+index 0fe6dbc..234c31e 100644
+--- a/frontend/src/app/api/v1/analytics/sequence-performance/route.ts
++++ b/frontend/src/app/api/v1/analytics/sequence-performance/route.ts
+@@ -1,9 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { sequence_id: "seq-1", total_sends: 1250, opens: 775, replies: 225, bounces: 15 },
+-    { sequence_id: "seq-2", total_sends: 890, opens: 490, replies: 125, bounces: 7 },
+-    { sequence_id: "seq-3", total_sends: 450, opens: 320, replies: 108, bounces: 2 },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/analytics/sequences/route.ts b/frontend/src/app/api/v1/analytics/sequences/route.ts
+index e7fe1a5..234c31e 100644
+--- a/frontend/src/app/api/v1/analytics/sequences/route.ts
++++ b/frontend/src/app/api/v1/analytics/sequences/route.ts
+@@ -1,13 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    sequences: [
+-      { sequence_id: "seq-1", sequence_name: "Cold Outreach — SaaS", enrolled: 420, active: 185, completed: 210, open_rate: 0.62, reply_rate: 0.18, bounce_rate: 0.012 },
+-      { sequence_id: "seq-2", sequence_name: "Re-engagement", enrolled: 310, active: 95, completed: 180, open_rate: 0.55, reply_rate: 0.14, bounce_rate: 0.008 },
+-      { sequence_id: "seq-3", sequence_name: "Event Follow-Up", enrolled: 150, active: 60, completed: 85, open_rate: 0.71, reply_rate: 0.24, bounce_rate: 0.005 },
+-      { sequence_id: "seq-4", sequence_name: "Trial Nurture", enrolled: 280, active: 140, completed: 100, open_rate: 0.48, reply_rate: 0.11, bounce_rate: 0.018 },
+-      { sequence_id: "seq-5", sequence_name: "Enterprise ABM", enrolled: 95, active: 50, completed: 30, open_rate: 0.58, reply_rate: 0.22, bounce_rate: 0.009 },
+-    ],
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/auth/login/route.ts b/frontend/src/app/api/v1/auth/login/route.ts
+index 76a5192..d8452ab 100644
+--- a/frontend/src/app/api/v1/auth/login/route.ts
++++ b/frontend/src/app/api/v1/auth/login/route.ts
+@@ -1,14 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({
+-    access_token: "mock-access-token-demo",
+-    refresh_token: "mock-refresh-token-demo",
+-    user: {
+-      id: "user-001",
+-      email: "thad@gengyveusa.com",
+-      full_name: "Thad Mitchell",
+-      role: "admin",
+-    },
+-  });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/auth/me/route.ts b/frontend/src/app/api/v1/auth/me/route.ts
+index 35de2c3..0a2f72a 100644
+--- a/frontend/src/app/api/v1/auth/me/route.ts
++++ b/frontend/src/app/api/v1/auth/me/route.ts
+@@ -1,25 +1,10 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    id: "user-001",
+-    email: "thad@gengyveusa.com",
+-    full_name: "Thad Mitchell",
+-    role: "admin",
+-    is_active: true,
+-    created_at: "2026-01-15T00:00:00Z",
+-    last_login_at: "2026-03-22T20:00:00Z",
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+ 
+-export async function PUT() {
+-  return NextResponse.json({
+-    id: "user-001",
+-    email: "thad@gengyveusa.com",
+-    full_name: "Thad Mitchell",
+-    role: "admin",
+-    is_active: true,
+-    created_at: "2026-01-15T00:00:00Z",
+-    last_login_at: "2026-03-22T20:00:00Z",
+-  });
++export async function PUT(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/chat/history/route.ts b/frontend/src/app/api/v1/chat/history/route.ts
+index 436b64e..234c31e 100644
+--- a/frontend/src/app/api/v1/chat/history/route.ts
++++ b/frontend/src/app/api/v1/chat/history/route.ts
+@@ -1,9 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    items: [],
+-    total: 0,
+-    session_id: "demo-session",
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/chat/route.ts b/frontend/src/app/api/v1/chat/route.ts
+index 86f8847..3bee510 100644
+--- a/frontend/src/app/api/v1/chat/route.ts
++++ b/frontend/src/app/api/v1/chat/route.ts
+@@ -1,14 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  // Return a streaming-style response with mock AI assistant data
+-  const responseText = JSON.stringify({
+-    response: "Based on your current data, your **Cold Outreach — SaaS** sequence is performing well with an 18.7% response rate. Here are a few suggestions:\n\n1. **Optimize Step 2**: LinkedIn connect messages have a 22% reply rate — consider adding a personalized note referencing the prospect's recent activity.\n\n2. **A/B Test Subject Lines**: Your open rate of 62% could improve with subject line testing.\n\n3. **Timing**: Most replies come in between 9-11 AM local time. Consider scheduling sends accordingly.\n\nWould you like me to create an A/B test for your email subjects?",
+-    sources: ["sequence_analytics", "best_practices_db"],
+-    session_id: "demo-session",
+-  });
+-
+-  return new NextResponse(responseText, {
+-    headers: { "Content-Type": "application/json" },
+-  });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req, undefined, { stream: true });
+ }
+diff --git a/frontend/src/app/api/v1/chat/sync/route.ts b/frontend/src/app/api/v1/chat/sync/route.ts
+index 1867ae3..d8452ab 100644
+--- a/frontend/src/app/api/v1/chat/sync/route.ts
++++ b/frontend/src/app/api/v1/chat/sync/route.ts
+@@ -1,9 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({
+-    response: "I've analyzed your outreach data. Your sequences are performing above industry average. Would you like me to suggest optimizations?",
+-    sources: ["analytics_engine"],
+-    session_id: "demo-session",
+-  });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/compliance/audit/[id]/route.ts b/frontend/src/app/api/v1/compliance/audit/[id]/route.ts
+index 8c60822..57a0228 100644
+--- a/frontend/src/app/api/v1/compliance/audit/[id]/route.ts
++++ b/frontend/src/app/api/v1/compliance/audit/[id]/route.ts
+@@ -1,18 +1,8 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET(
+-  _req: Request,
+-  { params }: { params: Promise<{ id: string }> }
+-) {
+-  const { id } = await params;
+-  return NextResponse.json({
+-    lead_id: id,
+-    consents: [
+-      { id: 1, channel: "email", method: "explicit_opt_in", proof: "Web form submission", granted_at: "2026-03-15T10:00:00Z" },
+-    ],
+-    touch_logs: [
+-      { id: 1, channel: "email", sent_at: "2026-03-16T14:00:00Z", step_position: 1 },
+-    ],
+-    dnc_records: [],
+-  });
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function GET(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/compliance/check/route.ts b/frontend/src/app/api/v1/compliance/check/route.ts
+index bbb23ad..d8452ab 100644
+--- a/frontend/src/app/api/v1/compliance/check/route.ts
++++ b/frontend/src/app/api/v1/compliance/check/route.ts
+@@ -1,5 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({ can_send: true, reason: "Valid consent on file" });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/compliance/consent/route.ts b/frontend/src/app/api/v1/compliance/consent/route.ts
+index bd00ce5..d8452ab 100644
+--- a/frontend/src/app/api/v1/compliance/consent/route.ts
++++ b/frontend/src/app/api/v1/compliance/consent/route.ts
+@@ -1,5 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({ success: true });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/compliance/dnc/route.ts b/frontend/src/app/api/v1/compliance/dnc/route.ts
+index d49f7ac..81a1c33 100644
+--- a/frontend/src/app/api/v1/compliance/dnc/route.ts
++++ b/frontend/src/app/api/v1/compliance/dnc/route.ts
+@@ -1,22 +1,10 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    items: [
+-      { id: "dnc-1", identifier: "spam@badactor.com", channel: "email", reason: "Spam complaint", source: "automated", blocked_at: "2026-03-15T10:00:00Z", created_at: "2026-03-15T10:00:00Z" },
+-      { id: "dnc-2", identifier: "+1-555-0199", channel: "sms", reason: "Unsubscribe request", source: "manual", blocked_at: "2026-03-18T14:00:00Z", created_at: "2026-03-18T14:00:00Z" },
+-      { id: "dnc-3", identifier: "noreply@oldcompany.com", channel: "email", reason: "Hard bounce", source: "automated", blocked_at: "2026-03-20T09:00:00Z", created_at: "2026-03-20T09:00:00Z" },
+-    ],
+-    total: 3,
+-    page: 1,
+-    page_size: 50,
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+ 
+-export async function POST() {
+-  return NextResponse.json({
+-    id: "dnc-new", identifier: "test@example.com", channel: "email",
+-    reason: "Manual add", source: "manual",
+-    blocked_at: "2026-03-22T08:00:00Z", created_at: "2026-03-22T08:00:00Z",
+-  }, { status: 201 });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/compliance/revoke/route.ts b/frontend/src/app/api/v1/compliance/revoke/route.ts
+index bd00ce5..d8452ab 100644
+--- a/frontend/src/app/api/v1/compliance/revoke/route.ts
++++ b/frontend/src/app/api/v1/compliance/revoke/route.ts
+@@ -1,5 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({ success: true });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/deals/pipelines/route.ts b/frontend/src/app/api/v1/deals/pipelines/route.ts
+index 8fd22b4..234c31e 100644
+--- a/frontend/src/app/api/v1/deals/pipelines/route.ts
++++ b/frontend/src/app/api/v1/deals/pipelines/route.ts
+@@ -1,18 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    {
+-      pipeline_id: "default",
+-      label: "Sales Pipeline",
+-      stages: [
+-        { stage_id: "discovery", label: "Discovery" },
+-        { stage_id: "qualified", label: "Qualified" },
+-        { stage_id: "proposal", label: "Proposal" },
+-        { stage_id: "negotiation", label: "Negotiation" },
+-        { stage_id: "closed_won", label: "Closed Won" },
+-        { stage_id: "closed_lost", label: "Closed Lost" },
+-      ],
+-    },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/deliverability/domains/route.ts b/frontend/src/app/api/v1/deliverability/domains/route.ts
+index f9fab6a..81a1c33 100644
+--- a/frontend/src/app/api/v1/deliverability/domains/route.ts
++++ b/frontend/src/app/api/v1/deliverability/domains/route.ts
+@@ -1,21 +1,10 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { id: "dom-1", domain: "outreach.fortressflow.com", health_score: 95, warmup_progress: 100, total_sent: 8500, total_bounced: 85, created_at: "2026-02-01T00:00:00Z" },
+-    { id: "dom-2", domain: "mail.gengyve.com", health_score: 88, warmup_progress: 72, total_sent: 3200, total_bounced: 48, created_at: "2026-02-15T00:00:00Z" },
+-    { id: "dom-3", domain: "reach.fortressflow.io", health_score: 92, warmup_progress: 100, total_sent: 2862, total_bounced: 28, created_at: "2026-03-01T00:00:00Z" },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+ 
+-export async function POST() {
+-  return NextResponse.json({
+-    id: "dom-new",
+-    domain: "new-domain.com",
+-    health_score: 100,
+-    warmup_progress: 0,
+-    total_sent: 0,
+-    total_bounced: 0,
+-    created_at: "2026-03-22T08:00:00Z",
+-  }, { status: 201 });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/deliverability/warmup/route.ts b/frontend/src/app/api/v1/deliverability/warmup/route.ts
+index b072307..234c31e 100644
+--- a/frontend/src/app/api/v1/deliverability/warmup/route.ts
++++ b/frontend/src/app/api/v1/deliverability/warmup/route.ts
+@@ -1,8 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { inbox_id: "inbox-1", date: "2026-03-22", emails_sent: 45, emails_target: 50, bounce_rate: 0.01, spam_rate: 0.0, open_rate: 0.72, status: "active" },
+-    { inbox_id: "inbox-2", date: "2026-03-22", emails_sent: 30, emails_target: 40, bounce_rate: 0.02, spam_rate: 0.001, open_rate: 0.65, status: "active" },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/insights/proactive/route.ts b/frontend/src/app/api/v1/insights/proactive/route.ts
+index b2d1c7f..234c31e 100644
+--- a/frontend/src/app/api/v1/insights/proactive/route.ts
++++ b/frontend/src/app/api/v1/insights/proactive/route.ts
+@@ -1,32 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    insights: [
+-      {
+-        id: "ins-1",
+-        type: "high_performer",
+-        title: "Cold Outreach sequence is crushing it",
+-        description: "Your SaaS cold outreach sequence has a 18.7% response rate — 3x the industry average. Consider increasing enrollment.",
+-        action_label: "Enroll more leads",
+-        action_value: "/sequences/seq-1",
+-      },
+-      {
+-        id: "ins-2",
+-        type: "warning",
+-        title: "Domain warmup needs attention",
+-        description: "mail.gengyve.com is at 72% warmup — avoid increasing send volume until warmup completes.",
+-        action_label: "View domains",
+-        action_value: "/deliverability",
+-      },
+-      {
+-        id: "ins-3",
+-        type: "suggestion",
+-        title: "Try A/B testing your subject lines",
+-        description: "Your open rate could improve by 15-20% with systematic subject line testing on your top sequences.",
+-        action_label: "Learn more",
+-        action_value: "/sequences",
+-      },
+-    ],
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/leads/[id]/deals/route.ts b/frontend/src/app/api/v1/leads/[id]/deals/route.ts
+index 6f85789..e992c64 100644
+--- a/frontend/src/app/api/v1/leads/[id]/deals/route.ts
++++ b/frontend/src/app/api/v1/leads/[id]/deals/route.ts
+@@ -1,29 +1,12 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    {
+-      deal_id: "deal-001",
+-      deal_name: "AcmeTech Enterprise License",
+-      pipeline: "default",
+-      stage: "qualified",
+-      amount: 45000,
+-      created_at: "2026-03-16T10:00:00Z",
+-      updated_at: "2026-03-20T14:00:00Z",
+-      hs_deal_id: null,
+-    },
+-  ]);
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function GET(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+ 
+-export async function POST() {
+-  return NextResponse.json({
+-    deal_id: "deal-new",
+-    deal_name: "New Deal",
+-    pipeline: "default",
+-    stage: "discovery",
+-    amount: null,
+-    created_at: "2026-03-22T08:00:00Z",
+-    updated_at: "2026-03-22T08:00:00Z",
+-    hs_deal_id: null,
+-  }, { status: 201 });
++export async function POST(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/leads/[id]/route.ts b/frontend/src/app/api/v1/leads/[id]/route.ts
+index 5aa1b35..57a0228 100644
+--- a/frontend/src/app/api/v1/leads/[id]/route.ts
++++ b/frontend/src/app/api/v1/leads/[id]/route.ts
+@@ -1,22 +1,8 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET(
+-  _req: Request,
+-  { params }: { params: Promise<{ id: string }> }
+-) {
+-  const { id } = await params;
+-  return NextResponse.json({
+-    id,
+-    email: "sarah.chen@acmetech.io",
+-    phone: "+1-555-0101",
+-    first_name: "Sarah",
+-    last_name: "Chen",
+-    company: "AcmeTech",
+-    title: "VP of Sales",
+-    source: "HubSpot Import",
+-    meeting_verified: true,
+-    proof_data: null,
+-    created_at: "2026-03-15T10:30:00Z",
+-    updated_at: "2026-03-20T14:22:00Z",
+-  });
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function GET(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/leads/import/csv/route.ts b/frontend/src/app/api/v1/leads/import/csv/route.ts
+index eaa4a30..d8452ab 100644
+--- a/frontend/src/app/api/v1/leads/import/csv/route.ts
++++ b/frontend/src/app/api/v1/leads/import/csv/route.ts
+@@ -1,9 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({
+-    imported: 150,
+-    duplicates: 12,
+-    errors: 3,
+-  });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/leads/route.ts b/frontend/src/app/api/v1/leads/route.ts
+index b0eece1..81a1c33 100644
+--- a/frontend/src/app/api/v1/leads/route.ts
++++ b/frontend/src/app/api/v1/leads/route.ts
+@@ -1,27 +1,10 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-const mockLeads = [
+-  { id: "lead-001", email: "sarah.chen@acmetech.io", phone: "+1-555-0101", first_name: "Sarah", last_name: "Chen", company: "AcmeTech", title: "VP of Sales", source: "HubSpot Import", meeting_verified: true, proof_data: null, created_at: "2026-03-15T10:30:00Z", updated_at: "2026-03-20T14:22:00Z" },
+-  { id: "lead-002", email: "marcus.rivera@techcorp.com", phone: "+1-555-0102", first_name: "Marcus", last_name: "Rivera", company: "TechCorp", title: "Director of Engineering", source: "LinkedIn", meeting_verified: false, proof_data: null, created_at: "2026-03-14T08:15:00Z", updated_at: "2026-03-19T11:45:00Z" },
+-  { id: "lead-003", email: "emily.watson@growthio.co", phone: null, first_name: "Emily", last_name: "Watson", company: "GrowthIO", title: "Head of Marketing", source: "CSV Import", meeting_verified: true, proof_data: null, created_at: "2026-03-12T16:00:00Z", updated_at: "2026-03-18T09:30:00Z" },
+-  { id: "lead-004", email: "james.park@novadata.ai", phone: "+1-555-0104", first_name: "James", last_name: "Park", company: "NovaData AI", title: "CTO", source: "Referral", meeting_verified: false, proof_data: null, created_at: "2026-03-10T12:00:00Z", updated_at: "2026-03-17T15:20:00Z" },
+-  { id: "lead-005", email: "lisa.johnson@scaleup.io", phone: "+1-555-0105", first_name: "Lisa", last_name: "Johnson", company: "ScaleUp", title: "CEO", source: "Cold Outreach", meeting_verified: true, proof_data: null, created_at: "2026-03-09T09:45:00Z", updated_at: "2026-03-16T10:10:00Z" },
+-  { id: "lead-006", email: "david.kim@cloudpeak.com", phone: "+1-555-0106", first_name: "David", last_name: "Kim", company: "CloudPeak", title: "VP Operations", source: "LinkedIn", meeting_verified: false, proof_data: null, created_at: "2026-03-08T14:30:00Z", updated_at: "2026-03-15T16:45:00Z" },
+-  { id: "lead-007", email: "anna.müller@eurosoft.de", phone: "+49-555-0107", first_name: "Anna", last_name: "Müller", company: "EuroSoft GmbH", title: "Sales Director", source: "Event", meeting_verified: true, proof_data: null, created_at: "2026-03-07T11:20:00Z", updated_at: "2026-03-14T08:55:00Z" },
+-  { id: "lead-008", email: "raj.patel@fintechpro.in", phone: "+91-555-0108", first_name: "Raj", last_name: "Patel", company: "FinTechPro", title: "Managing Director", source: "Webinar", meeting_verified: false, proof_data: null, created_at: "2026-03-06T07:10:00Z", updated_at: "2026-03-13T12:30:00Z" },
+-  { id: "lead-009", email: "jessica.lee@brighthub.com", phone: "+1-555-0109", first_name: "Jessica", last_name: "Lee", company: "BrightHub", title: "Head of Partnerships", source: "HubSpot Import", meeting_verified: true, proof_data: null, created_at: "2026-03-05T15:50:00Z", updated_at: "2026-03-12T17:15:00Z" },
+-  { id: "lead-010", email: "tom.nguyen@rapidgrowth.co", phone: "+1-555-0110", first_name: "Tom", last_name: "Nguyen", company: "RapidGrowth", title: "COO", source: "CSV Import", meeting_verified: false, proof_data: null, created_at: "2026-03-04T10:00:00Z", updated_at: "2026-03-11T13:40:00Z" },
+-];
+-
+-export async function GET() {
+-  return NextResponse.json({
+-    items: mockLeads,
+-    total: 2847,
+-    page: 1,
+-    page_size: 20,
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+ 
+-export async function POST() {
+-  return NextResponse.json(mockLeads[0], { status: 201 });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/presets/route.ts b/frontend/src/app/api/v1/presets/route.ts
+index 6d3cc03..234c31e 100644
+--- a/frontend/src/app/api/v1/presets/route.ts
++++ b/frontend/src/app/api/v1/presets/route.ts
+@@ -1,28 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    {
+-      name: "5-Step SaaS Outreach",
+-      description: "Proven multi-channel sequence for SaaS prospects",
+-      category: "outreach",
+-      steps: [
+-        { step_type: "email", position: 1, delay_hours: 0, has_template: true, template_name: "Cold Intro", channel: "email" },
+-        { step_type: "linkedin_connect", position: 2, delay_hours: 24, has_template: true, template_name: "Connect Request", channel: "linkedin" },
+-        { step_type: "email", position: 3, delay_hours: 72, has_template: true, template_name: "Follow-Up #1", channel: "email" },
+-        { step_type: "sms", position: 4, delay_hours: 120, has_template: true, template_name: "Quick Check-In", channel: "sms" },
+-        { step_type: "email", position: 5, delay_hours: 168, has_template: true, template_name: "Break-Up Email", channel: "email" },
+-      ],
+-    },
+-    {
+-      name: "3-Step Re-engagement",
+-      description: "Win back cold leads with personalized touches",
+-      category: "re-engagement",
+-      steps: [
+-        { step_type: "email", position: 1, delay_hours: 0, has_template: true, template_name: "We Miss You", channel: "email" },
+-        { step_type: "email", position: 2, delay_hours: 72, has_template: true, template_name: "Value Reminder", channel: "email" },
+-        { step_type: "email", position: 3, delay_hours: 168, has_template: true, template_name: "Last Chance", channel: "email" },
+-      ],
+-    },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/[id]/analytics/route.ts b/frontend/src/app/api/v1/sequences/[id]/analytics/route.ts
+index 28e25fc..57a0228 100644
+--- a/frontend/src/app/api/v1/sequences/[id]/analytics/route.ts
++++ b/frontend/src/app/api/v1/sequences/[id]/analytics/route.ts
+@@ -1,20 +1,8 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET(
+-  _req: Request,
+-  { params }: { params: Promise<{ id: string }> }
+-) {
+-  const { id } = await params;
+-  return NextResponse.json({
+-    sequence_id: id,
+-    total_enrolled: 420,
+-    active: 185,
+-    completed: 210,
+-    steps: [
+-      { step_position: 1, step_type: "email", sent: 420, opened: 260, replied: 75, bounced: 5 },
+-      { step_position: 2, step_type: "linkedin_connect", sent: 350, opened: 0, replied: 45, bounced: 0 },
+-      { step_position: 3, step_type: "email", sent: 280, opened: 175, replied: 52, bounced: 3 },
+-    ],
+-    ab_results: [],
+-  });
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function GET(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/[id]/channel-health/route.ts b/frontend/src/app/api/v1/sequences/[id]/channel-health/route.ts
+index 5acd950..57a0228 100644
+--- a/frontend/src/app/api/v1/sequences/[id]/channel-health/route.ts
++++ b/frontend/src/app/api/v1/sequences/[id]/channel-health/route.ts
+@@ -1,9 +1,8 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { channel: "email", sent_today: 45, limit: 200, utilization: 0.225, bounce_rate: 0.012, reply_rate: 0.18, last_failure: null },
+-    { channel: "linkedin", sent_today: 12, limit: 50, utilization: 0.24, bounce_rate: 0, reply_rate: 0.22, last_failure: null },
+-    { channel: "sms", sent_today: 8, limit: 100, utilization: 0.08, bounce_rate: 0.005, reply_rate: 0.14, last_failure: null },
+-  ]);
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function GET(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/[id]/enroll/route.ts b/frontend/src/app/api/v1/sequences/[id]/enroll/route.ts
+index d308218..caca423 100644
+--- a/frontend/src/app/api/v1/sequences/[id]/enroll/route.ts
++++ b/frontend/src/app/api/v1/sequences/[id]/enroll/route.ts
+@@ -1,5 +1,8 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({ enrolled: 5, errors: [] });
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function POST(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/[id]/monitor/route.ts b/frontend/src/app/api/v1/sequences/[id]/monitor/route.ts
+index 058ef2d..57a0228 100644
+--- a/frontend/src/app/api/v1/sequences/[id]/monitor/route.ts
++++ b/frontend/src/app/api/v1/sequences/[id]/monitor/route.ts
+@@ -1,28 +1,8 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET(
+-  _req: Request,
+-  { params }: { params: Promise<{ id: string }> }
+-) {
+-  const { id } = await params;
+-  return NextResponse.json({
+-    sequence_id: id,
+-    sequence_name: "Cold Outreach — SaaS",
+-    status: "active",
+-    total_enrolled: 420,
+-    active: 185,
+-    completed: 210,
+-    replied: 75,
+-    failed: 5,
+-    enrollments: [
+-      {
+-        id: "enr-1", lead_id: "lead-001", lead_name: "Sarah Chen", lead_email: "sarah.chen@acmetech.io", lead_company: "AcmeTech",
+-        current_step: 3, total_steps: 3, status: "completed", enrolled_at: "2026-03-10T09:00:00Z",
+-        last_touch_at: "2026-03-18T14:00:00Z", last_state_change_at: "2026-03-18T14:00:00Z",
+-        hole_filler_triggered: false, escalation_channel: null, touch_history: [], reply_snippets: [],
+-      },
+-    ],
+-    channel_breakdown: { email: 700, linkedin: 350, sms: 0 },
+-    daily_send_count: { "2026-03-20": 45, "2026-03-21": 38, "2026-03-22": 22 },
+-  });
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function GET(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/[id]/route.ts b/frontend/src/app/api/v1/sequences/[id]/route.ts
+index 588e28f..bf88a06 100644
+--- a/frontend/src/app/api/v1/sequences/[id]/route.ts
++++ b/frontend/src/app/api/v1/sequences/[id]/route.ts
+@@ -1,34 +1,16 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET(
+-  _req: Request,
+-  { params }: { params: Promise<{ id: string }> }
+-) {
+-  const { id } = await params;
+-  return NextResponse.json({
+-    id,
+-    name: "Cold Outreach — SaaS",
+-    description: "Multi-channel cold outreach targeting SaaS decision makers",
+-    status: "active",
+-    created_at: "2026-03-10T09:00:00Z",
+-    updated_at: "2026-03-20T14:00:00Z",
+-    steps: [
+-      { id: "step-1", sequence_id: id, step_type: "email", position: 1, config: { subject: "Quick question about {{company}}" }, delay_hours: 0, condition: null, true_next_position: null, false_next_position: null, ab_variants: null, is_ab_test: false, node_id: "n1", created_at: "2026-03-10T09:00:00Z" },
+-      { id: "step-2", sequence_id: id, step_type: "linkedin_connect", position: 2, config: { message: "Hi {{first_name}}" }, delay_hours: 24, condition: null, true_next_position: null, false_next_position: null, ab_variants: null, is_ab_test: false, node_id: "n2", created_at: "2026-03-10T09:00:00Z" },
+-      { id: "step-3", sequence_id: id, step_type: "email", position: 3, config: { subject: "Following up" }, delay_hours: 72, condition: null, true_next_position: null, false_next_position: null, ab_variants: null, is_ab_test: false, node_id: "n3", created_at: "2026-03-10T09:00:00Z" },
+-    ],
+-    enrolled_count: 420,
+-    visual_config: null,
+-    ai_generated: false,
+-    ai_generation_prompt: null,
+-    ai_generation_metadata: null,
+-  });
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function GET(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+ 
+-export async function PUT() {
+-  return NextResponse.json({ success: true });
++export async function PUT(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+ 
+-export async function DELETE() {
+-  return NextResponse.json({ success: true });
++export async function DELETE(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/[id]/steps/route.ts b/frontend/src/app/api/v1/sequences/[id]/steps/route.ts
+index c9a3086..caca423 100644
+--- a/frontend/src/app/api/v1/sequences/[id]/steps/route.ts
++++ b/frontend/src/app/api/v1/sequences/[id]/steps/route.ts
+@@ -1,19 +1,8 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({
+-    id: "step-new",
+-    sequence_id: "seq-1",
+-    step_type: "email",
+-    position: 1,
+-    config: {},
+-    delay_hours: 0,
+-    condition: null,
+-    true_next_position: null,
+-    false_next_position: null,
+-    ab_variants: null,
+-    is_ab_test: false,
+-    node_id: null,
+-    created_at: "2026-03-22T08:00:00Z",
+-  }, { status: 201 });
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function POST(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/[id]/visual/route.ts b/frontend/src/app/api/v1/sequences/[id]/visual/route.ts
+index 70a5f5d..34b3c34 100644
+--- a/frontend/src/app/api/v1/sequences/[id]/visual/route.ts
++++ b/frontend/src/app/api/v1/sequences/[id]/visual/route.ts
+@@ -1,17 +1,12 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET(
+-  _req: Request,
+-  { params }: { params: Promise<{ id: string }> }
+-) {
+-  const { id } = await params;
+-  return NextResponse.json({
+-    sequence_id: id,
+-    visual_config: null,
+-    steps: [],
+-  });
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function GET(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+ 
+-export async function PUT() {
+-  return NextResponse.json({ success: true });
++export async function PUT(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/generate/route.ts b/frontend/src/app/api/v1/sequences/generate/route.ts
+index 64f82d1..d8452ab 100644
+--- a/frontend/src/app/api/v1/sequences/generate/route.ts
++++ b/frontend/src/app/api/v1/sequences/generate/route.ts
+@@ -1,14 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({
+-    success: true,
+-    sequence_id: "seq-gen-1",
+-    sequence_name: "AI-Generated Outreach",
+-    steps_generated: 4,
+-    channels_used: ["email", "linkedin"],
+-    ai_platforms_consulted: ["gpt-4"],
+-    visual_config: null,
+-    error: null,
+-  });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/replies/inbox/route.ts b/frontend/src/app/api/v1/sequences/replies/inbox/route.ts
+index c5053f3..234c31e 100644
+--- a/frontend/src/app/api/v1/sequences/replies/inbox/route.ts
++++ b/frontend/src/app/api/v1/sequences/replies/inbox/route.ts
+@@ -1,32 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    items: [
+-      {
+-        id: "reply-001", enrollment_id: "enr-1", sequence_id: "seq-1", lead_id: "lead-001",
+-        lead_name: "Sarah Chen", lead_email: "sarah.chen@acmetech.io", channel: "email",
+-        subject: "Re: Quick question about AcmeTech", body_snippet: "Hi! Yes, we'd love to learn more about your platform. Can we schedule a call this week?",
+-        sentiment: "positive", sentiment_confidence: 0.92, ai_analysis: null, ai_suggested_action: "Schedule meeting",
+-        received_at: "2026-03-20T15:30:00Z", processed_at: "2026-03-20T15:31:00Z",
+-      },
+-      {
+-        id: "reply-002", enrollment_id: "enr-2", sequence_id: "seq-1", lead_id: "lead-002",
+-        lead_name: "Marcus Rivera", lead_email: "marcus.rivera@techcorp.com", channel: "email",
+-        subject: "Re: Quick question about TechCorp", body_snippet: "Please remove me from your mailing list.",
+-        sentiment: "negative", sentiment_confidence: 0.88, ai_analysis: null, ai_suggested_action: "Unsubscribe & add to DNC",
+-        received_at: "2026-03-19T11:45:00Z", processed_at: "2026-03-19T11:46:00Z",
+-      },
+-      {
+-        id: "reply-003", enrollment_id: "enr-5", sequence_id: "seq-2", lead_id: "lead-005",
+-        lead_name: "Lisa Johnson", lead_email: "lisa.johnson@scaleup.io", channel: "email",
+-        subject: "Re: We miss you!", body_snippet: "Interesting timing — we were just reviewing tools. Send me pricing?",
+-        sentiment: "positive", sentiment_confidence: 0.85, ai_analysis: null, ai_suggested_action: "Send pricing deck",
+-        received_at: "2026-03-18T09:20:00Z", processed_at: "2026-03-18T09:21:00Z",
+-      },
+-    ],
+-    total: 3,
+-    page: 1,
+-    page_size: 20,
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/sequences/route.ts b/frontend/src/app/api/v1/sequences/route.ts
+index 60720bc..81a1c33 100644
+--- a/frontend/src/app/api/v1/sequences/route.ts
++++ b/frontend/src/app/api/v1/sequences/route.ts
+@@ -1,50 +1,10 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-const mockSequences = [
+-  {
+-    id: "seq-1", name: "Cold Outreach — SaaS", description: "Multi-channel cold outreach targeting SaaS decision makers", status: "active",
+-    created_at: "2026-03-10T09:00:00Z", updated_at: "2026-03-20T14:00:00Z",
+-    steps: [
+-      { id: "step-1", sequence_id: "seq-1", step_type: "email", position: 1, config: { subject: "Quick question about {{company}}" }, delay_hours: 0, condition: null, true_next_position: null, false_next_position: null, ab_variants: null, is_ab_test: false, node_id: "n1", created_at: "2026-03-10T09:00:00Z" },
+-      { id: "step-2", sequence_id: "seq-1", step_type: "linkedin_connect", position: 2, config: { message: "Hi {{first_name}}, loved your recent post." }, delay_hours: 24, condition: null, true_next_position: null, false_next_position: null, ab_variants: null, is_ab_test: false, node_id: "n2", created_at: "2026-03-10T09:00:00Z" },
+-      { id: "step-3", sequence_id: "seq-1", step_type: "email", position: 3, config: { subject: "Following up — {{company}}" }, delay_hours: 72, condition: null, true_next_position: null, false_next_position: null, ab_variants: null, is_ab_test: false, node_id: "n3", created_at: "2026-03-10T09:00:00Z" },
+-    ],
+-    enrolled_count: 420, visual_config: null, ai_generated: false, ai_generation_prompt: null, ai_generation_metadata: null,
+-  },
+-  {
+-    id: "seq-2", name: "Re-engagement Campaign", description: "Win back inactive leads with personalized content", status: "active",
+-    created_at: "2026-03-08T11:00:00Z", updated_at: "2026-03-19T16:30:00Z",
+-    steps: [
+-      { id: "step-4", sequence_id: "seq-2", step_type: "email", position: 1, config: { subject: "We miss you, {{first_name}}!" }, delay_hours: 0, condition: null, true_next_position: null, false_next_position: null, ab_variants: null, is_ab_test: false, node_id: "n4", created_at: "2026-03-08T11:00:00Z" },
+-      { id: "step-5", sequence_id: "seq-2", step_type: "sms", position: 2, config: { body: "Hi {{first_name}}, check your inbox!" }, delay_hours: 48, condition: null, true_next_position: null, false_next_position: null, ab_variants: null, is_ab_test: false, node_id: "n5", created_at: "2026-03-08T11:00:00Z" },
+-    ],
+-    enrolled_count: 310, visual_config: null, ai_generated: false, ai_generation_prompt: null, ai_generation_metadata: null,
+-  },
+-  {
+-    id: "seq-3", name: "Event Follow-Up", description: "Automated follow-up after trade shows and webinars", status: "paused",
+-    created_at: "2026-03-05T14:00:00Z", updated_at: "2026-03-18T10:00:00Z",
+-    steps: [
+-      { id: "step-6", sequence_id: "seq-3", step_type: "email", position: 1, config: { subject: "Great meeting you at {{event_name}}" }, delay_hours: 0, condition: null, true_next_position: null, false_next_position: null, ab_variants: null, is_ab_test: false, node_id: "n6", created_at: "2026-03-05T14:00:00Z" },
+-    ],
+-    enrolled_count: 150, visual_config: null, ai_generated: true, ai_generation_prompt: "Create a post-event follow-up sequence", ai_generation_metadata: null,
+-  },
+-  {
+-    id: "seq-4", name: "Trial Nurture Drip", description: "Nurture trial users toward conversion", status: "draft",
+-    created_at: "2026-03-01T08:00:00Z", updated_at: "2026-03-15T12:00:00Z",
+-    steps: [],
+-    enrolled_count: 0, visual_config: null, ai_generated: false, ai_generation_prompt: null, ai_generation_metadata: null,
+-  },
+-];
+-
+-export async function GET() {
+-  return NextResponse.json({
+-    items: mockSequences,
+-    total: 4,
+-    page: 1,
+-    page_size: 20,
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+ 
+-export async function POST() {
+-  return NextResponse.json(mockSequences[0], { status: 201 });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/settings/api-keys/[service]/route.ts b/frontend/src/app/api/v1/settings/api-keys/[service]/route.ts
+index bf52f2b..b5459ff 100644
+--- a/frontend/src/app/api/v1/settings/api-keys/[service]/route.ts
++++ b/frontend/src/app/api/v1/settings/api-keys/[service]/route.ts
+@@ -1,14 +1,12 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function PUT() {
+-  return NextResponse.json({
+-    service_name: "openai",
+-    masked_key: "sk-...updated",
+-    created_at: "2026-03-01T00:00:00Z",
+-    updated_at: "2026-03-22T08:00:00Z",
+-  });
++type Ctx = { params: Promise<Record<string, string>> };
++
++export async function PUT(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+ 
+-export async function DELETE() {
+-  return NextResponse.json({ success: true });
++export async function DELETE(req: NextRequest, ctx: Ctx) {
++  return proxyToBackend(req, ctx);
+ }
+diff --git a/frontend/src/app/api/v1/settings/api-keys/route.ts b/frontend/src/app/api/v1/settings/api-keys/route.ts
+index 74edcd3..234c31e 100644
+--- a/frontend/src/app/api/v1/settings/api-keys/route.ts
++++ b/frontend/src/app/api/v1/settings/api-keys/route.ts
+@@ -1,8 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json([
+-    { service_name: "openai", masked_key: "sk-...abc123", created_at: "2026-03-01T00:00:00Z", updated_at: "2026-03-15T00:00:00Z" },
+-    { service_name: "anthropic", masked_key: "sk-ant-...xyz789", created_at: "2026-03-05T00:00:00Z", updated_at: "2026-03-18T00:00:00Z" },
+-  ]);
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/settings/integration-status/route.ts b/frontend/src/app/api/v1/settings/integration-status/route.ts
+index 9777722..234c31e 100644
+--- a/frontend/src/app/api/v1/settings/integration-status/route.ts
++++ b/frontend/src/app/api/v1/settings/integration-status/route.ts
+@@ -1,15 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    integrations: [
+-      { name: "HubSpot CRM", configured: true, mode: "active" },
+-      { name: "SendGrid", configured: true, mode: "active" },
+-      { name: "Twilio SMS", configured: true, mode: "active" },
+-      { name: "LinkedIn Sales Nav", configured: false, mode: "not_configured" },
+-      { name: "Slack Notifications", configured: true, mode: "manual" },
+-      { name: "OpenAI GPT-4", configured: true, mode: "active" },
+-      { name: "Anthropic Claude", configured: true, mode: "active" },
+-    ],
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/settings/onboarding/route.ts b/frontend/src/app/api/v1/settings/onboarding/route.ts
+index a2a3b02..d8452ab 100644
+--- a/frontend/src/app/api/v1/settings/onboarding/route.ts
++++ b/frontend/src/app/api/v1/settings/onboarding/route.ts
+@@ -1,5 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({ success: true, message: "Onboarding preferences saved" });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/templates/preview/route.ts b/frontend/src/app/api/v1/templates/preview/route.ts
+index ac33a04..d8452ab 100644
+--- a/frontend/src/app/api/v1/templates/preview/route.ts
++++ b/frontend/src/app/api/v1/templates/preview/route.ts
+@@ -1,11 +1,6 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function POST() {
+-  return NextResponse.json({
+-    rendered_subject: "Quick question about AcmeTech",
+-    rendered_plain_body: "Hi Sarah,\n\nI noticed AcmeTech is growing fast...",
+-    rendered_html_body: null,
+-    variables_used: ["first_name", "company"],
+-    warnings: [],
+-  });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/app/api/v1/templates/route.ts b/frontend/src/app/api/v1/templates/route.ts
+index 88f3d1c..81a1c33 100644
+--- a/frontend/src/app/api/v1/templates/route.ts
++++ b/frontend/src/app/api/v1/templates/route.ts
+@@ -1,18 +1,10 @@
+-import { NextResponse } from "next/server";
++import { NextRequest } from "next/server";
++import { proxyToBackend } from "@/lib/backend-proxy";
+ 
+-export async function GET() {
+-  return NextResponse.json({
+-    items: [
+-      { id: "tpl-1", name: "Cold Intro Email", channel: "email", category: "outreach", subject: "Quick question about {{company}}", html_body: null, plain_body: "Hi {{first_name}},\n\nI noticed {{company}} is growing fast...", linkedin_action: null, variables: ["first_name", "company"], variant_group: null, variant_label: null, is_system: false, is_active: true, created_at: "2026-03-01T00:00:00Z", updated_at: "2026-03-15T00:00:00Z" },
+-      { id: "tpl-2", name: "Follow-Up #1", channel: "email", category: "follow_up", subject: "Re: {{company}} — quick follow-up", html_body: null, plain_body: "Hi {{first_name}},\n\nJust circling back...", linkedin_action: null, variables: ["first_name", "company"], variant_group: null, variant_label: null, is_system: false, is_active: true, created_at: "2026-03-02T00:00:00Z", updated_at: "2026-03-16T00:00:00Z" },
+-      { id: "tpl-3", name: "LinkedIn Connect", channel: "linkedin", category: "outreach", subject: null, html_body: null, plain_body: "Hi {{first_name}}, I enjoyed your recent post about...", linkedin_action: "connection_request", variables: ["first_name"], variant_group: null, variant_label: null, is_system: false, is_active: true, created_at: "2026-03-03T00:00:00Z", updated_at: "2026-03-17T00:00:00Z" },
+-    ],
+-    total: 3,
+-    page: 1,
+-    page_size: 20,
+-  });
++export async function GET(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+ 
+-export async function POST() {
+-  return NextResponse.json({ id: "tpl-new", name: "New Template" }, { status: 201 });
++export async function POST(req: NextRequest) {
++  return proxyToBackend(req);
+ }
+diff --git a/frontend/src/lib/backend-proxy.ts b/frontend/src/lib/backend-proxy.ts
+new file mode 100644
+index 0000000..4e9e692
+--- /dev/null
++++ b/frontend/src/lib/backend-proxy.ts
+@@ -0,0 +1,153 @@
++/**
++ * Backend proxy utility for Next.js API routes.
++ *
++ * Forwards requests from the Next.js frontend API routes to the
++ * real FastAPI backend, preserving method, headers, query params,
++ * and body. Handles both JSON and streaming (SSE) responses.
++ */
++
++import { NextRequest, NextResponse } from "next/server";
++
++const BACKEND_URL =
++  process.env.BACKEND_URL ||
++  process.env.NEXT_PUBLIC_BACKEND_URL ||
++  "http://localhost:8000";
++
++interface ProxyOptions {
++  /** Override the backend path (default: derived from the request URL) */
++  path?: string;
++  /** Extra headers to add to the backend request */
++  extraHeaders?: Record<string, string>;
++  /** If true, return the raw Response for streaming (SSE) */
++  stream?: boolean;
++}
++
++/**
++ * Proxy a Next.js API route request to the FastAPI backend.
++ *
++ * Usage in a route handler:
++ *   export async function GET(req: NextRequest, ctx?: { params: Promise<Record<string, string>> }) {
++ *     return proxyToBackend(req, ctx);
++ *   }
++ */
++export async function proxyToBackend(
++  req: NextRequest,
++  ctx?: { params?: Promise<Record<string, string>> },
++  options?: ProxyOptions
++): Promise<NextResponse | Response> {
++  // Resolve dynamic route params if present
++  const resolvedParams = ctx?.params ? await ctx.params : {};
++
++  // Build backend URL path
++  let backendPath: string;
++  if (options?.path) {
++    backendPath = options.path;
++  } else {
++    // Extract path after /api/v1 and substitute dynamic params
++    const url = new URL(req.url);
++    backendPath = url.pathname.replace(/^\/api\/v1/, "/api/v1");
++
++    // Replace Next.js [param] segments with actual values
++    for (const [key, value] of Object.entries(resolvedParams)) {
++      // The path already has the resolved value from Next.js routing,
++      // so we don't need to substitute — the URL already contains it.
++      void key;
++      void value;
++    }
++
++    // Preserve query string
++    if (url.search) {
++      backendPath += url.search;
++    }
++  }
++
++  const targetUrl = `${BACKEND_URL}${backendPath}`;
++
++  // Forward headers, stripping hop-by-hop headers
++  const headers = new Headers();
++  const skipHeaders = new Set([
++    "host",
++    "connection",
++    "keep-alive",
++    "transfer-encoding",
++    "te",
++    "trailer",
++    "upgrade",
++    "proxy-authorization",
++    "proxy-authenticate",
++  ]);
++
++  req.headers.forEach((value, key) => {
++    if (!skipHeaders.has(key.toLowerCase())) {
++      headers.set(key, value);
++    }
++  });
++
++  // Add any extra headers
++  if (options?.extraHeaders) {
++    for (const [key, value] of Object.entries(options.extraHeaders)) {
++      headers.set(key, value);
++    }
++  }
++
++  // Build fetch options
++  const fetchOptions: RequestInit = {
++    method: req.method,
++    headers,
++  };
++
++  // Forward body for non-GET/HEAD requests
++  if (req.method !== "GET" && req.method !== "HEAD") {
++    const contentType = req.headers.get("content-type") || "";
++
++    if (contentType.includes("multipart/form-data")) {
++      // For file uploads, pass the raw body and let fetch set the boundary
++      fetchOptions.body = await req.arrayBuffer();
++      // Keep the original content-type with boundary
++    } else if (contentType.includes("application/json")) {
++      fetchOptions.body = await req.text();
++    } else {
++      // Pass through raw body for other content types
++      fetchOptions.body = await req.arrayBuffer();
++    }
++  }
++
++  try {
++    const backendResponse = await fetch(targetUrl, fetchOptions);
++
++    // For streaming responses (SSE), pass through directly
++    if (options?.stream || backendResponse.headers.get("content-type")?.includes("text/event-stream")) {
++      return new Response(backendResponse.body, {
++        status: backendResponse.status,
++        headers: {
++          "Content-Type": backendResponse.headers.get("content-type") || "text/event-stream",
++          "Cache-Control": "no-cache",
++          "Connection": "keep-alive",
++        },
++      });
++    }
++
++    // For regular JSON responses
++    const responseHeaders = new Headers();
++    backendResponse.headers.forEach((value, key) => {
++      if (!skipHeaders.has(key.toLowerCase())) {
++        responseHeaders.set(key, value);
++      }
++    });
++
++    const body = await backendResponse.arrayBuffer();
++    return new NextResponse(body, {
++      status: backendResponse.status,
++      headers: responseHeaders,
++    });
++  } catch (error) {
++    console.error(`[proxy] Failed to reach backend at ${targetUrl}:`, error);
++    return NextResponse.json(
++      {
++        detail: "Backend service unavailable",
++        error: error instanceof Error ? error.message : "Unknown error",
++      },
++      { status: 502 }
++    );
++  }
++}
+-- 
+2.43.0
+
