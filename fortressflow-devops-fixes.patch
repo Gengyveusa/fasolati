@@ -1,0 +1,918 @@
+From ec55b4ec900b30efda149cec1f32c9f526784181 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 23 Mar 2026 23:53:13 +0000
+Subject: [PATCH] Fix migration chain, add NextAuth refresh, .env.dev, Railway
+ deployment
+
+- Merge 003b_missing_tables into 003_templates_and_outreach for clean
+  linear Alembic migration chain; remove nuclear wipe hack from start.sh
+- Add JWT access token auto-refresh in NextAuth jwt callback using
+  backend /api/v1/auth/refresh endpoint (28-min rotation)
+- Add SessionProvider to root providers for client-side getSession()
+- Create .env.dev with working defaults for docker-compose up
+- Add railway.toml deployment config; update Celery to auto-detect
+  Redis as broker when RABBITMQ_URL points at redis:// (Railway compat)
+- Update railway-deploy.md to reflect auto-conversion fixes
+
+https://claude.ai/code/session_013VPx1ByRZU684nEDpz5cu6
+---
+ .env.dev                                      |  67 ++++++
+ .gitignore                                    |   3 +-
+ .../versions/003_templates_and_outreach.py    | 124 +++++++++-
+ .../alembic/versions/003b_missing_tables.py   | 214 ------------------
+ .../versions/004_deliverability_fortress.py   |   2 +-
+ backend/app/workers/celery_app.py             |  11 +-
+ backend/start.sh                              | 111 ---------
+ deploy/railway-deploy.md                      |  13 +-
+ .../src/app/api/auth/[...nextauth]/route.ts   |  62 ++++-
+ frontend/src/app/providers.tsx                |  19 +-
+ frontend/src/types/next-auth.d.ts             |   3 +
+ railway.toml                                  |  56 +++++
+ 12 files changed, 325 insertions(+), 360 deletions(-)
+ create mode 100644 .env.dev
+ delete mode 100644 backend/alembic/versions/003b_missing_tables.py
+ create mode 100644 railway.toml
+
+diff --git a/.env.dev b/.env.dev
+new file mode 100644
+index 0000000..de37c7e
+--- /dev/null
++++ b/.env.dev
+@@ -0,0 +1,67 @@
++# ============================================================
++# FortressFlow — Local Development Environment
++# Usage: cp .env.dev .env && docker-compose up
++# ============================================================
++
++# ── Database ──────────────────────────────────────────────
++POSTGRES_USER=fortressflow
++POSTGRES_PASSWORD=fortressflow_dev
++POSTGRES_DB=fortressflow
++
++# ── Message Broker ────────────────────────────────────────
++RABBITMQ_USER=fortressflow
++RABBITMQ_PASS=fortressflow_dev
++
++# ── Application Secrets ──────────────────────────────────
++SECRET_KEY=dev-secret-key-do-not-use-in-production-0123456789abcdef0123456789abcdef
++UNSUBSCRIBE_HMAC_KEY=dev-hmac-key-do-not-use-in-prod
++
++# ── Environment ──────────────────────────────────────────
++ENVIRONMENT=development
++
++# ── NextAuth ─────────────────────────────────────────────
++NEXTAUTH_URL=http://localhost:3000
++NEXTAUTH_SECRET=dev-nextauth-secret-do-not-use-in-production-0123456789abcdef
++
++# ── Backend proxy (server-side) ──────────────────────────
++BACKEND_URL=http://backend:8000
++NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
++
++# ── CORS ─────────────────────────────────────────────────
++CORS_ORIGINS=http://localhost:3000
++
++# ── Monitoring ───────────────────────────────────────────
++GRAFANA_PASSWORD=admin
++
++# ── AI Chatbot (optional — leave blank to disable) ───────
++GROQ_API_KEY=
++GROQ_MODEL=llama-3.3-70b-versatile
++OPENAI_API_KEY=
++OPENAI_MODEL=gpt-4o-mini
++CHAT_MAX_TOKENS=1024
++CHAT_RATE_LIMIT_PER_MINUTE=30
++CHAT_HISTORY_RETENTION_DAYS=90
++
++# ── Integrations (all optional for local dev) ────────────
++HUBSPOT_API_KEY=
++HUBSPOT_APP_ID=
++ZOOMINFO_CLIENT_ID=
++ZOOMINFO_CLIENT_SECRET=
++ZOOMINFO_API_KEY=
++APOLLO_API_KEY=
++TWILIO_ACCOUNT_SID=
++TWILIO_AUTH_TOKEN=
++TWILIO_PHONE_NUMBER=
++AWS_ACCESS_KEY_ID=
++AWS_SECRET_ACCESS_KEY=
++AWS_REGION=us-east-1
++SES_FROM_EMAIL=
++IMAP_HOST=
++IMAP_USER=
++IMAP_PASSWORD=
++LINKEDIN_OAUTH_CLIENT_ID=
++LINKEDIN_OAUTH_CLIENT_SECRET=
++PHANTOMBUSTER_API_KEY=
++PHANTOMBUSTER_CONNECT_AGENT_ID=
++PHANTOMBUSTER_MESSAGE_AGENT_ID=
++SENTRY_DSN=
+diff --git a/.gitignore b/.gitignore
+index f1c8de3..b97d5a6 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -2,6 +2,8 @@ __pycache__/
+ *.py[cod]
+ *.pyo
+ .env
++.env.prod
++.env.local
+ .venv/
+ venv/
+ *.egg-info/
+@@ -36,5 +38,4 @@ Thumbs.db
+ *.swo
+ 
+ # Docker
+-*.env.local
+ 
+diff --git a/backend/alembic/versions/003_templates_and_outreach.py b/backend/alembic/versions/003_templates_and_outreach.py
+index e8ca3e1..916402a 100644
+--- a/backend/alembic/versions/003_templates_and_outreach.py
++++ b/backend/alembic/versions/003_templates_and_outreach.py
+@@ -1,8 +1,12 @@
+-"""Add templates table and outreach channel support.
++"""Add templates, sending_domains, sequences, sequence_steps, sequence_enrollments.
+ 
+ Revision ID: 003_templates_and_outreach
+ Revises: 002_lead_enrichment_columns
+ Create Date: 2026-03-19
++
++Note: This migration was consolidated from 003 + 003b to produce a clean,
++linear migration chain.  The original 003b_missing_tables migration has been
++removed.
+ """
+ 
+ from alembic import op
+@@ -20,13 +24,23 @@ depends_on = None
+ def upgrade() -> None:
+     bind = op.get_bind()
+ 
+-    # Create enum types — use DO blocks so creation is idempotent at the SQL level
++    # ── Enum types ────────────────────────────────────────────────────────
+     create_enum_idempotent("template_channel", ["email", "sms", "linkedin"])
+     create_enum_idempotent(
+         "template_category", ["cold_outreach", "follow_up", "re_engagement", "custom"]
+     )
++    create_enum_idempotent(
++        "step_type", ["email", "sms", "linkedin", "delay", "condition"]
++    )
++    create_enum_idempotent(
++        "enrollment_status",
++        ["active", "paused", "completed", "bounced", "replied", "unsubscribed", "failed"],
++    )
++    create_enum_idempotent(
++        "sequence_status", ["draft", "active", "paused", "archived"]
++    )
+ 
+-    # Create templates table
++    # ── templates ─────────────────────────────────────────────────────────
+     if not table_exists(bind, "templates"):
+         op.create_table(
+             "templates",
+@@ -56,7 +70,6 @@ def upgrade() -> None:
+             sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+         )
+ 
+-    # Add indexes
+     if not index_exists(bind, "ix_templates_channel"):
+         op.create_index("ix_templates_channel", "templates", ["channel"])
+     if not index_exists(bind, "ix_templates_category"):
+@@ -66,12 +79,115 @@ def upgrade() -> None:
+     if not index_exists(bind, "ix_templates_variant_group"):
+         op.create_index("ix_templates_variant_group", "templates", ["variant_group"])
+ 
++    # ── sending_domains ───────────────────────────────────────────────────
++    if not table_exists(bind, "sending_domains"):
++        op.create_table(
++            "sending_domains",
++            sa.Column("id", UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
++            sa.Column("domain", sa.String(255), unique=True, nullable=False),
++            sa.Column("health_score", sa.Float, nullable=False, server_default=sa.text("100.0")),
++            sa.Column("warmup_progress", sa.Float, nullable=False, server_default=sa.text("0.0")),
++            sa.Column("total_sent", sa.Integer, nullable=False, server_default=sa.text("0")),
++            sa.Column("total_bounced", sa.Integer, nullable=False, server_default=sa.text("0")),
++            sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
++        )
++    if not index_exists(bind, "ix_sending_domains_domain"):
++        op.create_index("ix_sending_domains_domain", "sending_domains", ["domain"], unique=True)
++
++    # ── sequences ─────────────────────────────────────────────────────────
++    if not table_exists(bind, "sequences"):
++        op.create_table(
++            "sequences",
++            sa.Column("id", UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
++            sa.Column("name", sa.String(255), nullable=False),
++            sa.Column("description", sa.Text, nullable=True),
++            sa.Column(
++                "status",
++                ENUM("draft", "active", "paused", "archived", name="sequence_status", create_type=False),
++                nullable=False,
++                server_default="draft",
++            ),
++            sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
++            sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
++        )
++
++    # ── sequence_steps ────────────────────────────────────────────────────
++    if not table_exists(bind, "sequence_steps"):
++        op.create_table(
++            "sequence_steps",
++            sa.Column("id", UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
++            sa.Column(
++                "sequence_id",
++                UUID(as_uuid=True),
++                sa.ForeignKey("sequences.id", ondelete="CASCADE"),
++                nullable=False,
++            ),
++            sa.Column(
++                "step_type",
++                ENUM("email", "sms", "linkedin", "delay", "condition", name="step_type", create_type=False),
++                nullable=False,
++            ),
++            sa.Column("position", sa.Integer, nullable=False, server_default=sa.text("0")),
++            sa.Column("config", JSONB, nullable=True),
++            sa.Column("delay_hours", sa.Float, nullable=False, server_default=sa.text("0")),
++            sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
++        )
++    if not index_exists(bind, "ix_sequence_steps_sequence_id"):
++        op.create_index("ix_sequence_steps_sequence_id", "sequence_steps", ["sequence_id"])
++
++    # ── sequence_enrollments ──────────────────────────────────────────────
++    if not table_exists(bind, "sequence_enrollments"):
++        op.create_table(
++            "sequence_enrollments",
++            sa.Column("id", UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
++            sa.Column(
++                "sequence_id",
++                UUID(as_uuid=True),
++                sa.ForeignKey("sequences.id", ondelete="CASCADE"),
++                nullable=False,
++            ),
++            sa.Column(
++                "lead_id",
++                UUID(as_uuid=True),
++                sa.ForeignKey("leads.id", ondelete="CASCADE"),
++                nullable=False,
++            ),
++            sa.Column("current_step", sa.Integer, nullable=False, server_default=sa.text("0")),
++            sa.Column(
++                "status",
++                ENUM(
++                    "active", "paused", "completed", "bounced", "replied",
++                    "unsubscribed", "failed",
++                    name="enrollment_status",
++                    create_type=False,
++                ),
++                nullable=False,
++                server_default="active",
++            ),
++            sa.Column("enrolled_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
++        )
++    if not index_exists(bind, "ix_sequence_enrollments_sequence_id"):
++        op.create_index("ix_sequence_enrollments_sequence_id", "sequence_enrollments", ["sequence_id"])
++    if not index_exists(bind, "ix_sequence_enrollments_lead_id"):
++        op.create_index("ix_sequence_enrollments_lead_id", "sequence_enrollments", ["lead_id"])
++
+ 
+ def downgrade() -> None:
++    op.drop_index("ix_sequence_enrollments_lead_id", table_name="sequence_enrollments")
++    op.drop_index("ix_sequence_enrollments_sequence_id", table_name="sequence_enrollments")
++    op.drop_table("sequence_enrollments")
++    op.drop_index("ix_sequence_steps_sequence_id", table_name="sequence_steps")
++    op.drop_table("sequence_steps")
++    op.drop_table("sequences")
++    op.drop_index("ix_sending_domains_domain", table_name="sending_domains")
++    op.drop_table("sending_domains")
+     op.drop_index("ix_templates_variant_group")
+     op.drop_index("ix_templates_is_active")
+     op.drop_index("ix_templates_category")
+     op.drop_index("ix_templates_channel")
+     op.drop_table("templates")
++    op.execute("DROP TYPE IF EXISTS sequence_status")
++    op.execute("DROP TYPE IF EXISTS enrollment_status")
++    op.execute("DROP TYPE IF EXISTS step_type")
+     op.execute("DROP TYPE IF EXISTS template_category")
+     op.execute("DROP TYPE IF EXISTS template_channel")
+diff --git a/backend/alembic/versions/003b_missing_tables.py b/backend/alembic/versions/003b_missing_tables.py
+deleted file mode 100644
+index 7f5ec7c..0000000
+--- a/backend/alembic/versions/003b_missing_tables.py
++++ /dev/null
+@@ -1,214 +0,0 @@
+-"""Create sending_domains, sequences, sequence_steps, sequence_enrollments tables
+-that were accidentally omitted from earlier migrations but are required by
+-migrations 004 and 005 which ALTER them.
+-
+-Revision ID: 003b_missing_tables
+-Revises: 003_templates_and_outreach
+-Create Date: 2026-03-23
+-"""
+-
+-from alembic import op
+-import sqlalchemy as sa
+-from sqlalchemy.dialects.postgresql import UUID, JSONB, ENUM
+-
+-from migration_helpers import create_enum_idempotent, table_exists, index_exists
+-
+-revision = "003b_missing_tables"
+-down_revision = "003_templates_and_outreach"
+-branch_labels = None
+-depends_on = None
+-
+-
+-def upgrade() -> None:
+-    bind = op.get_bind()
+-
+-    # ── Enum types — use DO blocks so creation is idempotent at the SQL level
+-    create_enum_idempotent(
+-        "step_type", ["email", "sms", "linkedin", "delay", "condition"]
+-    )
+-    create_enum_idempotent(
+-        "enrollment_status",
+-        ["active", "paused", "completed", "bounced", "replied", "unsubscribed", "failed"],
+-    )
+-    create_enum_idempotent(
+-        "sequence_status", ["draft", "active", "paused", "archived"]
+-    )
+-
+-    # ── sending_domains ─────────────────────────────────────────────────
+-    if not table_exists(bind, "sending_domains"):
+-        op.create_table(
+-            "sending_domains",
+-            sa.Column(
+-                "id",
+-                UUID(as_uuid=True),
+-                primary_key=True,
+-                server_default=sa.text("gen_random_uuid()"),
+-            ),
+-            sa.Column("domain", sa.String(255), unique=True, nullable=False),
+-            sa.Column(
+-                "health_score",
+-                sa.Float,
+-                nullable=False,
+-                server_default=sa.text("100.0"),
+-            ),
+-            sa.Column(
+-                "warmup_progress",
+-                sa.Float,
+-                nullable=False,
+-                server_default=sa.text("0.0"),
+-            ),
+-            sa.Column(
+-                "total_sent",
+-                sa.Integer,
+-                nullable=False,
+-                server_default=sa.text("0"),
+-            ),
+-            sa.Column(
+-                "total_bounced",
+-                sa.Integer,
+-                nullable=False,
+-                server_default=sa.text("0"),
+-            ),
+-            sa.Column(
+-                "created_at",
+-                sa.DateTime(timezone=True),
+-                server_default=sa.func.now(),
+-                nullable=False,
+-            ),
+-        )
+-    if not index_exists(bind, "ix_sending_domains_domain"):
+-        op.create_index("ix_sending_domains_domain", "sending_domains", ["domain"], unique=True)
+-
+-    # ── sequences ───────────────────────────────────────────────────────
+-    if not table_exists(bind, "sequences"):
+-        op.create_table(
+-            "sequences",
+-            sa.Column(
+-                "id",
+-                UUID(as_uuid=True),
+-                primary_key=True,
+-                server_default=sa.text("gen_random_uuid()"),
+-            ),
+-            sa.Column("name", sa.String(255), nullable=False),
+-            sa.Column("description", sa.Text, nullable=True),
+-            sa.Column(
+-                "status",
+-                ENUM(
+-                    "draft", "active", "paused", "archived",
+-                    name="sequence_status",
+-                    create_type=False,
+-                ),
+-                nullable=False,
+-                server_default="draft",
+-            ),
+-            sa.Column(
+-                "created_at",
+-                sa.DateTime(timezone=True),
+-                server_default=sa.func.now(),
+-                nullable=False,
+-            ),
+-            sa.Column(
+-                "updated_at",
+-                sa.DateTime(timezone=True),
+-                server_default=sa.func.now(),
+-                nullable=False,
+-            ),
+-        )
+-
+-    # ── sequence_steps ──────────────────────────────────────────────────
+-    if not table_exists(bind, "sequence_steps"):
+-        op.create_table(
+-            "sequence_steps",
+-            sa.Column(
+-                "id",
+-                UUID(as_uuid=True),
+-                primary_key=True,
+-                server_default=sa.text("gen_random_uuid()"),
+-            ),
+-            sa.Column(
+-                "sequence_id",
+-                UUID(as_uuid=True),
+-                sa.ForeignKey("sequences.id", ondelete="CASCADE"),
+-                nullable=False,
+-            ),
+-            sa.Column(
+-                "step_type",
+-                ENUM(
+-                    "email", "sms", "linkedin", "delay", "condition",
+-                    name="step_type",
+-                    create_type=False,
+-                ),
+-                nullable=False,
+-            ),
+-            sa.Column("position", sa.Integer, nullable=False, server_default=sa.text("0")),
+-            sa.Column("config", JSONB, nullable=True),
+-            sa.Column("delay_hours", sa.Float, nullable=False, server_default=sa.text("0")),
+-            sa.Column(
+-                "created_at",
+-                sa.DateTime(timezone=True),
+-                server_default=sa.func.now(),
+-                nullable=False,
+-            ),
+-        )
+-    if not index_exists(bind, "ix_sequence_steps_sequence_id"):
+-        op.create_index("ix_sequence_steps_sequence_id", "sequence_steps", ["sequence_id"])
+-
+-    # ── sequence_enrollments ────────────────────────────────────────────
+-    if not table_exists(bind, "sequence_enrollments"):
+-        op.create_table(
+-            "sequence_enrollments",
+-            sa.Column(
+-                "id",
+-                UUID(as_uuid=True),
+-                primary_key=True,
+-                server_default=sa.text("gen_random_uuid()"),
+-            ),
+-            sa.Column(
+-                "sequence_id",
+-                UUID(as_uuid=True),
+-                sa.ForeignKey("sequences.id", ondelete="CASCADE"),
+-                nullable=False,
+-            ),
+-            sa.Column(
+-                "lead_id",
+-                UUID(as_uuid=True),
+-                sa.ForeignKey("leads.id", ondelete="CASCADE"),
+-                nullable=False,
+-            ),
+-            sa.Column("current_step", sa.Integer, nullable=False, server_default=sa.text("0")),
+-            sa.Column(
+-                "status",
+-                ENUM(
+-                    "active", "paused", "completed", "bounced", "replied",
+-                    "unsubscribed", "failed",
+-                    name="enrollment_status",
+-                    create_type=False,
+-                ),
+-                nullable=False,
+-                server_default="active",
+-            ),
+-            sa.Column(
+-                "enrolled_at",
+-                sa.DateTime(timezone=True),
+-                server_default=sa.func.now(),
+-                nullable=False,
+-            ),
+-        )
+-    if not index_exists(bind, "ix_sequence_enrollments_sequence_id"):
+-        op.create_index("ix_sequence_enrollments_sequence_id", "sequence_enrollments", ["sequence_id"])
+-    if not index_exists(bind, "ix_sequence_enrollments_lead_id"):
+-        op.create_index("ix_sequence_enrollments_lead_id", "sequence_enrollments", ["lead_id"])
+-
+-
+-def downgrade() -> None:
+-    op.drop_index("ix_sequence_enrollments_lead_id", table_name="sequence_enrollments")
+-    op.drop_index("ix_sequence_enrollments_sequence_id", table_name="sequence_enrollments")
+-    op.drop_table("sequence_enrollments")
+-    op.drop_index("ix_sequence_steps_sequence_id", table_name="sequence_steps")
+-    op.drop_table("sequence_steps")
+-    op.drop_table("sequences")
+-    op.drop_index("ix_sending_domains_domain", table_name="sending_domains")
+-    op.drop_table("sending_domains")
+-    op.execute("DROP TYPE IF EXISTS sequence_status")
+-    op.execute("DROP TYPE IF EXISTS enrollment_status")
+-    op.execute("DROP TYPE IF EXISTS step_type")
+diff --git a/backend/alembic/versions/004_deliverability_fortress.py b/backend/alembic/versions/004_deliverability_fortress.py
+index 5665fef..09204e9 100644
+--- a/backend/alembic/versions/004_deliverability_fortress.py
++++ b/backend/alembic/versions/004_deliverability_fortress.py
+@@ -12,7 +12,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
+ from migration_helpers import table_exists, index_exists, column_exists
+ 
+ revision = "004_deliverability_fortress"
+-down_revision = "003b_missing_tables"
++down_revision = "003_templates_and_outreach"
+ branch_labels = None
+ depends_on = None
+ 
+diff --git a/backend/app/workers/celery_app.py b/backend/app/workers/celery_app.py
+index 96c62bf..a38b9eb 100644
+--- a/backend/app/workers/celery_app.py
++++ b/backend/app/workers/celery_app.py
+@@ -3,9 +3,18 @@ from celery.schedules import crontab
+ 
+ from app.config import settings
+ 
++# Use RABBITMQ_URL as broker, but fall back to REDIS_URL if RABBITMQ_URL
++# points at Redis (Railway has no RabbitMQ plugin).
++_broker = settings.RABBITMQ_URL
++if _broker.startswith("redis://") or _broker.startswith("rediss://"):
++    _broker = _broker  # already Redis — use as-is
++elif not _broker or _broker == "amqp://guest:guest@localhost:5672/":
++    # unconfigured / default — fall back to Redis
++    _broker = settings.REDIS_URL
++
+ celery_app = Celery(
+     "fortressflow",
+-    broker=settings.RABBITMQ_URL,
++    broker=_broker,
+     backend=settings.REDIS_URL,
+     include=["app.workers.tasks"],
+ )
+diff --git a/backend/start.sh b/backend/start.sh
+index a1bef7f..8db06e6 100755
+--- a/backend/start.sh
++++ b/backend/start.sh
+@@ -4,117 +4,6 @@ set -e
+ echo "=== FortressFlow Backend Startup ==="
+ echo "Running database migrations..."
+ 
+-# ── Pre-migration: detect and fix corrupted partial-migration state ──────────
+-# If a previous deploy half-ran migrations (enums exist but tables like
+-# 'users' are missing), Alembic cannot recover on its own.  This block
+-# detects that situation and performs a nuclear wipe so migrations can
+-# re-run cleanly from revision 001.
+-python -c "
+-import sys
+-import sqlalchemy as sa
+-from app.config import settings
+-
+-url = settings.DATABASE_URL.replace('postgresql+asyncpg://', 'postgresql://', 1)
+-
+-try:
+-    engine = sa.create_engine(url, connect_args={'connect_timeout': 5})
+-except Exception as exc:
+-    print(f'Could not create engine: {exc}')
+-    sys.exit(0)  # non-fatal — let alembic try on its own
+-
+-try:
+-    with engine.connect() as conn:
+-        # 1. Check alembic_version
+-        result = conn.execute(sa.text(
+-            \"SELECT 1 FROM information_schema.tables \"
+-            \"WHERE table_schema = 'public' AND table_name = 'alembic_version'\"
+-        ))
+-        has_alembic = result.scalar() is not None
+-
+-        current_rev = None
+-        if has_alembic:
+-            row = conn.execute(sa.text('SELECT version_num FROM alembic_version')).fetchone()
+-            current_rev = row[0] if row else None
+-
+-        # 2. Check if the users table exists (created in migration 008)
+-        result = conn.execute(sa.text(
+-            \"SELECT 1 FROM information_schema.tables \"
+-            \"WHERE table_schema = 'public' AND table_name = 'users'\"
+-        ))
+-        has_users = result.scalar() is not None
+-
+-        # 3. Check for orphaned enum types left by partial migration runs
+-        KNOWN_ENUMS = [
+-            'template_channel', 'template_category', 'step_type',
+-            'enrollment_status', 'sequence_status', 'consent_channel',
+-            'consent_method', 'touch_action', 'userrole',
+-        ]
+-        placeholders = ', '.join(f':e{i}' for i in range(len(KNOWN_ENUMS)))
+-        params = {f'e{i}': v for i, v in enumerate(KNOWN_ENUMS)}
+-        result = conn.execute(
+-            sa.text(f'SELECT typname FROM pg_type WHERE typname IN ({placeholders})'),
+-            params,
+-        )
+-        orphaned_enums = [r[0] for r in result.fetchall()]
+-
+-        # ── Decision logic ──────────────────────────────────────────────
+-        if not has_users and orphaned_enums:
+-            # Classic corrupted state: enums were created but the migration
+-            # that stamps alembic_version either never ran or a later
+-            # migration crashed, leaving the DB half-built.
+-            print(f'CORRUPTED STATE DETECTED: no users table, but found enums: {orphaned_enums}')
+-            print('Performing full database reset so migrations can run cleanly...')
+-
+-            # Drop tables in reverse-FK order (children first)
+-            TABLES = [
+-                'api_configurations',
+-                'chat_logs',
+-                'channel_metrics',
+-                'linkedin_queue',
+-                'reply_webhook_events',
+-                'reply_logs',
+-                'warmup_seed_logs',
+-                'warmup_configs',
+-                'sending_inboxes',
+-                'sequence_enrollments',
+-                'sequence_steps',
+-                'sequences',
+-                'sending_domains',
+-                'templates',
+-                'warmup_queue',
+-                'touch_logs',
+-                'dnc_blocks',
+-                'consents',
+-                'leads',
+-                'users',
+-                'alembic_version',
+-            ]
+-            for t in TABLES:
+-                conn.execute(sa.text(f'DROP TABLE IF EXISTS {t} CASCADE'))
+-
+-            for e in KNOWN_ENUMS:
+-                conn.execute(sa.text(f'DROP TYPE IF EXISTS {e} CASCADE'))
+-
+-            conn.commit()
+-            print('Database reset complete. Migrations will run fresh.')
+-
+-        elif not has_alembic and not has_users and not orphaned_enums:
+-            print('Fresh database — migrations will create everything.')
+-
+-        elif has_users:
+-            print(f'Database looks healthy. alembic revision: {current_rev}')
+-
+-        else:
+-            print(f'Unexpected state — has_alembic={has_alembic}, has_users={has_users}, '
+-                  f'current_rev={current_rev}, enums={orphaned_enums}. '
+-                  'Proceeding with migrations and hoping for the best.')
+-
+-    engine.dispose()
+-except Exception as exc:
+-    print(f'Database state check failed: {exc}')
+-    print('Proceeding with migrations anyway.')
+-" 2>&1 || echo "Pre-migration check script exited non-zero — proceeding with migrations anyway."
+-
+ # ── Run Alembic migrations with retry + backoff ──────────────────────────────
+ MIGRATION_OK=0
+ for i in 1 2 3 4 5; do
+diff --git a/deploy/railway-deploy.md b/deploy/railway-deploy.md
+index 4fe949c..ea1421c 100644
+--- a/deploy/railway-deploy.md
++++ b/deploy/railway-deploy.md
+@@ -88,7 +88,7 @@ railway variables set \
+   PORT=8000
+ ```
+ 
+-> **Important**: Replace `RABBITMQ_URL` with the Redis URL to use Redis as the Celery broker. This requires updating `backend/app/workers/celery_app.py` to accept Redis URLs, or simply setting the variable since Celery supports Redis natively.
++> **Important**: Set `RABBITMQ_URL` to the Redis URL. The Celery app auto-detects Redis URLs and uses them as the broker — no code changes needed.
+ 
+ ### Backend Start Command
+ 
+@@ -291,16 +291,7 @@ railway logs -s worker
+ 
+ ### PostgreSQL Connection
+ 
+-Railway's `DATABASE_URL` uses the standard `postgresql://` scheme. The backend expects `postgresql+asyncpg://`. Handle this with a variable reference or by adjusting the `DATABASE_URL` format:
+-
+-```bash
+-# Option A: Set explicitly with asyncpg driver
+-railway variables set \
+-  DATABASE_URL='postgresql+asyncpg://...'
+-
+-# Option B: Modify backend/app/config.py to auto-convert
+-# (add .replace("postgresql://", "postgresql+asyncpg://") in the Settings class)
+-```
++Railway's `DATABASE_URL` uses the standard `postgresql://` scheme. The backend's `config.py` **auto-converts** this to `postgresql+asyncpg://` via a Pydantic validator — no manual conversion needed. Just use `${{Postgres.DATABASE_URL}}` directly.
+ 
+ ### Cost Estimate (Railway Pro)
+ 
+diff --git a/frontend/src/app/api/auth/[...nextauth]/route.ts b/frontend/src/app/api/auth/[...nextauth]/route.ts
+index db57e94..3d15689 100644
+--- a/frontend/src/app/api/auth/[...nextauth]/route.ts
++++ b/frontend/src/app/api/auth/[...nextauth]/route.ts
+@@ -3,6 +3,35 @@ import CredentialsProvider from "next-auth/providers/credentials";
+ 
+ const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
+ 
++// Access tokens expire after 30 minutes — refresh 2 minutes early
++const ACCESS_TOKEN_MAX_AGE_MS = 28 * 60 * 1000;
++
++async function refreshAccessToken(token: Record<string, unknown>) {
++  try {
++    const res = await fetch(`${BACKEND_URL}/api/v1/auth/refresh`, {
++      method: "POST",
++      headers: { "Content-Type": "application/json" },
++      body: JSON.stringify({ refresh_token: token.refreshToken }),
++    });
++
++    if (!res.ok) {
++      // Refresh token expired or revoked — force re-login
++      return { ...token, error: "RefreshTokenExpired" };
++    }
++
++    const data = await res.json();
++
++    return {
++      ...token,
++      accessToken: data.access_token,
++      refreshToken: data.refresh_token ?? token.refreshToken,
++      accessTokenIssuedAt: Date.now(),
++    };
++  } catch {
++    return { ...token, error: "RefreshTokenError" };
++  }
++}
++
+ const handler = NextAuth({
+   providers: [
+     CredentialsProvider({
+@@ -32,7 +61,6 @@ const handler = NextAuth({
+ 
+           const data = await res.json();
+ 
+-          // Return the user object with tokens embedded for the JWT callback
+           return {
+             id: data.user.id,
+             name: data.user.full_name || data.user.email,
+@@ -59,19 +87,35 @@ const handler = NextAuth({
+       // On initial sign-in, persist the backend tokens into the NextAuth JWT
+       if (user) {
+         token.id = user.id;
+-        token.role = (user as any).role;
+-        token.accessToken = (user as any).accessToken;
+-        token.refreshToken = (user as any).refreshToken;
++        token.role = (user as Record<string, unknown>).role as string;
++        token.accessToken = (user as Record<string, unknown>).accessToken as string;
++        token.refreshToken = (user as Record<string, unknown>).refreshToken as string;
++        token.accessTokenIssuedAt = Date.now();
++        return token;
+       }
+-      return token;
++
++      // On subsequent requests, check if the access token needs refreshing
++      const issuedAt = (token.accessTokenIssuedAt as number) || 0;
++      if (Date.now() - issuedAt < ACCESS_TOKEN_MAX_AGE_MS) {
++        // Access token still valid
++        return token;
++      }
++
++      // Access token expired — refresh it
++      return refreshAccessToken(token as Record<string, unknown>);
+     },
+     async session({ session, token }) {
+-      // Expose user info + access token in the session for client-side use
+       if (session.user) {
+-        (session.user as any).id = token.id;
+-        (session.user as any).role = token.role;
++        (session.user as Record<string, unknown>).id = token.id;
++        (session.user as Record<string, unknown>).role = token.role;
+       }
+-      (session as any).accessToken = token.accessToken;
++      (session as Record<string, unknown>).accessToken = token.accessToken;
++
++      // Signal the client if the refresh token is dead
++      if (token.error) {
++        (session as Record<string, unknown>).error = token.error;
++      }
++
+       return session;
+     },
+   },
+diff --git a/frontend/src/app/providers.tsx b/frontend/src/app/providers.tsx
+index 8b51bcd..7e318ba 100644
+--- a/frontend/src/app/providers.tsx
++++ b/frontend/src/app/providers.tsx
+@@ -1,6 +1,7 @@
+ "use client";
+ 
+ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
++import { SessionProvider } from "next-auth/react";
+ import {
+   createContext,
+   useContext,
+@@ -102,13 +103,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
+   );
+ 
+   return (
+-    <QueryClientProvider client={queryClient}>
+-      <ThemeProvider>
+-        <ChatPanelProvider>
+-          {children}
+-          <Toaster />
+-        </ChatPanelProvider>
+-      </ThemeProvider>
+-    </QueryClientProvider>
++    <SessionProvider refetchInterval={5 * 60} refetchOnWindowFocus>
++      <QueryClientProvider client={queryClient}>
++        <ThemeProvider>
++          <ChatPanelProvider>
++            {children}
++            <Toaster />
++          </ChatPanelProvider>
++        </ThemeProvider>
++      </QueryClientProvider>
++    </SessionProvider>
+   );
+ }
+diff --git a/frontend/src/types/next-auth.d.ts b/frontend/src/types/next-auth.d.ts
+index cb87282..2d80d6b 100644
+--- a/frontend/src/types/next-auth.d.ts
++++ b/frontend/src/types/next-auth.d.ts
+@@ -3,6 +3,7 @@ import "next-auth";
+ declare module "next-auth" {
+   interface Session {
+     accessToken?: string;
++    error?: string;
+     user: {
+       id?: string;
+       name?: string | null;
+@@ -19,5 +20,7 @@ declare module "next-auth/jwt" {
+     role?: string;
+     accessToken?: string;
+     refreshToken?: string;
++    accessTokenIssuedAt?: number;
++    error?: string;
+   }
+ }
+diff --git a/railway.toml b/railway.toml
+new file mode 100644
+index 0000000..8e534c4
+--- /dev/null
++++ b/railway.toml
+@@ -0,0 +1,56 @@
++# ============================================================
++# FortressFlow — Railway Deployment Configuration
++#
++# This project deploys as 3 services on Railway:
++#   1. backend  — FastAPI + Alembic migrations
++#   2. frontend — Next.js 15 standalone
++#   3. worker   — Celery async task processor
++#
++# Required Railway plugins: PostgreSQL, Redis
++# RabbitMQ is NOT available — Celery uses Redis as broker.
++#
++# Setup:
++#   1. Create a new project on Railway
++#   2. Add PostgreSQL and Redis plugins
++#   3. Create 3 services pointing at this repo
++#   4. Set root directory + start command per service (see below)
++#   5. Set environment variables (see .env.example)
++#
++# Backend service:
++#   Root directory: backend
++#   Build command: (uses Dockerfile)
++#   Start command: bash start.sh
++#   Variables:
++#     DATABASE_URL=${{Postgres.DATABASE_URL}}
++#     REDIS_URL=${{Redis.REDIS_URL}}
++#     RABBITMQ_URL=${{Redis.REDIS_URL}}  ← use Redis as Celery broker
++#     SECRET_KEY=<openssl rand -hex 32>
++#     UNSUBSCRIBE_HMAC_KEY=<openssl rand -hex 16>
++#     ENVIRONMENT=production
++#     CORS_ORIGINS=https://<frontend-domain>
++#     PORT=8000
++#
++# Frontend service:
++#   Root directory: frontend
++#   Build command: (uses Dockerfile)
++#   Variables:
++#     BACKEND_URL=http://${{backend.RAILWAY_PRIVATE_DOMAIN}}:8000
++#     NEXT_PUBLIC_BACKEND_URL=https://<backend-public-domain>
++#     NEXTAUTH_URL=https://<frontend-public-domain>
++#     NEXTAUTH_SECRET=<openssl rand -hex 32>
++#
++# Worker service:
++#   Root directory: backend
++#   Build command: (uses Dockerfile)
++#   Start command: celery -A app.workers.celery_app worker --loglevel=info --concurrency=2
++#   Variables: (same as backend)
++# ============================================================
++
++[build]
++builder = "DOCKERFILE"
++
++[deploy]
++healthcheckPath = "/health"
++healthcheckTimeout = 300
++restartPolicyType = "ON_FAILURE"
++restartPolicyMaxRetries = 5
+-- 
+2.43.0
+
