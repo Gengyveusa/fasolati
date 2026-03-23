@@ -10,7 +10,7 @@
   --t:#00e8cc;--g:#e0b44a;
   --bg:#050508;
   --tx:rgba(255,255,255,.65);--txd:rgba(255,255,255,.35);--w:rgba(255,255,255,.92);
-  --lytica:#FF6B6B;--lithos:#c9a84c;--loria:#4AEDC4;--maxoral:#C59AFF;--fasolati-green:#A8C686;
+  --lytica:#FF6B6B;--lithos:#c9a84c;--loria:#4AEDC4;--maxoral:#C59AFF;--fasolati-green:#A8C686;--fortress:#5B8DEF;
   --font:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'SF Mono','Fira Code','Consolas',monospace;
 }
@@ -416,6 +416,51 @@ footer{position:relative;z-index:1}
 .ab-val h4{font-size:.88rem;font-weight:700;color:var(--w);margin-bottom:6px}
 .ab-val p{font-size:.8rem;color:var(--txd);line-height:1.8}
 
+/* ══════════════════ FORTRESSFLOW OVERLAY ══════════════════ */
+.fortress-overlay{position:fixed;inset:0;z-index:3000;background:rgba(5,5,8,.98);overflow-y:auto;opacity:0;pointer-events:none;transition:opacity .5s cubic-bezier(.16,1,.3,1)}
+.fortress-overlay.open{opacity:1;pointer-events:auto}
+.fortress-close{position:fixed;top:20px;right:32px;z-index:3001;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--w);transition:all .3s}
+.fortress-close:hover{border-color:var(--fortress);background:rgba(91,141,239,.06)}
+.fortress-inner{max-width:800px;margin:0 auto;padding:80px 32px 120px}
+.fortress-hero{text-align:center;margin-bottom:80px}
+.fortress-hero h1{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;color:var(--w);letter-spacing:-2px;margin-bottom:12px}
+.fortress-hero h1 span{color:var(--fortress)}
+.fortress-hero p{font-size:.95rem;color:var(--tx);line-height:1.9;max-width:620px;margin:0 auto}
+.fortress-hero .ff-badge{display:inline-block;margin-bottom:20px;padding:6px 16px;border-radius:20px;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--fortress);border:1px solid rgba(91,141,239,.25);background:rgba(91,141,239,.06)}
+
+.ff-section{margin-bottom:64px;padding-bottom:64px;border-bottom:1px solid rgba(255,255,255,.04)}
+.ff-section:last-child{border-bottom:none;padding-bottom:0}
+.ff-section-num{font-size:.5rem;letter-spacing:4px;text-transform:uppercase;font-weight:700;opacity:.4;margin-bottom:10px;color:var(--fortress)}
+.ff-section h2{font-size:clamp(1.4rem,3vw,1.8rem);font-weight:800;color:var(--w);letter-spacing:-1px;margin-bottom:8px;line-height:1.2}
+.ff-section .ff-tagline{font-size:.9rem;font-style:italic;color:var(--txd);margin-bottom:24px;line-height:1.6}
+.ff-section .ff-body{font-size:.88rem;color:var(--tx);line-height:2.1;margin-bottom:24px}
+
+.ff-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}
+.ff-card{padding:24px;border-radius:14px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.04);transition:border-color .3s}
+.ff-card:hover{border-color:rgba(91,141,239,.15)}
+.ff-card h4{font-size:.82rem;font-weight:700;color:var(--fortress);margin-bottom:8px}
+.ff-card p{font-size:.8rem;color:var(--txd);line-height:1.8}
+
+.ff-stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:24px 0}
+.ff-stack-item{padding:14px 16px;border-radius:10px;background:rgba(91,141,239,.04);border:1px solid rgba(91,141,239,.08);text-align:center}
+.ff-stack-item .ff-stack-label{font-size:.6rem;letter-spacing:1px;text-transform:uppercase;font-weight:600;color:var(--txd);margin-bottom:4px}
+.ff-stack-item .ff-stack-val{font-size:.82rem;font-weight:700;color:var(--w)}
+
+.ff-phases{counter-reset:phase}
+.ff-phase{position:relative;padding-left:36px;margin-bottom:28px}
+.ff-phase::before{counter-increment:phase;content:counter(phase);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.25);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:var(--fortress);line-height:24px;text-align:center}
+.ff-phase h4{font-size:.88rem;font-weight:700;color:var(--w);margin-bottom:4px}
+.ff-phase p{font-size:.82rem;color:var(--tx);line-height:1.85}
+
+.ff-cta{text-align:center;margin-top:48px;padding-top:48px;border-top:1px solid rgba(255,255,255,.04)}
+.ff-cta p{font-size:.88rem;color:var(--tx);line-height:1.9;margin-bottom:20px}
+
+@media(max-width:700px){
+  .ff-cards{grid-template-columns:1fr}
+  .ff-stack{grid-template-columns:1fr 1fr}
+  .fortress-inner{padding:60px 20px 80px}
+}
+
 /* ══════════════════ EMBED OVERLAYS ══════════════════ */
 .embed-overlay{position:fixed;inset:0;z-index:3000;background:rgba(5,5,8,.98);opacity:0;pointer-events:none;transition:opacity .5s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
 .embed-overlay.open{opacity:1;pointer-events:auto}
@@ -513,6 +558,9 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
         <div class="dd-divider"></div>
         <div class="dd-tag">Platform</div>
         <div class="dd-item" data-scroll="s4" data-ddclose><div class="dd-title">Fasolati Engine</div><div class="dd-desc">Three-vector scoring + SciAgent AI protocols</div></div>
+        <div class="dd-divider"></div>
+        <div class="dd-tag" style="color:var(--fortress)">B2B Outreach</div>
+        <div class="dd-item" data-open-fortress><div class="dd-title" style="color:var(--fortress)">FortressFlow™</div><div class="dd-desc">Compliance-first lead generation for dental & DSOs</div></div>
       </div>
     </div>
 
@@ -591,6 +639,7 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
       <div class="menu-item" data-products="lytica"><div class="mi-title">Professional Products</div><div class="mi-desc">Lytica, Lithos, Loria — clinician-grade oral therapeutics</div></div>
       <div class="menu-item" data-products="fasolati-tier"><div class="mi-title">Everyday Home Products</div><div class="mi-desc">OTC-grade daily maintenance for mouth and gut health</div></div>
       <div class="menu-item" data-scroll="s4" data-close><div class="mi-title">Health Dashboard</div><div class="mi-desc">Biomarker tracking, three-vector scoring, and SciAgent</div></div>
+      <div class="menu-item" data-fortress="open"><div class="mi-title" style="color:var(--fortress)">FortressFlow</div><div class="mi-desc">Compliance-first B2B lead generation for dental practices</div></div>
       <div class="menu-item" data-close href="https://claude.ai/public/artifacts/4bb92b11-5a4b-4fb9-bd72-46cab7f1b752" target="_blank"><div class="mi-title">Launch Engine UI</div><div class="mi-desc">Open the interactive Fasolati Engine interface</div></div>
     </div>
     <div class="menu-col">
@@ -968,6 +1017,81 @@ footer{position:relative;z-index:1;text-align:center;padding:60px 32px;font-size
   </div>
 </div>
 
+<!-- ═══ FORTRESSFLOW OVERLAY ═══ -->
+<div class="fortress-overlay" id="fortress-overlay">
+  <button class="fortress-close" id="fortress-close">✕</button>
+  <div class="fortress-inner">
+    <div class="fortress-hero">
+      <div class="ff-badge">By Gengyve USA Inc.</div>
+      <h1>Fortress<span>Flow</span></h1>
+      <p>Compliance-first B2B outreach automation for the dental and healthcare market. Purpose-built for dental practices, DSOs, and healthcare organizations that need to reach decision-makers without compromising on CAN-SPAM, GDPR, TCPA, or CCPA obligations.</p>
+    </div>
+
+    <div class="ff-section">
+      <div class="ff-section-num">01 — Why FortressFlow</div>
+      <h2>Ethical Lead Generation. By Design.</h2>
+      <p class="ff-tagline">Other tools bolt on compliance. FortressFlow treats it as infrastructure.</p>
+      <p class="ff-body">The dental industry operates under strict regulatory oversight. Every outreach — email, SMS, LinkedIn — carries compliance risk. FortressFlow was built from the ground up so that CAN-SPAM, GDPR, TCPA, and CCPA are not afterthoughts but foundational constraints embedded in every layer of the platform. Audit trails, HMAC-signed unsubscribe tokens, DNC scrubbing, time-of-day enforcement, and GDPR erasure endpoints are built in from day one.</p>
+      <div class="ff-cards">
+        <div class="ff-card"><h4>CAN-SPAM + GDPR</h4><p>Audit trails on every send. Physical address injection. HMAC-signed unsubscribe tokens. Right-to-erasure endpoints. Suppression lists that actually suppress.</p></div>
+        <div class="ff-card"><h4>TCPA + CCPA</h4><p>Time-of-day enforcement for SMS. DNC list scrubbing. Opt-out honoring within seconds. State-level consent tracking. Every touchpoint logged and auditable.</p></div>
+        <div class="ff-card"><h4>Sender Reputation</h4><p>SPF/DKIM/DMARC/BIMI configured from the start. Dedicated IP warm-up with automated 15% daily ramp. Circuit breakers pause sending at >5% bounce or >0.1% spam complaints.</p></div>
+        <div class="ff-card"><h4>Vertical Focus</h4><p>Purpose-built for dental practices, DSOs, and healthcare organizations. Not a generic tool with dental templates — the data model, enrichment pipeline, and compliance layer are dental-native.</p></div>
+      </div>
+    </div>
+
+    <div class="ff-section">
+      <div class="ff-section-num">02 — The Seven Phases</div>
+      <h2>From Consent to Conversion</h2>
+      <p class="ff-tagline">A complete outreach sequencer built in seven phases — each one compliance-hardened.</p>
+      <div class="ff-phases">
+        <div class="ff-phase"><h4>Compliance & Consent Engine</h4><p>Audit trails, HMAC-signed unsubscribe tokens, suppression lists, GDPR erasure endpoints, CAN-SPAM address injection, TCPA time-of-day enforcement. The foundation everything else sits on.</p></div>
+        <div class="ff-phase"><h4>Lead Import & Enrichment</h4><p>CSV import with deduplication. Waterfall enrichment via ZoomInfo, Apollo, and HubSpot. 90-day TTL refresh. Configurable lead scoring. Bi-directional HubSpot sync keeps your CRM in lockstep.</p></div>
+        <div class="ff-phase"><h4>Deliverability Fortress</h4><p>SPF/DKIM/DMARC/BIMI. AWS SES dedicated IP warm-up ramping from 5/day at 15% daily increase. Bounce and spam circuit breakers. Inbox rotation across 10 sending identities.</p></div>
+        <div class="ff-phase"><h4>Sequence Engine & Visual Builder</h4><p>Multi-step sequences with React Flow drag-and-drop builder. Conditional branching on open, click, reply, and bounce events. A/B variant support for subject lines and body copy.</p></div>
+        <div class="ff-phase"><h4>Multi-Channel Outreach</h4><p>Email + SMS (Twilio) + LinkedIn in coordinated sequences. IMAP reply detection. Daily caps — 400 email, 30 SMS, 25 LinkedIn — to protect sender reputation. Webhook listeners for real-time event processing.</p></div>
+        <div class="ff-phase"><h4>Production Hardening</h4><p>Redis rate limiting. Security headers and CSRF protection. 10MB body cap. User-agent blocking. JSON-structured logging. Full Grafana, Prometheus, and Sentry monitoring stack.</p></div>
+        <div class="ff-phase"><h4>In-App AI Chatbot</h4><p>Floating Intercom-style widget with streaming SSE. Groq primary, OpenAI fallback. Slash commands for system status and warm-up monitoring. Live database context injection. Dark mode. ARIA accessible.</p></div>
+      </div>
+    </div>
+
+    <div class="ff-section">
+      <div class="ff-section-num">03 — AI Integrations</div>
+      <h2>Intelligence at Every Layer</h2>
+      <p class="ff-tagline">Three best-in-class AI sales platforms wired into the enrichment and outreach pipeline.</p>
+      <div class="ff-cards">
+        <div class="ff-card"><h4>HubSpot Breeze AI</h4><p>Automated prospecting, enrichment, and email content suggestions. Your CRM becomes a live intelligence layer, not a dead data warehouse.</p></div>
+        <div class="ff-card"><h4>ZoomInfo Copilot</h4><p>Account intent data, organizational chart insights, and GTM Workspace integration. Know who to reach, when to reach them, and why they're ready.</p></div>
+        <div class="ff-card"><h4>Apollo AI Assistant</h4><p>AI-powered lead scoring, waterfall enrichment, and Claude MCP integration for autonomous outreach sequences that adapt in real time.</p></div>
+        <div class="ff-card"><h4>Built-In Chatbot</h4><p>Groq-powered AI assistant with live database context. Slash commands for campaign status, warm-up progress, and system health — all inside the platform.</p></div>
+      </div>
+    </div>
+
+    <div class="ff-section">
+      <div class="ff-section-num">04 — Tech Stack</div>
+      <h2>Production-Grade Architecture</h2>
+      <p class="ff-tagline">Every layer chosen for reliability, security, and observability.</p>
+      <div class="ff-stack">
+        <div class="ff-stack-item"><div class="ff-stack-label">Frontend</div><div class="ff-stack-val">Next.js</div></div>
+        <div class="ff-stack-item"><div class="ff-stack-label">Backend</div><div class="ff-stack-val">FastAPI</div></div>
+        <div class="ff-stack-item"><div class="ff-stack-label">Database</div><div class="ff-stack-val">PostgreSQL</div></div>
+        <div class="ff-stack-item"><div class="ff-stack-label">Queue</div><div class="ff-stack-val">Redis + RabbitMQ</div></div>
+        <div class="ff-stack-item"><div class="ff-stack-label">Workers</div><div class="ff-stack-val">Celery</div></div>
+        <div class="ff-stack-item"><div class="ff-stack-label">Email</div><div class="ff-stack-val">AWS SES</div></div>
+        <div class="ff-stack-item"><div class="ff-stack-label">SMS</div><div class="ff-stack-val">Twilio</div></div>
+        <div class="ff-stack-item"><div class="ff-stack-label">Monitoring</div><div class="ff-stack-val">Grafana + Prometheus</div></div>
+        <div class="ff-stack-item"><div class="ff-stack-label">Containers</div><div class="ff-stack-val">Docker</div></div>
+        <div class="ff-stack-item"><div class="ff-stack-label">AI</div><div class="ff-stack-val">Groq + OpenAI</div></div>
+      </div>
+    </div>
+
+    <div class="ff-cta">
+      <p>FortressFlow is built and operated by Gengyve USA Inc. — the same team behind Lytica, Lithos, and Loria. Interested in deploying ethical outreach automation for your dental practice or DSO?</p>
+      <a class="btn bp" style="cursor:pointer" onclick="closeFortress();openPartner()">Get in Touch</a>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ ENGINE UI EMBED ═══ -->
 <div class="embed-overlay" id="embed-engine">
   <div class="embed-bar"><span class="embed-title">Fasolati Engine UI</span><button class="embed-close" onclick="closeEmbed('engine')">✕</button></div>
@@ -1173,6 +1297,12 @@ const aboutOv=document.getElementById('about-overlay'),aboutClose=document.getEl
 function openAbout(){closeMenu();aboutOv.classList.add('open');document.body.style.overflow='hidden';aboutOv.scrollTop=0}
 function closeAbout(){aboutOv.classList.remove('open');document.body.style.overflow=''}
 aboutClose.addEventListener('click',closeAbout);
+// FortressFlow overlay
+const fortressOv=document.getElementById('fortress-overlay'),fortressClose=document.getElementById('fortress-close');
+function openFortress(){closeMenu();fortressOv.classList.add('open');document.body.style.overflow='hidden';fortressOv.scrollTop=0}
+function closeFortress(){fortressOv.classList.remove('open');document.body.style.overflow=''}
+fortressClose.addEventListener('click',closeFortress);
+overlay.querySelectorAll('[data-fortress]').forEach(el=>{el.addEventListener('click',openFortress)});
 // Embed overlays
 function openEmbed(type){
   closeMenu();
@@ -1449,6 +1579,11 @@ function togglePill(pill){const exp=pill.nextElementSibling;const isOpen=exp.sty
   document.querySelectorAll('.dd-item[data-open-about]').forEach(el=>{el.addEventListener('click',()=>{
     if(activeDrop){activeDrop._drop.classList.remove('show');activeDrop.classList.remove('active');activeDrop=null}
     openAbout();
+  })});
+  // dd-item fortress overlay actions
+  document.querySelectorAll('.dd-item[data-open-fortress]').forEach(el=>{el.addEventListener('click',()=>{
+    if(activeDrop){activeDrop._drop.classList.remove('show');activeDrop.classList.remove('active');activeDrop=null}
+    openFortress();
   })});
   // dd-item embed actions
   document.querySelectorAll('.dd-item[data-open-embed]').forEach(el=>{el.addEventListener('click',()=>{
