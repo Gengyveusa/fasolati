@@ -1,0 +1,78 @@
+# robots.txt — fasolati.life
+#
+# Served from the repo root by GitHub Pages. Previously this file did not
+# exist and /robots.txt returned a 404, so there was no crawl policy and no
+# statement either way about AI crawlers.
+
+User-agent: *
+Allow: /
+
+# ---------------------------------------------------------------
+# AI / answer-engine crawlers — explicitly allowed.
+#
+# Deliberate, not a default. These are how ChatGPT, Claude, Perplexity and
+# Gemini learn that Fasolati and Loria exist and become able to cite them.
+# For a consumer product with a category-defining claim — CHX-free oral care
+# via ecological remodeling — being absent from those answers is the whole
+# loss. Flip to Disallow only if the goal changes from visibility to control.
+# ---------------------------------------------------------------
+
+# OpenAI
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Google — Gemini / AI Overviews (distinct from Googlebot)
+User-agent: Google-Extended
+Allow: /
+
+# Microsoft — Copilot
+User-agent: Bingbot
+Allow: /
+
+# Common Crawl — feeds many downstream model corpora
+User-agent: CCBot
+Allow: /
+
+# Apple Intelligence
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+# xAI — Grok
+User-agent: xAI-Bot
+Allow: /
+
+# Amazon
+User-agent: Amazonbot
+Allow: /
+
+Sitemap: https://fasolati.life/sitemap.xml

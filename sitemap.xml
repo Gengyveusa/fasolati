@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  One URL, because the site genuinely is one URL.
+
+  index.html is a single document; every section — the platform, SciAgent,
+  the shop, partner, about — is a JavaScript overlay panel sharing this
+  address. There are no other pages to list, and listing anchors or invented
+  paths would be worse than listing nothing.
+
+  This is the constraint to fix next: nine sections and four products with no
+  individual URL means nothing can be linked, advertised, or cited on its own.
+  When those sections become real paths, they belong here.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://fasolati.life/</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
