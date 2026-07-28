@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+
+/**
+ * The contact form.
+ *
+ * `noindex` and excluded from the sitemap (see astro.config.mjs): a form has
+ * no standalone search intent, and indexing it competes with the pages that
+ * should rank for "fasolati partner" / "fasolati clinicians". It stays
+ * `follow` so links out of it still pass through.
+ */
+
+const title = 'Partner With Fasolati — Clinicians, Investors, DSOs, Researchers';
+const description =
+  'Tell us how you want to connect - pilot the platform in your practice, fund the node network, integrate the therapeutic cascade, or collaborate on clinical studies. We respond within 48 hours.';
+---
+<Base title={title} description={description} path="/partner/" noindex={true}>
+  <div class="partner-inner">
+
+
+    <div class="partner-hero">
+      <h1>Partner With Us</h1>
+      <p>Whether you're a clinician, investor, DSO operator, or researcher — tell us how you want to connect and we'll get back to you within 48 hours.</p>
+    </div>
+
+    <!-- FORM -->
+    <div class="partner-form" id="partner-form">
+
+      <!-- Step 1: Role Selection -->
+      <div style="margin-bottom:12px"><span class="pf-label">I'm interested as a<span class="req">*</span></span></div>
+      <div class="role-grid" id="role-grid">
+        <div class="role-card" data-role="clinician">
+          <div class="role-icon">⚕</div>
+          <div class="role-name">Clinician</div>
+          <div class="role-desc">Pilot the platform in your practice</div>
+        </div>
+        <div class="role-card" data-role="investor">
+          <div class="role-icon">◆</div>
+          <div class="role-name">Investor</div>
+          <div class="role-desc">Fund the node network</div>
+        </div>
+        <div class="role-card" data-role="dso">
+          <div class="role-icon">⬡</div>
+          <div class="role-name">DSO Partner</div>
+          <div class="role-desc">Integrate the therapeutic cascade</div>
+        </div>
+        <div class="role-card" data-role="researcher">
+          <div class="role-icon">⊛</div>
+          <div class="role-name">Researcher</div>
+          <div class="role-desc">Collaborate on clinical studies</div>
+        </div>
+        <div class="role-card" data-role="general" style="grid-column:1/-1">
+          <div class="role-icon">→</div>
+          <div class="role-name">General Interest</div>
+          <div class="role-desc">Stay in the loop on Fasolati developments</div>
+        </div>
+      </div>
+
+      <!-- Role-specific value props -->
+      <div class="role-value" id="rv-clinician"><h4>For Clinicians</h4><p>Get early access to Lytica and Loria professional products. Integrate the Fasolati Engine into your practice workflow. See how oral-systemic protocols reduce inflammatory markers in your patient population.</p></div>
+      <div class="role-value" id="rv-investor" style="border-left-color:var(--g)"><h4>For Investors</h4><p>Fasolati sits at the intersection of oral health ($50B), gut health ($71B), and AI-driven precision medicine. We're building the operating system for inflammation prevention — the largest addressable cause of death globally.</p></div>
+      <div class="role-value" id="rv-dso" style="border-left-color:var(--t)"><h4>For DSO Partners</h4><p>Deploy the full Lytica → Loria therapeutic cascade across your network. New high-margin intervention revenue plus recurring Fasolati subscriptions that increase patient lifetime value.</p></div>
+      <div class="role-value" id="rv-researcher" style="border-left-color:var(--g)"><h4>For Researchers</h4><p>Access de-identified longitudinal data from the Fasolati platform. Collaborate on oral-systemic, microbiome, and biomarker studies with real-world evidence from active patient populations.</p></div>
+      <div class="role-value" id="rv-general"><h4>Stay Connected</h4><p>Get updates on product launches, research findings, and partnership opportunities as the Fasolati node network expands.</p></div>
+
+      <!-- Contact Fields -->
+      <div class="pf-row">
+        <div class="pf-group"><label class="pf-label">First Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-first" placeholder="First name" required></div>
+        <div class="pf-group"><label class="pf-label">Last Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-last" placeholder="Last name" required></div>
+      </div>
+      <div class="pf-group"><label class="pf-label">Email<span class="req">*</span></label><input class="pf-input" type="email" id="pf-email" placeholder="you@example.com" required></div>
+      <div class="pf-row">
+        <div class="pf-group"><label class="pf-label">Phone</label><input class="pf-input" type="tel" id="pf-phone" placeholder="(555) 123-4567"></div>
+        <div class="pf-group"><label class="pf-label">Company / Practice</label><input class="pf-input" type="text" id="pf-company" placeholder="Organization name"></div>
+      </div>
+      <div class="pf-group"><label class="pf-label">Message</label><textarea class="pf-textarea" id="pf-message" placeholder="Tell us what you're looking for, what excites you, or any questions you have..."></textarea></div>
+
+      <button class="pf-submit" id="pf-submit" disabled>Select a role above to continue</button>
+      <p class="pf-note">Your information is encrypted and never shared. We'll respond within 48 hours.</p>
+    </div>
+
+    <!-- Success State -->
+    <div class="partner-success" id="partner-success">
+      <div class="ps-icon">✓</div>
+      <div class="ps-title">We've Got It</div>
+      <p class="ps-body">Thanks for reaching out. Your information has been received and someone from the Fasolati team will be in touch within 48 hours. In the meantime, explore the platform:</p>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap">
+        <a href="https://claude.ai/public/artifacts/4bb92b11-5a4b-4fb9-bd72-46cab7f1b752" class="btn bp" target="_blank">Launch Engine UI</a>
+        <a href="https://claude.ai/public/artifacts/fddec7f6-4bf5-4888-b8a3-89bd80287d18" class="btn bs" target="_blank">View Deep Dive</a>
+      </div>
+    </div>
+
+  
+  </div>
+
+  <script src="../scripts/partner-form.js"></script>
+</Base>
+

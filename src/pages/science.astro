@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, breadcrumb } from '../data/site.ts';
+
+/**
+ * Inside the Black Box - how SciAgent is built, trained, verified, and how it
+ * handles a user's data.
+ *
+ * This is the page most likely to be surfaced by an AI answering "how does
+ * this health AI work / is it safe", which is precisely the question it was
+ * written to answer - and precisely what it could not do while it lived
+ * behind a JS toggle on the home page.
+ */
+
+const title = 'Inside the Black Box — How SciAgent AI Works | Fasolati';
+const description =
+  'How the SciAgent clinical reasoning engine is built and trained, the three verification layers every recommendation passes through, how it builds a personal model over time, and what happens to your health data.';
+
+const schema = [
+  {
+    '@type': 'MedicalWebPage',
+    '@id': `${SITE}/science/`,
+    url: `${SITE}/science/`,
+    name: title,
+    description,
+    isPartOf: { '@id': `${SITE}/#website` },
+    publisher: { '@id': `${SITE}/#organization` },
+    author: { '@id': `${SITE}/#founder` },
+    about: { '@type': 'MedicalCondition', name: 'Chronic inflammation' },
+  },
+  breadcrumb('Inside the Black Box', '/science/'),
+];
+---
+<Base title={title} description={description} path="/science/" schema={schema}>
+  <div class="bb-inner">
+
+
+    <div class="bb-hero">
+      <h1>Inside the <span class="bb-accent">Black Box</span></h1>
+      <p>You deserve to know exactly how the AI that manages your health actually works — what it knows, where it learned it, how it checks itself, and how it gets smarter the longer you use it.</p>
+    </div>
+
+    <!-- 01 — FOUNDATION -->
+    <div class="bb-section">
+      <div class="bb-section-num" style="color:var(--t)">01 — The Brain</div>
+      <h2>What Powers SciAgent</h2>
+      <p class="bb-tagline">Not a chatbot. A clinical reasoning engine trained on the science of inflammation.</p>
+      <p class="bb-body">SciAgent is built on a large language model — the same class of AI behind the most advanced reasoning systems in the world — but fine-tuned specifically for oral-systemic health. Think of the base model as a medical school graduate: broad knowledge, strong reasoning. Our fine-tuning is the residency — years of specialized training in the exact pathways that connect your mouth, your gut, and your systemic inflammation.</p>
+      <div class="bb-cards">
+        <div class="bb-card"><h4 style="color:var(--t)">Foundation Model</h4><p>A state-of-the-art language model provides the reasoning backbone — the ability to read your data, recognize patterns, weigh tradeoffs, and explain its thinking in plain language. We don't build this from scratch. We build on the best.</p></div>
+        <div class="bb-card"><h4 style="color:var(--t)">Domain Fine-Tuning</h4><p>We then train the model on oral-systemic health specifically: periodontal pathology, gut barrier dynamics, inflammatory cascades, biomarker interpretation, pharmacology of our product lines. It doesn't guess about inflammation. It reasons from mechanism.</p></div>
+        <div class="bb-card"><h4 style="color:var(--g)">Constrained Outputs</h4><p>SciAgent can only recommend interventions from the Fasolati product ecosystem. It cannot prescribe medications, diagnose diseases, or replace your doctor. It operates within strict clinical guardrails — what to rinse, swallow, and avoid. Not medical advice. Protocol guidance.</p></div>
+        <div class="bb-card"><h4 style="color:var(--g)">Explainable Reasoning</h4><p>Every recommendation SciAgent makes comes with a "why." Not a black box output — a transparent chain of reasoning you can read, question, and share with your clinician. If it suggests increasing your Loria frequency, it tells you exactly which data point triggered that change.</p></div>
+      </div>
+    </div>
+
+    <!-- 02 — TRAINING DATA -->
+    <div class="bb-section">
+      <div class="bb-section-num" style="color:var(--t)">02 — The Education</div>
+      <h2>Where It Learned What It Knows</h2>
+      <p class="bb-tagline">Trained on peer-reviewed science. Not internet health forums. Not sponsored content.</p>
+      <p class="bb-body">The quality of an AI is only as good as the quality of its training data. SciAgent's knowledge base is built from curated, peer-reviewed clinical literature — the same sources your periodontist and gastroenterologist rely on. We don't scrape the internet. We curate the science.</p>
+      <div class="bb-cards">
+        <div class="bb-card"><h4 style="color:var(--t)">Clinical Literature</h4><p>Thousands of peer-reviewed papers on periodontitis, gut permeability, inflammatory biomarkers, microbiome ecology, and the oral-systemic connection. Sources include The Lancet, Nature, Journal of Clinical Periodontology, Gut, and specialized inflammation research.</p></div>
+        <div class="bb-card"><h4 style="color:var(--t)">Biomarker Databases</h4><p>Reference ranges, population distributions, and clinical significance thresholds for hs-CRP, HbA1c, zonulin, calprotectin, LPS-binding protein, and other inflammatory markers. SciAgent knows what your numbers mean in context — not just whether they're "high" or "low."</p></div>
+        <div class="bb-card"><h4 style="color:var(--g)">Product Pharmacology</h4><p>Deep knowledge of every Fasolati formulation — mechanisms, dosing, interactions, contraindications, expected response curves. When SciAgent adjusts your Lytica protocol, it understands the enzymatic and phage mechanisms at the molecular level.</p></div>
+        <div class="bb-card"><h4 style="color:var(--g)">Clinical Practice Guidelines</h4><p>Current treatment guidelines from the American Academy of Periodontology, American Gastroenterological Association, and the European Federation of Periodontology. SciAgent's recommendations align with — never contradict — established standards of care.</p></div>
+      </div>
+      <p class="bb-body" style="margin-top:24px;font-size:.82rem;opacity:.7">What SciAgent is never trained on: social media health claims, supplement marketing, anecdotal testimonials, or unreviewed preprints. If it's not in the peer-reviewed literature or validated clinical databases, SciAgent doesn't know it — and that's by design.</p>
+    </div>
+
+    <!-- 03 — VERIFICATION -->
+    <div class="bb-section">
+      <div class="bb-section-num" style="color:var(--t)">03 — The Fact-Check</div>
+      <h2>How It Verifies Everything</h2>
+      <p class="bb-tagline">Every recommendation runs through three layers of verification before it reaches you.</p>
+      <p class="bb-body">We built SciAgent with a fundamental assumption: AI makes mistakes. The question isn't whether errors happen — it's whether the system catches them before they reach you. Our answer is a three-layer verification architecture that treats every output as unproven until confirmed.</p>
+
+      <div class="bb-flow">
+        <div class="bb-flow-step"><h4 style="color:var(--t)">Layer 1</h4><p><strong style="color:var(--w)">Evidence Match</strong><br>Every claim is cross-referenced against its source literature. If SciAgent says "hs-CRP above 3.0 correlates with increased cardiovascular risk," it must cite the specific studies.</p></div>
+        <span class="bb-flow-arrow">→</span>
+        <div class="bb-flow-step"><h4 style="color:var(--g)">Layer 2</h4><p><strong style="color:var(--w)">Clinical Guardrails</strong><br>Rule-based safety checks catch anything outside established parameters. Dosing limits, contraindication flags, interaction warnings — hard-coded, not learned. The AI cannot override these.</p></div>
+        <span class="bb-flow-arrow">→</span>
+        <div class="bb-flow-step"><h4 style="color:var(--t)">Layer 3</h4><p><strong style="color:var(--w)">Confidence Scoring</strong><br>Every recommendation carries a confidence score. High confidence: act on it. Medium: SciAgent explains the uncertainty. Low: it flags the question for your clinician instead of guessing.</p></div>
+      </div>
+
+      <div class="bb-trust">
+        <div class="bb-trust-item"><div class="bb-trust-icon" style="color:var(--t)">⊘</div><h4>Never Invents</h4><p>SciAgent cannot fabricate studies or statistics. It retrieves from its verified knowledge base or says "I don't know."</p></div>
+        <div class="bb-trust-item"><div class="bb-trust-icon" style="color:var(--g)">⟐</div><h4>Never Overreaches</h4><p>If your data suggests something outside its scope — a possible diagnosis, a medication question — it routes you to your doctor, not a guess.</p></div>
+        <div class="bb-trust-item"><div class="bb-trust-icon" style="color:var(--t)">↻</div><h4>Always Auditable</h4><p>Every recommendation is logged with its reasoning chain. Your clinician can review exactly why SciAgent made each suggestion.</p></div>
+      </div>
+    </div>
+
+    <!-- 04 — PERSONALIZATION -->
+    <div class="bb-section">
+      <div class="bb-section-num" style="color:var(--g)">04 — Your Model</div>
+      <h2>How It Learns You</h2>
+      <p class="bb-tagline">The longer you use Fasolati, the smarter your personal model becomes.</p>
+      <p class="bb-body">SciAgent starts with population-level science — what works for most people. But you're not most people. Over weeks and months, it builds a model of your specific inflammatory patterns, your response curves, your habits, and your triggers. This is where it transforms from a general tool into your personal health engine.</p>
+
+      <div class="bb-timeline">
+        <div class="bb-tl-item"><h4>Week 1 — Baseline</h4><p>SciAgent ingests your initial data: lab results, oral exam findings, any wearable data you connect. It establishes your personal baseline across the three vectors — Oral Ecology, Gut Integrity, Systemic Inflammation — and sets starting protocols based on population evidence.</p></div>
+        <div class="bb-tl-item"><h4>Weeks 2–4 — Response Mapping</h4><p>As you use the products and log data, SciAgent begins tracking how your body responds. How quickly does your hs-CRP drop after a Lytica intervention? Does your sleep quality correlate with gut protocol adherence? It's building your personal response curves.</p></div>
+        <div class="bb-tl-item"><h4>Months 2–3 — Pattern Recognition</h4><p>With enough data, SciAgent starts identifying your unique patterns. Maybe your inflammation spikes every time you travel. Maybe your oral ecology dips on weekends. Maybe Biolumen works faster for you than population averages predict. These insights shape increasingly precise protocols.</p></div>
+        <div class="bb-tl-item"><h4>Month 4+ — Predictive Protocols</h4><p>This is where the model matures. SciAgent begins anticipating inflammatory events before they show up in your biomarkers — adjusting protocols proactively based on behavioral patterns, seasonal trends, and your established response curves. It moves from reactive to predictive.</p></div>
+        <div class="bb-tl-item"><h4>Ongoing — Continuous Refinement</h4><p>Your model never stops learning. Every new lab result, every oral exam, every week of wearable data sharpens the picture. And as the broader Fasolati user base grows, anonymized population insights feed back into the system — your model benefits from the collective without ever exposing your data.</p></div>
+      </div>
+    </div>
+
+    <!-- 05 — YOUR DATA -->
+    <div class="bb-section" style="border-bottom:none">
+      <div class="bb-section-num" style="color:var(--g)">05 — Your Data</div>
+      <h2>What Happens to Your Information</h2>
+      <p class="bb-tagline">Your health data is yours. Period.</p>
+      <div class="bb-cards">
+        <div class="bb-card"><h4 style="color:var(--t)">Encrypted at Rest</h4><p>Your personal health data is encrypted with AES-256 encryption — the same standard used by banks and defense systems. Even our engineers cannot read your individual records.</p></div>
+        <div class="bb-card"><h4 style="color:var(--t)">Never Sold</h4><p>Your data is never sold, rented, or shared with advertisers, insurance companies, or employers. Fasolati's business model is products and subscriptions — not your information.</p></div>
+        <div class="bb-card"><h4 style="color:var(--g)">You Control It</h4><p>Export your complete health record anytime. Delete your data anytime. Pause data collection anytime. Your model, your data, your decision.</p></div>
+        <div class="bb-card"><h4 style="color:var(--g)">De-identified Research</h4><p>If you opt in, anonymized and de-identified patterns from your data contribute to population-level research that improves the system for everyone. No identifying information ever leaves your account.</p></div>
+      </div>
+
+      <div style="text-align:center;margin-top:48px">
+        <a href="https://claude.ai/public/artifacts/4bb92b11-5a4b-4fb9-bd72-46cab7f1b752" class="btn bp" target="_blank">See SciAgent in Action →</a>
+      </div>
+    </div>
+
+  
+  </div>
+
+  <nav class="page-next" aria-label="Related pages">
+    <a href="/engine/"><h3>Fasolati Engine</h3><p>The product SciAgent runs inside.</p></a>
+    <a href="/platform/"><h3>Therapeutic Platform</h3><p>The mechanisms SciAgent prescribes from.</p></a>
+    <a href="/about/"><h3>About Fasolati</h3><p>Why a surgeon built an operating system.</p></a>
+  </nav>
+</Base>
