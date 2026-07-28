@@ -9,9 +9,12 @@
  * product-aware surface.
  *
  * ACCURACY RULES — these markup claims are commercial statements:
- *   • `availability` is emitted as schema.org only when the item is genuinely
- *     purchasable. "Coming soon" and "waitlist" get no Offer at all, because
- *     an Offer asserts something is on sale.
+ *   • An `Offer` is emitted only when the item is purchasable *at the URL the
+ *     Offer names*. "Coming soon" and "waitlist" get none, because an Offer
+ *     asserts something is on sale. Neither does Loria: it is genuinely
+ *     available, but it sells under a different brand and fasolati.life has no
+ *     checkout, so an Offer pointing at /loria/ would promise Google Shopping
+ *     a purchase path that does not exist. Restore it when there is one.
  *   • No price appears anywhere on the site, so no price is asserted here.
  *     Inventing one to win a rich result would be a lie about a medical
  *     product.
@@ -40,11 +43,12 @@ export type Product = {
    * Call to action on the product page.
    *
    * `href` means "this is a link somewhere real"; its absence means the CTA is
-   * the waitlist form. Loria's Order button was `href="#"` on the live site —
-   * a dead link on the only product that is actually for sale. It points at
-   * the contact form until a storefront URL exists; that is a holding pattern,
-   * not a destination, and it is the one thing standing between the InStock
-   * Offer below and a genuinely purchasable product.
+   * the waitlist form. Loria's Order button was `href="#"` on the live site.
+   * It points at the contact form because the product sells under a separate
+   * brand that is deliberately not linked from here yet — a holding pattern,
+   * not a destination. The label is still "Order", which the copy pass should
+   * revisit; a button that says Order and opens a contact form is a small lie
+   * about what happens next.
    */
   cta: { label: string; note?: string; href?: string };
   /** schema.org type — most are Product; the Engine is software. */
@@ -130,10 +134,17 @@ export const productBySlug = Object.fromEntries(PRODUCTS.map((p) => [p.slug, p])
 /**
  * schema.org node for a product.
  *
- * Only `available` items get an `offers` block. schema.org treats an Offer as
- * an assertion that the thing is on sale; attaching one to a waitlist item
- * would misrepresent availability to every shopping and answer surface that
- * reads it.
+ * No `offers` block is emitted for anything, deliberately.
+ *
+ * schema.org treats an Offer as an assertion that the thing is on sale at the
+ * URL the Offer names, and every shopping and answer surface reads it that
+ * way. fasolati.life has no checkout on any page, so there is currently no
+ * product here for which that assertion is true — including Loria, which is
+ * genuinely available but sells under a separate brand not linked from this
+ * site.
+ *
+ * When a real buy path exists, add `offerUrl` to the product and re-emit;
+ * the availability field is already carried and unchanged.
  */
 export function productSchema(p: Product, site: string) {
   const id = `${site}/${p.slug}/`;
@@ -156,15 +167,6 @@ export function productSchema(p: Product, site: string) {
 
   const size = p.specs?.find((s) => s.label === 'Format')?.value;
   if (size) base.size = size;
-
-  if (p.availability === 'available') {
-    base.offers = {
-      '@type': 'Offer',
-      availability: 'https://schema.org/InStock',
-      url: id,
-      seller: { '@id': `${site}/#organization` },
-    };
-  }
 
   return base;
 }
