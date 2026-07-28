@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+
+/**
+ * GitHub Pages serves this file for any path with nothing behind it, with a
+ * real 404 status. Worth having now that the site has ten URLs instead of
+ * one: a mistyped /lorai/ used to be impossible because there was nothing to
+ * mistype.
+ */
+---
+<Base
+  title="Not found — Fasolati"
+  description="That address doesn't correspond to anything on the Fasolati site."
+  path="/404.html"
+  noindex={true}
+>
+  <div class="nf">
+    <h1>Nothing here</h1>
+    <p>
+      That address doesn't correspond to anything on the site. It may have been
+      mistyped, or it may have moved.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a class="btn bp" href="/">Home</a>
+      <a class="btn bs" href="/shop/">Products</a>
+      <a class="btn bs" href="/science/">Inside the Black Box</a>
+    </div>
+  </div>
+</Base>

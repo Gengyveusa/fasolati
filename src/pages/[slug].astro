@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import { PRODUCTS, productSchema } from '../data/products.ts';
+import { SITE, breadcrumb } from '../data/site.ts';
+
+/**
+ * One page per product: /loria/, /lytica/, /gut-stack/, /engine/.
+ *
+ * These are the pages that did not exist. Loria is the one product Fasolati
+ * actually sells, and until now it had no URL — it was a card inside a shop
+ * overlay that shared the home page's address. Nothing could link to it, no
+ * ad could land on it, and no shopping or answer surface could read a Product
+ * node for it, because there was no page for that node to describe.
+ *
+ * The mechanism-level science stays on /platform/ rather than being copied
+ * here. Two pages saying the same thing in different words is how a site ends
+ * up competing with itself for its own product name.
+ */
+
+export function getStaticPaths() {
+  return PRODUCTS.map((product) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+
+const title = `${product.name} — ${product.status} | Fasolati`;
+const description = `${product.tagline} ${product.body}`.slice(0, 300);
+
+const schema = [
+  productSchema(product, SITE),
+  breadcrumb(product.shortName, `/${product.slug}/`),
+];
+---
+<Base title={title} description={description} path={`/${product.slug}/`} schema={schema}>
+  <div class="shop-inner">
+    <p style="margin-bottom:26px"><a class="page-back" href="/shop/">← All products</a></p>
+
+    <span class={`pp-status${product.availability === 'available' ? ' live' : ''}`}>
+      {product.availability === 'available' ? '● ' : ''}{product.status}
+    </span>
+
+    <h1 class="sp-name" style={`color:${product.accent}`}>{product.name}</h1>
+    <p class="sp-tagline">{product.tagline}</p>
+    <p class="sp-body">{product.body}</p>
+
+    {product.specs && (
+      <div class="pp-specs">
+        {product.specs.map((s) => (
+          <div class="pp-spec">
+            <h4 style={`color:${product.accent}`}>{s.label}</h4>
+            <p>{s.value}</p>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <div class="sp-cta">
+      {product.cta.href ? (
+        <a class="btn bp" href={product.cta.href}>{product.cta.label}</a>
+      ) : (
+        <form class="sp-waitlist" data-waitlist={product.slug}>
+          <input type="email" name="email" placeholder="your@email.com" aria-label="Email address" required />
+          <button type="submit">{product.cta.label}</button>
+        </form>
+      )}
+      {product.cta.note && <span style="font-size:.72rem;color:var(--txd)">{product.cta.note}</span>}
+    </div>
+  </div>
+
+  <nav class="page-next" aria-label="Related pages">
+    <a href="/platform/"><h3>How it works</h3><p>Mechanism, targets, and the Lytica → Loria cascade.</p></a>
+    <a href="/shop/"><h3>Everything else</h3><p>The full Fasolati product line.</p></a>
+    <a href="/science/"><h3>Inside the Black Box</h3><p>The AI that decides when to use this.</p></a>
+  </nav>
+
+  <!-- Loads on all four product pages; a no-op where there is no
+       [data-waitlist] form, since Loria's CTA is a link rather than a form. -->
+  <script src="../scripts/waitlist.js"></script>
+</Base>

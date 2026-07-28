@@ -1,0 +1,26 @@
+{
+  "name": "fasolati",
+  "version": "1.0.0",
+  "description": "Fasolati — the inflammation operating system (fasolati.life)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gengyveusa/fasolati.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gengyveusa/fasolati/issues"
+  },
+  "homepage": "https://github.com/gengyveusa/fasolati#readme",
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.3",
+    "astro": "5.18.2"
+  },
+  "type": "module"
+}

@@ -1,0 +1,140 @@
+/**
+ * Interior page layout.
+ *
+ * The content on these pages — the platform breakdown, Inside the Black Box,
+ * the shop, the about story — is byte-for-byte the markup that used to live
+ * inside `.products-overlay`, `.bb-overlay`, `.shop-overlay` and
+ * `.about-overlay`. Those wrappers were `position:fixed; inset:0` panels that
+ * JS faded in over the home page.
+ *
+ * The inner containers (`.bb-inner`, `.products-inner`, …) already carry the
+ * max-width and padding, so the only thing the wrappers contributed was the
+ * fixed positioning. Dropping them is the whole change: the same markup now
+ * sits in normal document flow at its own URL. That is why global.css is
+ * almost untouched — the design didn't need reworking, it needed an address.
+ */
+
+/* Clears the fixed nav. The overlays used to start at viewport top with
+   `padding:80px 32px` on the inner container; in flow that padding now sits
+   under the nav bar, so the difference is made up here rather than by editing
+   every inner container. */
+main.page {
+  position: relative;
+  z-index: 1;
+  padding-top: 24px;
+}
+
+/* The home page's own sections manage their spacing, and the nav is
+   transparent over the hero by design. */
+main:not(.page) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Back link ─────────────────────────────────────────────────────────── */
+/* Every interior page ends up in search results on its own now, so a visitor
+   can arrive anywhere. Each needs a way back to the root that isn't the nav. */
+.page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--txd);
+  transition: color 0.3s;
+}
+.page-back:hover { color: var(--t); }
+
+/* ── Cross-links between pages ─────────────────────────────────────────── */
+/* Splitting one URL into ten only helps if the ten are connected: internal
+   links are how both a reader and a crawler discover that /loria/ exists. */
+.page-next {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 32px 96px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+  gap: 14px;
+}
+.page-next a {
+  display: block;
+  padding: 18px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.015);
+  transition: border-color 0.3s, background 0.3s;
+}
+.page-next a:hover {
+  border-color: rgba(0, 232, 204, 0.3);
+  background: rgba(0, 232, 204, 0.03);
+}
+.page-next h3 {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--w);
+  margin-bottom: 5px;
+}
+.page-next p {
+  font-size: 0.75rem;
+  color: var(--txd);
+  line-height: 1.65;
+}
+
+/* ── Product pages ─────────────────────────────────────────────────────── */
+.pp-status {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--txd);
+  margin-bottom: 22px;
+}
+.pp-status.live {
+  color: var(--loria);
+  border-color: rgba(74, 237, 196, 0.3);
+  background: rgba(74, 237, 196, 0.06);
+}
+.pp-specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+  margin: 32px 0;
+}
+.pp-spec {
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.015);
+}
+.pp-spec h4 {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.pp-spec p { font-size: 0.82rem; color: var(--tx); line-height: 1.7; }
+
+/* ── 404 ───────────────────────────────────────────────────────────────── */
+.nf {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 140px 32px 120px;
+  text-align: center;
+}
+.nf h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: var(--w);
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+}
+.nf p { font-size: 0.92rem; color: var(--tx); line-height: 1.9; margin-bottom: 32px; }
+
+@media (max-width: 720px) {
+  .page-next { padding: 0 20px 72px; }
+}

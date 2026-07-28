@@ -1,0 +1,84 @@
+---
+import Base from '../layouts/Base.astro';
+import { PRODUCTS } from '../data/products.ts';
+import { SITE, breadcrumb } from '../data/site.ts';
+
+/**
+ * The shop index.
+ *
+ * Rendered from src/data/products.ts rather than hand-written markup, so the
+ * cards here, the four product pages, and the Product/Offer schema on each can
+ * no longer disagree with one another. Every card is now a link to a real
+ * page instead of a section of an overlay.
+ */
+
+const title = 'Shop — Fasolati Oral & Gut Health Products';
+const description =
+  'Clinical-grade oral and gut health from Fasolati. Loria daily oral rinse available now; Lytica, the Gut Restoration Stack, and Fasolati Engine beta access open for waitlist.';
+
+const schema = [
+  {
+    '@type': 'CollectionPage',
+    '@id': `${SITE}/shop/`,
+    url: `${SITE}/shop/`,
+    name: title,
+    description,
+    isPartOf: { '@id': `${SITE}/#website` },
+  },
+  {
+    '@type': 'ItemList',
+    '@id': `${SITE}/shop/#products`,
+    name: 'Fasolati products',
+    itemListElement: PRODUCTS.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: p.name,
+      url: `${SITE}/${p.slug}/`,
+    })),
+  },
+  breadcrumb('Shop', '/shop/'),
+];
+---
+<Base title={title} description={description} path="/shop/" schema={schema}>
+  <div class="shop-inner">
+    <div class="shop-hero">
+      <h1>The Fasolati Shop</h1>
+      <p>Clinical-grade oral and gut health — available now or join the waitlist for early access to products in development.</p>
+    </div>
+
+    {PRODUCTS.map((p) => (
+      <article class={`shop-product${p.availability === 'available' ? ' featured' : ''}`}>
+        <span class={`sp-badge ${p.availability === 'available' ? 'live' : 'soon'}`}>
+          {p.availability === 'available' ? '● ' : ''}{p.status}
+        </span>
+        <h2 class="sp-name" style={`color:${p.accent}`}>{p.name}</h2>
+        <p class="sp-tagline">{p.tagline}</p>
+        <p class="sp-body">{p.body}</p>
+
+        {p.specs && (
+          <div class="sp-details">
+            {p.specs.map((s) => (
+              <div class="sp-detail">
+                <h4 style={`color:${p.accent}`}>{s.label}</h4>
+                <p>{s.value}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div class="sp-cta">
+          <a class="btn bp" href={`/${p.slug}/`}>
+            {p.availability === 'available' ? `About ${p.shortName} →` : `${p.cta.label} →`}
+          </a>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <nav class="page-next" aria-label="Related pages">
+    <a href="/platform/"><h3>Therapeutic Platform</h3><p>The mechanisms behind each formulation.</p></a>
+    <a href="/science/"><h3>Inside the Black Box</h3><p>How the AI that writes your protocol works.</p></a>
+    <a href="/about/"><h3>About Fasolati</h3><p>Who built this, and why.</p></a>
+  </nav>
+</Base>
+

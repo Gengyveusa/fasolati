@@ -1,0 +1,90 @@
+---
+import Nav from '../components/Nav.astro';
+import { SITE, DEFAULTS, BASE_GRAPH } from '../data/site.ts';
+import '../styles/global.css';
+import '../styles/pages.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Site-root-relative, with a trailing slash — "/loria/". */
+  path: string;
+  /** Extra schema.org nodes merged into the shared @graph. */
+  schema?: Record<string, unknown>[];
+  /** The home page keeps its own hero; interior pages get top padding. */
+  interior?: boolean;
+  /** Pages with no standalone search intent — the contact form, 404. */
+  noindex?: boolean;
+}
+
+const { title, description, path, schema = [], interior = true, noindex = false } = Astro.props;
+
+/**
+ * Canonical, og:url and the sitemap all derive from `site` in
+ * astro.config.mjs and the page's own `path`. The hand-written page pointed
+ * every one of these at a domain that does not resolve and that the portfolio
+ * does not own, so the whole site consolidated its ranking signals onto
+ * nothing. Deriving them from one constant is what stops that recurring — and
+ * the deploy workflow greps the built output for that domain, so a
+ * reintroduction fails the build rather than shipping.
+ *
+ * This note lives in the frontmatter rather than in an HTML comment: comments
+ * in the template are served to every visitor and crawler, and one naming the
+ * wrong domain would trip the very check it describes.
+ */
+const canonical = `${SITE}${path}`;
+const graph = [...BASE_GRAPH, ...schema];
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+
+<link rel="canonical" href={canonical} />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Fasolati" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content={DEFAULTS.ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Fasolati — the inflammation operating system. Mouth and gut as origin nodes." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={DEFAULTS.ogImage} />
+<meta name="author" content={DEFAULTS.author} />
+<meta
+  name="robots"
+  content={noindex
+    ? 'noindex, follow'
+    : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
+/>
+
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+<script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })} />
+
+<!-- HubSpot Tracking Code -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/243149587.js"></script>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+
+<Nav />
+
+<main class={interior ? 'page' : undefined}>
+  <slot />
+</main>
+
+<footer><span style="color:var(--t)">Fasolati</span> · Oral · Gut · Systemic — One Operating System</footer>
+
+<script src="../scripts/site.js"></script>
+</body>
+</html>
