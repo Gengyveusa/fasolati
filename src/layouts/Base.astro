@@ -19,6 +19,19 @@ interface Props {
 
 const { title, description, path, schema = [], interior = true, noindex = false } = Astro.props;
 
+/**
+ * Canonical, og:url and the sitemap all derive from `site` in
+ * astro.config.mjs and the page's own `path`. The hand-written page pointed
+ * every one of these at a domain that does not resolve and that the portfolio
+ * does not own, so the whole site consolidated its ranking signals onto
+ * nothing. Deriving them from one constant is what stops that recurring — and
+ * the deploy workflow greps the built output for that domain, so a
+ * reintroduction fails the build rather than shipping.
+ *
+ * This note lives in the frontmatter rather than in an HTML comment: comments
+ * in the template are served to every visitor and crawler, and one naming the
+ * wrong domain would trip the very check it describes.
+ */
 const canonical = `${SITE}${path}`;
 const graph = [...BASE_GRAPH, ...schema];
 ---
@@ -30,14 +43,6 @@ const graph = [...BASE_GRAPH, ...schema];
 <title>{title}</title>
 <meta name="description" content={description} />
 
-<!--
-  Canonical, Open Graph url and the sitemap all derive from `site` in
-  astro.config.mjs and the page's own `path`. The hand-written page pointed
-  every one of these at https://fasolati.com — a domain that does not resolve
-  and that the portfolio does not own — so the whole site consolidated its
-  ranking signals onto nothing. Deriving them from one constant is what stops
-  that from being possible again.
--->
 <link rel="canonical" href={canonical} />
 <meta property="og:url" content={canonical} />
 <meta property="og:title" content={title} />
