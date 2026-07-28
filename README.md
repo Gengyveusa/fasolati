@@ -41,6 +41,23 @@ engine — including Loria, the only product actually for sale.
 - `src/scripts/` — `site.js` (all pages), plus `framework.js`,
   `partner-form.js` and `waitlist.js`, which load only where they are used.
 
+## Getting new pages indexed
+
+Google: submit `https://fasolati.life/sitemap-index.xml` in Search Console.
+There is no API for this on our side — it is a manual step in the GSC UI.
+
+Everyone else — Bing (and therefore Copilot), Yandex, Seznam, Naver — accepts
+a direct push:
+
+```bash
+npm run indexnow          # submit every URL in the live sitemap
+npm run indexnow -- --dry # print the payload, submit nothing
+```
+
+Ownership is proven by `public/<key>.txt`, which is deployed with the site.
+The script reads the live sitemap rather than a hardcoded list, so it can
+never push `/partner/` (noindex) or a URL that no longer exists.
+
 ## Deployment
 
 `.github/workflows/deploy.yml` builds on push to `main` and publishes `dist/`.

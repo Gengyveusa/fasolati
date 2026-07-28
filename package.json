@@ -1,11 +1,12 @@
 {
   "name": "fasolati",
   "version": "1.0.0",
-  "description": "Fasolati — the inflammation operating system (fasolati.life)",
+  "description": "Fasolati \u2014 the inflammation operating system (fasolati.life)",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "repository": {
     "type": "git",
