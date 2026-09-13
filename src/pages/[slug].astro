@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { PRODUCTS, productSchema } from '../data/products.ts';
 import { SITE, breadcrumb } from '../data/site.ts';
+import LifeBoardDemo from '../components/LifeBoardDemo.astro';
 
 /** Stable information pages: /loria/, /lytica/, /gut-stack/, /engine/. */
 
@@ -38,38 +39,39 @@ const schema = [
       <div class="pp-specs">
         {product.specs.map((s) => (
           <div class="pp-spec">
-            <h4 style={`color:${product.accent}`}>{s.label}</h4>
+            <h2 style={`color:${product.accent}`}>{s.label}</h2>
             <p>{s.value}</p>
           </div>
         ))}
       </div>
     )}
 
+    {product.slug === 'engine' && (
+      <LifeBoardDemo />
+      <p class="sp-body"><a href="/science/#life-board">Read the Life Board’s proposed evidence and interpretation requirements in the Science Spine →</a></p>
+    )}
     <div class="sp-cta">
       {product.cta.href ? (
         <a class="btn bp" href={product.cta.href}>{product.cta.label}</a>
       ) : (
-        <form class="sp-waitlist" data-waitlist={product.slug} aria-describedby="inquiry-privacy">
-          <input type="email" name="email" placeholder="your@email.com" aria-label="Email address for development updates" autocomplete="email" required />
-          <button type="submit">{product.cta.label}</button>
+        <form class="sp-waitlist" method="post" action="/partner/" data-waitlist={product.slug} aria-describedby="inquiry-privacy">
+          <input type="email" name="email" placeholder="your@email.com" aria-label="Email address for development updates" autocomplete="email" maxlength="254" required disabled />
+          <button type="submit" disabled>{product.cta.label}</button>
         </form>
       )}
       {product.cta.note && <span class="pf-note">{product.cta.note}</span>}
     </div>
     {!product.cta.href && (
       <p class="form-status" id="update-status" role="status" aria-live="polite"></p>
-      <p class="pf-note" id="inquiry-privacy">By requesting updates, you ask Fasolati to contact you about this development. Your email and product interest are sent through HubSpot. We confirm acceptance only after the service responds successfully. Please do not send health records.</p>
+      <p class="pf-note" id="inquiry-privacy">By requesting updates, you ask Fasolati to contact you about this development. Your email and product interest are sent through HubSpot. We confirm acceptance only after the service responds successfully. Please do not send health records. <a href="/privacy/">How this website handles information</a>.</p>
       <noscript><p class="pf-note">JavaScript is required to request development updates.</p></noscript>
-    )}
-    {product.slug === 'engine' && (
-      <p class="sp-body"><a href="/science/#life-board">Read the Life Board’s proposed evidence and interpretation requirements in the Science Spine →</a></p>
     )}
   </div>
 
   <nav class="page-next" aria-label="Related pages">
-    <a href="/platform/"><h3>The Platform</h3><p>Product information and development directions.</p></a>
-    <a href="/shop/"><h3>Products & Concepts</h3><p>Explore the rest of the Fasolati portfolio.</p></a>
-    <a href="/science/"><h3>Science Spine</h3><p>The evidence, its limits and the work ahead.</p></a>
+    <a href="/platform/"><span class="related-page-title">The Platform</span><p>Product information and development directions.</p></a>
+    <a href="/shop/"><span class="related-page-title">Products & Concepts</span><p>Explore the rest of the Fasolati portfolio.</p></a>
+    <a href="/science/"><span class="related-page-title">Science Spine</span><p>The evidence, its limits and the work ahead.</p></a>
   </nav>
 
   <script src="../scripts/waitlist.js"></script>

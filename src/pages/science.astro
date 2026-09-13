@@ -18,7 +18,12 @@ const schema = [{
       <p class="science-lede">Not just which bacteria are present.<br />What they release. Where it goes. What it does.</p>
       <p class="section-intro">Fasolati’s science spine asks whether a well-characterized oral bacterial effector measurement can add useful information beyond a periodontal examination, bacterial burden, and conventional risk measures.</p>
       <div class="boundary-note"><strong>Development status.</strong> The OMV assay and individualized systemic-effect interpretations described here remain research proposals. The evidence on this page does not validate a Fasolati oral-rinse test for cardiovascular, neurological, cancer, or other personal disease-risk prediction.</div>
+      <div class="review-meta"><span>Selected evidence, not a systematic review</span><span>6 mechanisms with source-level boundaries</span><span>No validated personal-risk score</span></div>
     </header>
+    <div class="reader-orientation">
+      <div><h2>Here for the big picture?</h2><p>Start with the <a href="#human-evidence">human evidence</a> and see how the <a href="/engine/#demo-title">Life Board handles uncertainty</a>.</p></div>
+      <div><h2>Here to test the idea?</h2><p>Inspect a mechanism, follow its paper, then examine the <a href="#experiments">experiments that could change the hypothesis</a>.</p></div>
+    </div>
     <nav class="science-index" aria-label="Science page contents">
       <a href="#mapping">Mechanism map</a><a href="#human-evidence">Human evidence</a><a href="#measurement">Measurement</a><a href="#experiments">Experiments</a><a href="#life-board">Life Board</a>
     </nav>
@@ -28,18 +33,25 @@ const schema = [{
       <h2>Promising mechanisms.<br />Specific boundaries.</h2>
       <p>Outer membrane vesicles are a subset of bacterial extracellular vesicles, or bEVs. Vesicle identity requires more than a particle’s size, and an enriched preparation can contain non-vesicular material. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10850029/" target="_blank" rel="noopener noreferrer">MISEV2023 guidance</a>.</p>
       <p>This map distinguishes the preparation tested, the reported response, and the claim it cannot support. Open a row to inspect the experimental setting and its limits.</p>
-      <div class="mechanism-list">
+      <div class="evidence-tools" hidden>
+        <label for="evidence-search">Find a mechanism, organism, or experimental setting</label>
+        <div class="evidence-search-row"><input id="evidence-search" type="search" placeholder="Try liver, RNA, or human tissue" aria-controls="mechanism-results" autocomplete="off" /><button type="button" data-reset hidden>Clear</button></div>
+        <div class="evidence-actions"><p id="evidence-count" role="status" aria-live="polite">6 of 6 mechanisms</p><button type="button" data-expand>Expand visible</button></div>
+      </div>
+      <div class="mechanism-list" id="mechanism-results">
         {MECHANISMS.map((m, i) => (
-          <details class="mechanism">
+          <details class="mechanism" id={m.id}>
             <summary><span class="mechanism-num">0{i + 1}</span><span class="mechanism-name"><strong>{m.name}</strong><span>{m.route}</span></span><span class="evidence-tag">{m.setting}</span><span class="expand-sign" aria-hidden="true">+</span></summary>
             <div class="mechanism-body">
               <div><h3>What was observed</h3><p>{m.finding} <a href={m.url} target="_blank" rel="noopener noreferrer">{m.source}</a>.</p></div>
-              <div><h3>What that does not establish</h3><p>{m.boundary}</p></div>
-              <div class="mechanism-use"><h3>Research use</h3><p>{m.use}</p></div>
+              <div><h3>What that does not establish</h3><p>{m.boundary} {m.boundaryUrl && <a href={m.boundaryUrl} target="_blank" rel="noopener noreferrer">Read the marker-specificity discussion</a>}</p></div>
+              <div class="mechanism-use"><h3>Research use</h3><p>{m.use}</p><a class="mechanism-permalink" href={`#${m.id}`}>Direct link to this mechanism →</a></div>
             </div>
           </details>
         ))}
       </div>
+      <p class="evidence-empty" id="evidence-empty" hidden>No mechanisms match this search. Try an organism, tissue, or experimental setting, or clear the search to see all six.</p>
+      <a class="evidence-download" href="/evidence-map.json" download="fasolati-evidence-map.json">Download the cited map (JSON)</a>
       <p class="boundary-note">An experimental effect is not a diagnosis. Evidence about whole bacteria or an isolated molecule is not automatically evidence about an intact vesicle carrying that molecule.</p>
     </section>
 
@@ -48,11 +60,11 @@ const schema = [{
       <h2>Human evidence exists.<br />Oral-source validation is a separate question.</h2>
       <div class="evidence-pair">
         <div><span class="evidence-tag">Human measurement</span><h3>Circulating bacterial vesicles</h3><p>Tulkens and colleagues characterized bacterial-EV-associated plasma fractions in 49 people, including groups with intestinal-barrier dysfunction. The study provides a measurement precedent, not a human oral-to-blood source trace. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6943244/" target="_blank" rel="noopener noreferrer">Tulkens et al.</a></p><p>Ou and colleagues used single-particle LPS/LTA analysis in human cohorts alongside mouse source-discrimination experiments. The paper also discusses residual lipoprotein contamination and unresolved transport questions. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10696524/" target="_blank" rel="noopener noreferrer">Ou et al.</a></p></div>
-        <div><span class="evidence-tag">Human intervention</span><h3>Periodontal care and systemic markers</h3><p>A Cochrane review found a 0.43 percentage-point reduction in HbA1c at three to four months after periodontal treatment in people with diabetes and periodontitis, with moderate-certainty evidence. This is not evidence that OMVs mediated the effect. <a href="https://pubmed.ncbi.nlm.nih.gov/35420698/" target="_blank" rel="noopener noreferrer">Simpson et al., 2022</a>.</p><p>A separate meta-analysis reported lower CRP after periodontal treatment, with substantial heterogeneity. It does not establish that a Fasolati formulation changes inflammation through a vesicle mechanism. <a href="https://pubmed.ncbi.nlm.nih.gov/35946825/" target="_blank" rel="noopener noreferrer">Luthra et al., 2023</a>.</p></div>
+        <div><span class="evidence-tag">Human intervention</span><h3>Periodontal care and systemic markers</h3><p>In people with diabetes and periodontitis, a Cochrane review found HbA1c was a mean 0.43 percentage points lower after periodontal treatment than with no active treatment or usual care at three to four months (95% CI: 0.28 to 0.59 points lower; moderate-certainty evidence). This is not evidence that OMVs mediated the effect. <a href="https://pubmed.ncbi.nlm.nih.gov/35420698/" target="_blank" rel="noopener noreferrer">Simpson et al., 2022</a>.</p><p>A separate meta-analysis reported lower CRP at six months after periodontal treatment, with substantial heterogeneity. Its smaller analysis at twelve months or longer did not detect an effect; longer-term evidence remained limited. This does not establish that a Fasolati formulation changes inflammation through a vesicle mechanism. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10087558/" target="_blank" rel="noopener noreferrer">Luthra et al., 2023</a>.</p></div>
       </div>
       <details class="research-detail">
-        <summary>A clinical counterweight: the GAIN trial</summary>
-        <div><p>The gingipain-inhibitor GAIN trial enrolled 643 participants and missed both co-primary endpoints in the overall cohort. A sponsor-reported salivary-Pg-positive subgroup signal on cognition did not establish benefit on the functional co-primary, and the program encountered liver-safety concerns and a full IND hold. <a href="https://www.sec.gov/Archives/edgar/data/1662774/000095017022009040/crtx-20220331.htm" target="_blank" rel="noopener noreferrer">Cortexyme’s 2022 filing</a>.</p><p>This does not disprove all oral-systemic mechanisms. It does show why mechanistic plausibility cannot stand in for successful human treatment, and the subgroup does not validate OMV-based stratification.</p></div>
+        <summary>A historical clinical counterweight: the GAIN trial</summary>
+        <div><p>The gingipain-inhibitor GAIN trial enrolled 643 participants and missed both co-primary endpoints in the overall cohort. A sponsor-reported salivary-Pg-positive subgroup signal on cognition did not establish benefit on the functional co-primary. Cortexyme’s 2022 filing described liver-safety concerns and a full IND hold on atuzaginstat dated January 25, 2022. <a href="https://www.sec.gov/Archives/edgar/data/1662774/000095017022009040/crtx-20220331.htm" target="_blank" rel="noopener noreferrer">Read the historical filing</a>.</p><p>This is a historical trial example, not a statement about the current status of every gingipain-inhibitor program. It does not disprove all oral-systemic mechanisms, but it shows why mechanistic plausibility cannot stand in for successful human treatment. The subgroup does not validate OMV-based stratification.</p></div>
       </details>
       <p>Within the literature reviewed for this spine, no verified human calibration from a Fasolati oral-rinse vesicle measurement to an individual systemic outcome was located. That is a bounded review finding, not proof that no relevant unpublished or unlocated study exists.</p>
     </section>
@@ -106,4 +118,5 @@ const schema = [{
       <p class="review-note">Review scope: selected primary vesicle studies, human bEV measurement studies, clinical intervention reviews, and measurement guidance. This is an evidence-informed research architecture, not an exhaustive systematic review.</p>
     </section>
   </article>
+  <script src="../scripts/science-explorer.js"></script>
 </Base>

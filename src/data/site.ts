@@ -40,7 +40,6 @@ export const ORGANIZATION = {
     'Chronic inflammation',
     'Periodontal medicine',
     'Gut microbiome',
-    'Hyaluronic acid mucosal barriers',
     'Biofilm disruption',
     'Bacterial extracellular vesicles',
   ],
@@ -59,13 +58,11 @@ export const FOUNDER = {
   honorificSuffix: 'DDS, MD, PhD, FACS',
   jobTitle: 'Founder',
   description:
-    'Oral and maxillofacial surgeon-scientist. Residency Program Director in Oral and Maxillofacial Surgery at the San Francisco VA Health Care System and clinical faculty at the University of California, San Francisco.',
+    'Oral and maxillofacial surgeon, UCSF Dental Center faculty member, and founder of Fasolati.',
   worksFor: { '@id': `${SITE}/#organization` },
   sameAs: [
     'https://www.linkedin.com/in/stephen-thaddeus-connelly-8954024b',
     'https://www.ucsfdentalcenter.org/providers/stephen-connelly-dds-md-phd',
-    'https://www.ovnnexus.com/',
-    'https://thequantumdistillery.com/',
   ],
 };
 

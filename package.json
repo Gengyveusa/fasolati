@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "validate:build": "node scripts/validate-build.mjs",
+    "test:build-validation": "node --test scripts/validate-build.test.mjs",
+    "audit": "npm audit --audit-level=low",
     "preview": "astro preview",
     "indexnow": "node scripts/indexnow.mjs"
   },
@@ -21,7 +24,14 @@
   "homepage": "https://github.com/gengyveusa/fasolati#readme",
   "dependencies": {
     "@astrojs/sitemap": "3.7.3",
-    "astro": "5.18.2"
+    "astro": "7.3.2"
+  },
+  "devDependencies": {
+    "parse5": "8.0.0"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=9.6.5"
   },
   "type": "module"
 }

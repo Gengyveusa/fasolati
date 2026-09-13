@@ -1,5 +1,7 @@
 # Fasolati science-spine website update
 
+Historical record of the initial science-spine content release. The subsequent local improvement candidate, including removal of the background tracking loader and the completed dependency migration, is documented in `quality-pass.md` and `build-maintenance.md`.
+
 Prepared September 12, 2026. This release replaces unsupported clinical and operational promises with an evidence-linked public research architecture while preserving the existing domain, product routes, and brand identity.
 
 ## Content scope
@@ -37,6 +39,8 @@ No assertion is made about live deployment, live lead delivery, clinical validit
 ## Outstanding maintenance
 
 The existing dependency audit reports six advisories: one critical, four high, and one low. Packages named in the audit are Astro, esbuild, js-yaml, nanoid, sharp, and svgo. The suggested Astro remediation is a major-version upgrade; dependency versions were not changed in this content release. This finding concerns the dependency tree, not a demonstrated exploit against the static published pages. A separate dependency upgrade and regression-testing pass remains warranted.
+
+Subsequent quality-pass note: the paragraph above records the initial release state. The local quality-pass branch upgrades Astro to 7.3.2 and Node to 22, with a clean-install audit reporting zero vulnerabilities. See `build-maintenance.md` for the actual advisory ranges, tested migration, and remaining Pages configuration correction. This does not mean those changes have already been published.
 
 ## Release gate
 

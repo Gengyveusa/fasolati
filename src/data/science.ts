@@ -1,25 +1,28 @@
 export const MECHANISMS = [
   {
+    id: 'endothelial-barrier',
     name: 'Endothelial barrier',
     route: 'P. gingivalis OMVs / gingipains → barrier effects',
     setting: 'Cells + zebrafish',
-    finding: 'Wild-type and gingipain-deficient OMV comparisons supported a gingipain contribution to endothelial-barrier disruption, with PECAM-1 loss associated with the response.',
+    finding: 'Wild-type and gingipain-deficient OMV comparisons supported a gingipain contribution to endothelial-barrier disruption, with PECAM-1 loss associated with the response. The zebrafish experiments used direct systemic injection, not oral exposure.',
     boundary: 'This does not calibrate an oral-rinse measurement to vascular leak, heart attack, or stroke risk in a person.',
     use: 'A candidate barrier-response benchmark, with preparation, cargo, and exposure controls.',
     source: 'Farrugia et al., 2020',
-    url: 'https://journals.sagepub.com/doi/10.1177/0022034520943187'
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7684789/'
   },
   {
+    id: 'hepatic-insulin-signaling',
     name: 'Hepatic insulin signaling',
     route: 'P. gingivalis OMVs → liver and glycogen signaling',
     setting: 'Mice + cells',
-    finding: 'Seyama and colleagues reported liver translocation in mice and gingipain-dependent effects on insulin-stimulated Akt/GSK-3β signaling and glycogen synthesis in experimental systems.',
+    finding: 'Seyama and colleagues reported liver translocation and reduced insulin-responsive hepatic glycogen synthesis in mice. In HepG2 cells, OMVs attenuated insulin-stimulated Akt/GSK-3β signaling in a gingipain-dependent manner.',
     boundary: 'This is not proof that a person’s glucose excursions are caused by oral vesicles, and it does not establish the same effect in muscle or adipose tissue.',
     use: 'A focused metabolic mechanism to test at exposure levels relevant to the intended human question.',
     source: 'Seyama et al., 2020',
     url: 'https://pubmed.ncbi.nlm.nih.gov/32088316/'
   },
   {
+    id: 'neuroinflammatory-responses',
     name: 'Neuroinflammatory responses',
     route: 'P. gingivalis OMV exposure → brain-related phenotypes',
     setting: 'Mouse experiment',
@@ -30,6 +33,7 @@ export const MECHANISMS = [
     url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9397999/'
   },
   {
+    id: 'innate-immune-activation',
     name: 'Innate immune activation',
     route: 'Periodontal-bacterial OMVs → receptor responses',
     setting: 'Mechanistic assays',
@@ -40,6 +44,7 @@ export const MECHANISMS = [
     url: 'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0151967'
   },
   {
+    id: 'vesicular-rna',
     name: 'Vesicular RNA',
     route: 'A. actinomycetemcomitans OMV RNA → host-cell responses',
     setting: 'Cells + mouse delivery',
@@ -50,13 +55,15 @@ export const MECHANISMS = [
     url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6894046/'
   },
   {
+    id: 'fusobacterium-tissue-interactions',
     name: 'Fusobacterium and tissue interactions',
     route: 'F. nucleatum EVs / FomA → adhesion and colonization',
     setting: 'Human tissue + models',
-    finding: 'Zheng and colleagues reported EV enrichment in clinical colorectal-cancer tissue and experimental FomA-transfer effects on bacterial adhesion, colonization, and tumor progression in models.',
-    boundary: 'Human tissue enrichment and model mechanisms are separate observations. They do not establish oral origin in an individual or validate an oral-rinse cancer predictor.',
+    finding: 'In five paired colorectal-cancer and adjacent-normal tissue samples, Zheng and colleagues found greater FomA signal in tumor-derived EV-enriched fractions, interpreted as F. nucleatum EV enrichment. Separate cell and mouse experiments supported FomA-transfer effects on adhesion, colonization, and tumor progression.',
+    boundary: 'FomA is not a vesicle-exclusive marker. Human tissue enrichment and model mechanisms are separate observations; they do not establish oral origin in an individual or validate an oral-rinse cancer predictor.',
+    boundaryUrl: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12003102/',
     use: 'A specific tissue-interaction hypothesis. Do not substitute whole-bacterium FadA studies for vesicle-specific FomA evidence.',
     source: 'Zheng et al., 2024',
-    url: 'https://pubmed.ncbi.nlm.nih.gov/39303027/'
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11414721/'
   }
 ];
