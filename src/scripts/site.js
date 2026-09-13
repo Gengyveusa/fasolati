@@ -56,19 +56,29 @@ if ('IntersectionObserver' in window && !reducedMotion.matches) {
 
 // Preserve the original brand's ambient particle field, with reduced-motion support.
 const canvas = document.getElementById('particle-canvas');
-if (canvas && !reducedMotion.matches) {
+if (canvas) {
   const ctx = canvas.getContext('2d');
-  let width = 0, height = 0;
+  let width = 0, height = 0, frame = null;
   const points = Array.from({length: 65}, () => ({x: Math.random(), y: Math.random(), r: Math.random() * 1.5 + 0.5}));
   const resize = () => { width = canvas.width = innerWidth; height = canvas.height = innerHeight; };
   resize(); window.addEventListener('resize', resize);
   const draw = () => {
+    if (document.hidden || reducedMotion.matches) { frame = null; return; }
     if (ctx) {
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = document.documentElement.dataset.theme === 'light' ? 'rgba(0,105,95,0.16)' : 'rgba(0,232,204,0.16)';
       points.forEach(p => { p.y = (p.y + 0.00005) % 1; ctx.beginPath(); ctx.arc(p.x * width, p.y * height, p.r, 0, Math.PI * 2); ctx.fill(); });
     }
-    requestAnimationFrame(draw);
+    frame = requestAnimationFrame(draw);
   };
-  draw();
+  const syncMotion = () => {
+    if (document.hidden || reducedMotion.matches) {
+      if (frame !== null) cancelAnimationFrame(frame);
+      frame = null;
+      if (reducedMotion.matches) ctx?.clearRect(0, 0, width, height);
+    } else if (frame === null) draw();
+  };
+  document.addEventListener('visibilitychange', syncMotion);
+  reducedMotion.addEventListener('change', syncMotion);
+  syncMotion();
 }

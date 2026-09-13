@@ -1,0 +1,33 @@
+<section class="board-demo" aria-labelledby="demo-title">
+  <header class="demo-intro">
+    <p class="section-kicker">An interactive design study</p>
+    <h2 id="demo-title">No score to hide behind.</h2>
+    <p>Explore how a Life Board could handle incomplete or conflicting information. These are fictional, qualitative examples, not patient data, measured results, or medical recommendations.</p>
+  </header>
+  <div class="demo-controls" role="group" aria-label="Choose an illustrative scenario" hidden>
+    <button type="button" data-scenario="missing" aria-pressed="true">Missing evidence</button>
+    <button type="button" data-scenario="local" aria-pressed="false">A local change</button>
+    <button type="button" data-scenario="discordant" aria-pressed="false">Signals disagree</button>
+  </div>
+  <div class="demo-workspace">
+    <div class="demo-observations" aria-labelledby="observations-title">
+      <div class="board-head"><h3 id="observations-title">Observation channels</h3><span>Illustrative only</span></div>
+      <dl>
+        <div><dt>Oral</dt><dd data-demo="oral">No comparable pair of samples</dd></div>
+        <div><dt>Gut</dt><dd data-demo="gut">Not measured</dd></div>
+        <div><dt>Host response</dt><dd data-demo="host">Not measured</dd></div>
+      </dl>
+      <p class="demo-no-score">Separate channels. No composite health score.</p>
+    </div>
+    <div class="demo-interpretation" aria-live="polite" aria-atomic="true">
+      <span class="section-kicker" data-demo="status">Not interpretable yet</span>
+      <h3 data-demo="title">Missing data stays missing.</h3>
+      <p data-demo="reading">Without comparable observations, there is no defensible trend. The interface should say that rather than estimate a result.</p>
+      <div class="demo-next"><h4>Next research question</h4><p data-demo="next">What specimen, timing, and repeatability requirements would make a comparison meaningful?</p></div>
+      <details class="demo-boundary"><summary>Why no stronger conclusion?</summary><p data-demo="boundary">A model cannot supply a measurement that was never taken. “Unknown” is a legitimate output, not a failure to be concealed.</p><a href="/science/#measurement">Inspect the measurement requirements →</a></details>
+    </div>
+  </div>
+  <noscript><p class="boundary-note">This example is shown in its default state. JavaScript enables the other scenarios; no information is sent from this demonstration.</p></noscript>
+  <p class="demo-footnote">The demonstration runs in this page. It accepts no health information and makes no clinical predictions.</p>
+</section>
+<script src="../scripts/life-board-demo.js"></script>

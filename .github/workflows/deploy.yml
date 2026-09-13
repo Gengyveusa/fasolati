@@ -1,80 +1,65 @@
 name: Deploy to GitHub Pages
 
-# The site is a build output now, not a checked-in file, so Pages has to run
-# the build rather than serve the branch.
-#
-# CUTOVER — this workflow does nothing until someone flips
-# Settings → Pages → Build and deployment → Source from "Deploy from a branch"
-# to "GitHub Actions". Until then Pages keeps serving the legacy root
-# index.html and the live site is untouched, which is deliberate: the switch
-# is one setting, and reverting it is the same setting.
+# Deploy the verified static output, never the legacy repository-root HTML.
+# Pages still needs a separately approved build_type=workflow setting change;
+# see docs/build-maintenance.md. Do not delete run history or the workflow.
 
 on:
   push:
     branches: [main]
-  # Build and verify on pull requests too, so the canonical/sitemap guard
-  # below actually gates the PR instead of only running after merge. The
-  # deploy job is guarded separately — a PR build publishes nothing.
   pull_request:
   workflow_dispatch:
 
+# PRs and builds receive no Pages-write or OIDC permissions.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# Never let two deploys race; let a newer push supersede a queued one.
+# Cancel outdated PR checks, but do not interrupt an active production deploy.
 concurrency:
   group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
 
+      - name: Audit all dependency severities
+        run: npm run audit
+
+      - name: Test the build validator
+        run: npm run test:build-validation
+
       - run: npm run build
 
-      # The build fails loudly rather than publishing a site whose canonical
-      # tags point somewhere the site does not live — the exact failure this
-      # migration was fixing. Cheap check, and it runs against the real output.
-      - name: Verify canonicals and sitemap
-        run: |
-          set -euo pipefail
-          test -f dist/index.html
-          test -f dist/CNAME
-          test -f dist/robots.txt
-          test -f dist/sitemap-index.xml
-          if grep -rl 'fasolati\.com' dist/ ; then
-            echo "::error::dist references fasolati.com — canonical target is fasolati.life"
-            exit 1
-          fi
-          for page in index loria lytica gut-stack engine shop platform science about; do
-            file="dist/$page/index.html"
-            [ "$page" = index ] && file="dist/index.html"
-            grep -q '<link rel="canonical" href="https://fasolati.life/' "$file" \
-              || { echo "::error::missing canonical in $file"; exit 1; }
-          done
-          echo "canonicals ok"
+      - name: Validate production output
+        run: npm run validate:build
 
       - uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         with:
           path: dist
 
   deploy:
     needs: build
-    # Only main deploys. A pull_request run stops after build + verify.
-    if: github.event_name != 'pull_request'
+    # This also blocks a manual workflow_dispatch from any non-main branch.
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

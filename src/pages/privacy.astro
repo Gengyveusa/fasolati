@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import { breadcrumb } from '../data/site.ts';
+---
+<Base title="Website data & privacy | Fasolati" description="How Fasolati's information website handles contact inquiries and development-update requests. This is not a health-record portal." path="/privacy/" schema={[breadcrumb('Website data & privacy', '/privacy/')]}>
+  <article class="science-article privacy-prose">
+    <header class="science-hero">
+      <p class="section-kicker">Website information</p>
+      <h1>Know what<br /><span>you are sharing.</span></h1>
+      <p class="science-lede">General inquiries only.<br />No health records.</p>
+      <p>This notice describes the information flows implemented on this website. It is not a description of a clinical service, a research-consent process, or a future Fasolati application.</p>
+    </header>
+    <h2>Contact inquiries</h2>
+    <p>The contact form sends your first and last name, email, selected role, and any optional phone number, organization, or message you enter to Fasolati's HubSpot form service. It also sends the name and canonical address of the contact page, without your browser's query string or fragment.</p>
+    <p>Submitting the form asks Fasolati to respond to that inquiry. Please do not include patient information, symptoms, lab results, medical records, or other sensitive personal information. This is not a clinical or emergency contact channel.</p>
+    <h2>Development updates</h2>
+    <p>A development-update request sends your email address, the development you selected, and its page address to the same form service. It asks for information about that development; it does not place an order, reserve access, or enroll you in a study.</p>
+    <h2>What happens in your browser</h2>
+    <p>The website's form scripts do not save your entries in local storage. Entries stay in the current page when delivery cannot be confirmed so that you can decide whether to retry. Closing or reloading that page may lose them; your browser's own autofill settings are separate.</p>
+    <p>The website template does not load HubSpot's background tracking script. The contact and update forms send requests when you submit them. The typeface is hosted with the site rather than requested from Google Fonts. Hosting and form-service requests can still involve provider logs; this is not a promise of anonymous browsing or a statement that those providers keep no logs.</p>
+    <p>The Life Board demonstration uses fictional examples within the page. It does not accept health data or calculate personal medical results.</p>
+    <h2>Delivery and follow-up</h2>
+    <p>An acceptance message means the form service returned a successful response. It does not confirm that a person read the inquiry or that an email reached an inbox. If a request times out, it may still have reached the service; retrying can create a duplicate.</p>
+    <p>For questions about an inquiry, access or deletion requests, or stopping development updates, use the <a href="/partner/">contact form</a> and state the request without adding sensitive information. This page does not assert a retention period or guarantee a particular response time.</p>
+    <p class="boundary-note">Any future handling of research specimens or health records would require a separate, appropriate process. Sending this website a message does not provide study consent or authorize clinical data sharing.</p>
+  </article>
+</Base>

@@ -4,6 +4,7 @@ import { SITE, DEFAULTS, BASE_GRAPH } from '../data/site.ts';
 import '../styles/global.css';
 import '../styles/pages.css';
 import '../styles/science.css';
+import '../styles/quality.css';
 
 interface Props {
   title: string;
@@ -41,6 +42,7 @@ const graph = [...BASE_GRAPH, ...schema];
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <title>{title}</title>
 <meta name="description" content={description} />
 
@@ -69,9 +71,6 @@ const graph = [...BASE_GRAPH, ...schema];
 
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <script is:inline>
   document.documentElement.dataset.theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
 </script>
@@ -79,8 +78,6 @@ const graph = [...BASE_GRAPH, ...schema];
 
 <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })} />
 
-<!-- HubSpot Tracking Code -->
-<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/243149587.js"></script>
 </head>
 <body>
 
@@ -97,7 +94,7 @@ const graph = [...BASE_GRAPH, ...schema];
 <footer>
   <p><span style="color:var(--t)">Fasolati</span> · Oral · Gut · Systemic</p>
   <p>Research and product development. This website does not provide individualized diagnosis or treatment.</p>
-  <p><a href="/science/">Science spine</a> · <a href="/platform/">Programs</a> · <a href="/partner/">Contact</a></p>
+  <p><a href="/science/">Science spine</a> · <a href="/platform/">Programs</a> · <a href="/partner/">Contact</a> · <a href="/privacy/">Website data & privacy</a></p>
 </footer>
 
 <script src="../scripts/site.js"></script>

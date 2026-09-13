@@ -24,7 +24,8 @@ const description =
     </div>
 
     <!-- FORM -->
-    <form class="partner-form" id="partner-form">
+    <form class="partner-form" id="partner-form" method="post" action="/partner/" aria-describedby="partner-privacy">
+      <fieldset class="form-fields" disabled aria-label="Inquiry details">
 
       <!-- Step 1: Role Selection -->
       <div style="margin-bottom:12px"><span class="pf-label">I'm interested as a<span class="req">*</span></span></div>
@@ -57,27 +58,28 @@ const description =
       </div>
 
       <!-- Role-specific value props -->
-      <div class="role-value" id="rv-clinician"><h4>For Clinicians</h4><p>Discuss intended uses, product-information needs and the evidence required for future evaluation. This inquiry does not enroll your practice in a live pilot or authorize a treatment protocol.</p></div>
-      <div class="role-value" id="rv-investor" style="border-left-color:var(--g)"><h4>For Investors</h4><p>Discuss the oral, gut and systemic development direction, its assumptions and the milestones needed to test them. Commercial ambition and demonstrated clinical utility are separate questions.</p></div>
-      <div class="role-value" id="rv-dso" style="border-left-color:var(--t)"><h4>For DSO Partners</h4><p>Share practice-network needs and explore potential collaboration. Product availability, implementation, evidence and any commercial terms would need a separate discussion.</p></div>
-      <div class="role-value" id="rv-researcher" style="border-left-color:var(--g)"><h4>For Researchers</h4><p>Discuss analyte definition, assay validation, source attribution or study design. Any future data or specimen collaboration would need appropriate consent, governance and review; this form does not grant data access.</p></div>
-      <div class="role-value" id="rv-general"><h4>Product & General Questions</h4><p>Ask about Loria’s current labeling, formulation or purchasing information, or request information about a development concept. Please keep your message to a general inquiry—not personal health advice or medical records.</p></div>
+      <div class="role-value" id="rv-clinician"><h2>For Clinicians</h2><p>Discuss intended uses, product-information needs and the evidence required for future evaluation. This inquiry does not enroll your practice in a live pilot or authorize a treatment protocol.</p></div>
+      <div class="role-value" id="rv-investor" style="border-left-color:var(--g)"><h2>For Investors</h2><p>Discuss the oral, gut and systemic development direction, its assumptions and the milestones needed to test them. Commercial ambition and demonstrated clinical utility are separate questions.</p></div>
+      <div class="role-value" id="rv-dso" style="border-left-color:var(--t)"><h2>For DSO Partners</h2><p>Share practice-network needs and explore potential collaboration. Product availability, implementation, evidence and any commercial terms would need a separate discussion.</p></div>
+      <div class="role-value" id="rv-researcher" style="border-left-color:var(--g)"><h2>For Researchers</h2><p>Discuss analyte definition, assay validation, source attribution or study design. Any future data or specimen collaboration would need appropriate consent, governance and review; this form does not grant data access.</p></div>
+      <div class="role-value" id="rv-general"><h2>Product & General Questions</h2><p>Ask about Loria’s current labeling, formulation or purchasing information, or request information about a development concept. Please keep your message to a general inquiry—not personal health advice or medical records.</p></div>
 
       <!-- Contact Fields -->
       <div class="pf-row">
-        <div class="pf-group"><label class="pf-label" for="pf-first">First Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-first" placeholder="First name" autocomplete="given-name" required></div>
-        <div class="pf-group"><label class="pf-label" for="pf-last">Last Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-last" placeholder="Last name" autocomplete="family-name" required></div>
+        <div class="pf-group"><label class="pf-label" for="pf-first">First Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-first" maxlength="100" placeholder="First name" autocomplete="given-name" required></div>
+        <div class="pf-group"><label class="pf-label" for="pf-last">Last Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-last" maxlength="100" placeholder="Last name" autocomplete="family-name" required></div>
       </div>
-      <div class="pf-group"><label class="pf-label" for="pf-email">Email<span class="req">*</span></label><input class="pf-input" type="email" id="pf-email" placeholder="you@example.com" autocomplete="email" required></div>
+      <div class="pf-group"><label class="pf-label" for="pf-email">Email<span class="req">*</span></label><input class="pf-input" type="email" id="pf-email" maxlength="254" placeholder="you@example.com" autocomplete="email" required></div>
       <div class="pf-row">
-        <div class="pf-group"><label class="pf-label" for="pf-phone">Phone (optional)</label><input class="pf-input" type="tel" id="pf-phone" placeholder="Phone number" autocomplete="tel"></div>
-        <div class="pf-group"><label class="pf-label" for="pf-company">Company / Practice (optional)</label><input class="pf-input" type="text" id="pf-company" placeholder="Organization name" autocomplete="organization"></div>
+        <div class="pf-group"><label class="pf-label" for="pf-phone">Phone (optional)</label><input class="pf-input" type="tel" id="pf-phone" maxlength="40" placeholder="Phone number" autocomplete="tel"></div>
+        <div class="pf-group"><label class="pf-label" for="pf-company">Company / Practice (optional)</label><input class="pf-input" type="text" id="pf-company" maxlength="200" placeholder="Organization name" autocomplete="organization"></div>
       </div>
-      <div class="pf-group"><label class="pf-label" for="pf-message">Message (optional)</label><textarea class="pf-textarea" id="pf-message" aria-describedby="partner-privacy" placeholder="Your product, research or business question. Do not include medical records, lab results or other sensitive health information."></textarea></div>
+      <div class="pf-group"><label class="pf-label" for="pf-message">Message (optional)</label><textarea class="pf-textarea" id="pf-message" maxlength="4000" aria-describedby="partner-privacy" placeholder="Your product, research or business question. Do not include medical records, lab results or other sensitive health information."></textarea></div>
 
       <button type="submit" class="pf-submit" id="pf-submit" disabled>Select a role above to continue</button>
+      </fieldset>
       <p class="form-status" id="partner-status" role="status" aria-live="polite"></p>
-      <p class="pf-note" id="partner-privacy">Submitting asks Fasolati to respond to your inquiry. Your contact details, selected role and message are sent through HubSpot. Delivery is confirmed only after the service accepts the request; if an error occurs, your entries remain here so you can retry. Do not submit health records, lab results or sensitive personal information. This is not a clinical or emergency contact channel.</p>
+      <p class="pf-note" id="partner-privacy">Submitting asks Fasolati to respond to your inquiry. Your contact details, selected role and message are sent through HubSpot. Service acceptance is confirmed only after a successful response; if an error occurs, your entries remain here so you can retry. Do not submit health records, lab results or sensitive personal information. This is not a clinical or emergency contact channel. <a href="/privacy/">How this website handles information</a>.</p>
       <noscript><p class="pf-note">This form requires JavaScript to send an inquiry. Enable JavaScript to use it.</p></noscript>
     </form>
 
