@@ -1,6 +1,7 @@
 import { submitForm } from './form-service.js';
 const FORM_ID = '644c74cd-8136-4b45-9d4b-2a62ff1f3df6';
 const ROLE_LABELS = { clinician: 'Clinician', investor: 'Investor', dso: 'DSO Partner', researcher: 'Researcher', general: 'General Interest' };
+const TOPIC_LABELS = { general: 'General inquiry', 'design-partner': 'Clinician design-partner interest', 'loria-dossier': 'Loria dossier information', 'evidence-correction': 'Evidence question or correction' };
 const roleGrid = document.getElementById('role-grid');
 const submitBtn = document.getElementById('pf-submit');
 const form = document.getElementById('partner-form');
@@ -9,6 +10,9 @@ const status = document.getElementById('partner-status');
 if (roleGrid && submitBtn && form && success && status) {
   const field = name => document.getElementById(`pf-${name}`);
   const fields = form.querySelector('fieldset');
+  const topic = field('topic');
+  const requestedIntent = new URLSearchParams(window.location.search).get('intent');
+  if (topic && Object.hasOwn(TOPIC_LABELS, requestedIntent)) topic.value = requestedIntent;
   let selectedRole = null, sending = false, accepted = false;
   const valid = () => selectedRole && field('first').value.trim() && field('last').value.trim() && field('email').value.trim() && field('email').validity.valid;
   const check = () => {
@@ -38,7 +42,7 @@ if (roleGrid && submitBtn && form && success && status) {
       { name: 'phone', value: field('phone').value.trim() },
       { name: 'company', value: field('company').value.trim() },
       { name: 'jobtitle', value: ROLE_LABELS[selectedRole] },
-      { name: 'message', value: field('message').value.trim() }
+      { name: 'message', value: `Topic: ${Object.hasOwn(TOPIC_LABELS, topic?.value) ? TOPIC_LABELS[topic.value] : TOPIC_LABELS.general}\n\n${field('message').value.trim()}` }
     ];
     sending = true; check(); fields.disabled = true; form.setAttribute('aria-busy', 'true');
     status.textContent = 'Sending your inquiry…';

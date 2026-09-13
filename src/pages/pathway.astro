@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import PathwayExplorer from '../components/PathwayExplorer.astro';
+import { SITE, breadcrumb } from '../data/site';
+import '../styles/experience.css';
+
+const title = 'The Mouth-to-Whole-Body Pathway | Evidence and open human links | Fasolati';
+const description = 'Explore five questions from oral source ecology to clinical translation. Inspect original research, experimental settings, and the human links still unproven.';
+const schema = [
+  {
+    '@type': 'WebPage',
+    '@id': `${SITE}/pathway/`,
+    url: `${SITE}/pathway/`,
+    name: title,
+    description,
+    isPartOf: { '@id': `${SITE}/#website` },
+    publisher: { '@id': `${SITE}/#organization` },
+    about: { '@type': 'Thing', name: 'Oral bacterial vesicle evidence and clinical translation' },
+  },
+  breadcrumb('Evidence pathway', '/pathway/'),
+];
+---
+<Base title={title} description={description} path="/pathway/" schema={schema}>
+  <article class="experience-page">
+    <nav class="experience-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Fasolati</a><span aria-hidden="true">/</span><span aria-current="page">Evidence pathway</span>
+    </nav>
+    <header class="experience-hero">
+      <div>
+        <p class="experience-eyebrow">Mouth to whole body / An evidence pathway</p>
+        <h1>A pathway.<br /><span>Not a promise.</span></h1>
+      </div>
+      <div class="experience-hero-copy">
+        <p>Source. Material. Route. Response. Decision.</p>
+        <p>Read what was tested, where it was tested, and what remains unproven. The dashed spaces matter as much as the findings.</p>
+        <a class="experience-reference-link" href="#pathway-map-title">Explore the map <span aria-hidden="true">↓</span></a>
+      </div>
+    </header>
+    <PathwayExplorer />
+    <section class="experience-next" aria-labelledby="pathway-next">
+      <div><p class="experience-eyebrow">From mechanism to interpretation</p><h2 id="pathway-next">Keep the biology.<br />Keep the boundary.</h2></div>
+      <div>
+        <p>The Life Board demonstration puts this discipline into a fictional record: oral, gut, and host observations stay distinct, even when they disagree.</p>
+        <div class="experience-next-links"><a href="/life-board/">Walk through the fictional Life Board <span aria-hidden="true">→</span></a><a href="/science/#human-evidence">Read the human evidence <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+  </article>
+</Base>

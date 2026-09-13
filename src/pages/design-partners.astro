@@ -1,0 +1,113 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, breadcrumb } from '../data/site.ts';
+import '../styles/dossier-program.css';
+
+const title = 'Clinician Design Partners — A Proposed Review Cohort | Fasolati';
+const description = 'Express interest in a proposed 5–8 clinician design-review cohort: a 30-minute fictional-case walkthrough focused on product usability, evidence clarity and uncertainty. No patient data or clinical validation.';
+const inquiry = '/partner/?intent=design-partner#partner-form';
+const schema = [{
+  '@type': 'WebPage', '@id': `${SITE}/design-partners/`, url: `${SITE}/design-partners/`,
+  name: title, description, dateModified: '2026-09-13',
+  isPartOf: { '@id': `${SITE}/#website` }, publisher: { '@id': `${SITE}/#organization` },
+}, breadcrumb('Clinician design partners', '/design-partners/')];
+const agenda = [
+  { time: '00–04', title: 'Set the boundary', body: 'Confirm the design-only scope, fictional material and no-patient-data rule.' },
+  { time: '04–09', title: 'Read without coaching', body: 'Explain what the product information and prototype appear to say—and what they do not.' },
+  { time: '09–18', title: 'Walk through a fictional case', body: 'Find the observation, its source, the uncertainty and the point at which a conclusion is not justified.' },
+  { time: '18–25', title: 'Challenge the information', body: 'Review the Loria dossier. Identify missing label fields and any wording that could overstate the evidence.' },
+  { time: '25–30', title: 'Prioritize the change', body: 'Choose the most important usability fix and explain why it matters.' },
+];
+---
+<Base title={title} description={description} path="/design-partners/" schema={schema}>
+  <article class="dp-page">
+    <a class="dp-back" href="/platform/">← Fasolati programs</a>
+    <header class="dp-hero dp-program-hero">
+      <div>
+        <p class="section-kicker">Clinician design partners / Proposed cohort</p>
+        <h1>Help shape what<br />a clinician<br /><span>sees next.</span></h1>
+        <p class="dp-lede">Bring a practitioner’s eye to the product information—not a patient to a study.</p>
+        <p>We propose a small design-review cohort to challenge how Fasolati presents observations, uncertainty and product evidence. The aim is better usability, not clinical validation.</p>
+        <div class="dp-actions"><a class="btn bp" href={inquiry}>Express interest <span aria-hidden="true">↗</span></a><a class="dp-text-link" href="#session">See the session ↓</a></div>
+        <p class="dp-small">Interest only. Participation, timing and product access are not promised.</p>
+      </div>
+      <aside class="dp-folio dp-program-folio" aria-labelledby="cohort-title">
+        <div class="dp-folio-head"><span>Proposed review format</span><span>Design only</span></div>
+        <h2 id="cohort-title">A small room.<br />A sharper question.</h2>
+        <dl class="dp-folio-list">
+          <div><dt>Planning target</dt><dd><strong class="dp-number">5–8</strong> clinicians<br /><span class="dp-small">Not an enrollment or remaining-slots count</span></dd></div>
+          <div><dt>One conversation</dt><dd><strong class="dp-number">30</strong> minutes<br /><span class="dp-small">Individual fictional-case walkthrough</span></dd></div>
+          <div><dt>What to bring</dt><dd>Your perspective.<br />No patients. No health records.</dd></div>
+        </dl>
+      </aside>
+    </header>
+
+    <nav class="dp-index" aria-label="Design partner program sections">
+      <a href="#review-focus"><span>01</span> Review focus</a>
+      <a href="#session"><span>02</span> The session</a>
+      <a href="#program-boundaries"><span>03</span> Boundaries</a>
+      <a href="#next-steps"><span>04</span> Next steps</a>
+    </nav>
+
+    <section class="dp-section dp-section-split" id="review-focus" aria-labelledby="focus-title">
+      <div class="dp-section-heading"><p class="section-kicker">01 / The practitioner’s perspective</p><h2 id="focus-title">Can the interface<br />earn the right<br />to be understood?</h2><p>We are interested in perspectives from general dentistry, periodontics, oral and maxillofacial surgery and dental hygiene, with room for a primary-care or dental informatics perspective.</p><p class="dp-small">These are proposed roles, not a list of recruited reviewers or endorsements.</p></div>
+      <ol class="dp-question-list">
+        <li><span class="dp-step-number">01</span><div><h3>What does the reader believe?</h3><p>Can a clinician distinguish a measured observation, an interpretation, a hypothesis and a claim not yet supported?</p></div></li>
+        <li><span class="dp-step-number">02</span><div><h3>What is missing at the decision point?</h3><p>Can the reader find the source, date, method and limitations—and recognize when the information is insufficient?</p></div></li>
+        <li><span class="dp-step-number">03</span><div><h3>Which change matters first?</h3><p>What would make the dossier or fictional Life Board walkthrough clearer without implying a treatment recommendation?</p></div></li>
+      </ol>
+    </section>
+
+    <section class="dp-section" id="session" aria-labelledby="session-title">
+      <div class="dp-section-heading"><p class="section-kicker">02 / Thirty minutes, with a purpose</p><h2 id="session-title">Read. Question.<br />Tell us where it breaks.</h2><p>The proposed session uses only supplied fictional cases and public product-information pages. You would review communication and product usability, not use a rinse, assess a real patient or evaluate clinical outcomes.</p></div>
+      <ol class="dp-agenda">
+        {agenda.map((step) => (
+          <li><span class="dp-time">{step.time}<span>minutes</span></span><div><h3>{step.title}</h3><p>{step.body}</p></div></li>
+        ))}
+      </ol>
+      <div class="dp-download">
+        <div><p class="section-kicker">A concise overview</p><h3>Clinician review brief</h3><p>The purpose, scope and proposed agenda in one downloadable note.</p></div>
+        <a class="btn bs" href="/downloads/clinician-review-brief.md" download="clinician-review-brief.md">Download brief <span class="dp-file-type">MD</span></a>
+      </div>
+    </section>
+
+    <section class="dp-section" id="program-boundaries" aria-labelledby="program-boundaries-title">
+      <div class="dp-section-heading"><p class="section-kicker">03 / The boundary is part of the design</p><h2 id="program-boundaries-title">Feedback, not validation.</h2><p>A useful critique can improve a screen or a sentence. It does not establish product safety, efficacy, diagnostic accuracy or clinical utility.</p></div>
+      <div class="dp-boundary-strip"><p><strong>No patients or patient data.</strong> No specimens, medical records, laboratory results, case histories or screenshots from clinical systems. Use only the supplied fictional materials.</p></div>
+      <details class="dp-detail">
+        <summary>Is this a clinical study or a product trial?</summary>
+        <div><p>No. The proposed activity is a design and product-usability review. It does not include patient recruitment, diagnosis, treatment, product administration, outcome measurement or clinical validation. Any future clinical work would require its own protocol, governance and appropriate review.</p></div>
+      </details>
+      <details class="dp-detail">
+        <summary>Does expressing interest reserve participation or access?</summary>
+        <div><p>No. An inquiry only indicates interest. The proposed 5–8-person cohort is a planning target, not a live enrollment count. Selection, dates, any terms and any access would require a separate agreement. There is no promise of payment, samples, software access or continuing membership.</p></div>
+      </details>
+      <details class="dp-detail">
+        <summary>What feedback would be captured?</summary>
+        <div><p>The proposed approach is moderator notes about navigation, interpretation and requested improvements. No audio or video recording is planned. Scope, permission for notes, retention and withdrawal arrangements would be confirmed before a session. Do not submit patient information through the interest form.</p></div>
+      </details>
+      <details class="dp-detail">
+        <summary>Would a clinician’s name or feedback become an endorsement?</summary>
+        <div><p>Not through this review. The proposed cohort is not an advisory board or a clinical endorsement program. Names, practice logos and quotations are not approved for marketing use by expressing interest or participating in a design conversation.</p></div>
+      </details>
+      <details class="dp-detail">
+        <summary>What can I read before expressing interest?</summary>
+        <div><p>Review the <a href="/loria-dossier/">Loria product dossier</a>, explore the <a href="/life-board/">guided fictional Life Board</a>, or read the <a href="/evidence/#claim-life-board-boundary">Life Board claim boundary</a>. No account or submission is needed to read these pages.</p></div>
+      </details>
+    </section>
+
+    <section class="dp-section" id="next-steps" aria-labelledby="next-title">
+      <div class="dp-section-heading"><p class="section-kicker">04 / An interest conversation first</p><h2 id="next-title">A considered next step.<br />Not an automatic enrollment.</h2></div>
+      <ol class="dp-evidence-levels">
+        <li><span class="dp-step-number">01</span><h3>Tell us your perspective</h3><p>Use the existing inquiry form. Share your professional role and the information-design question you would most like to examine.</p></li>
+        <li><span class="dp-step-number">02</span><h3>Confirm fit and boundaries</h3><p>Any follow-up would clarify the scope, proposed timing and note-taking arrangements before an invitation is agreed.</p></li>
+        <li><span class="dp-step-number">03</span><h3>Review only if agreed</h3><p>A session would proceed only after the materials, permissions and scope are ready. The cohort remains a proposal.</p></li>
+      </ol>
+    </section>
+
+    <section class="dp-close" aria-labelledby="program-close-title">
+      <div><p class="section-kicker">Your perspective, without patient data</p><h2 id="program-close-title">Make the next<br />version clearer.</h2><p>Express interest in a design conversation. Please keep your message to your professional perspective—not personal medical advice or a real patient case.</p></div>
+      <div class="dp-close-actions"><a class="btn bp" href={inquiry}>Express interest <span aria-hidden="true">↗</span></a><a class="dp-text-link" href="/loria-dossier/">Read the Loria dossier →</a></div>
+    </section>
+  </article>
+</Base>

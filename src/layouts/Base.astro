@@ -70,6 +70,7 @@ const graph = [...BASE_GRAPH, ...schema];
 />
 
 <link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="alternate" type="application/rss+xml" title="Fasolati evidence updates" href="/evidence-updates.xml" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <script is:inline>
   document.documentElement.dataset.theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
@@ -85,7 +86,7 @@ const graph = [...BASE_GRAPH, ...schema];
 <canvas id="particle-canvas" aria-hidden="true"></canvas>
 
 <Nav />
-<noscript><nav class="no-js-nav" aria-label="Site navigation"><a href="/">Home</a><a href="/science/">Science</a><a href="/platform/">Programs</a><a href="/shop/">Products</a><a href="/about/">About</a><a href="/partner/">Contact</a></nav></noscript>
+<noscript><nav class="no-js-nav" aria-label="Site navigation"><a href="/">Home</a><a href="/science/">Science</a><a href="/life-board/">Life Board</a><a href="/pathway/">Pathway</a><a href="/evidence/">Evidence ledger</a><a href="/loria-dossier/">Loria dossier</a><a href="/design-partners/">Design partners</a><a href="/platform/">Programs</a><a href="/shop/">Products</a><a href="/about/">About</a><a href="/partner/">Contact</a></nav></noscript>
 
 <main id="main-content" class={interior ? 'page' : undefined} tabindex="-1">
   <slot />
@@ -94,7 +95,7 @@ const graph = [...BASE_GRAPH, ...schema];
 <footer>
   <p><span style="color:var(--t)">Fasolati</span> · Oral · Gut · Systemic</p>
   <p>Research and product development. This website does not provide individualized diagnosis or treatment.</p>
-  <p><a href="/science/">Science spine</a> · <a href="/platform/">Programs</a> · <a href="/partner/">Contact</a> · <a href="/privacy/">Website data & privacy</a></p>
+  <p><a href="/science/">Science spine</a> · <a href="/evidence/">Evidence ledger</a> · <a href="/design-partners/">Design partners</a> · <a href="/partner/">Contact</a> · <a href="/privacy/">Website data & privacy</a></p>
 </footer>
 
 <script src="../scripts/site.js"></script>

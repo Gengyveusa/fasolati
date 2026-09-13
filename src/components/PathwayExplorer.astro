@@ -1,0 +1,113 @@
+---
+import { PATHWAY, PATHWAY_STAGES } from '../data/pathway';
+---
+<section class="pathway-explorer" data-pathway-explorer aria-labelledby="pathway-map-title">
+  <header class="experience-section-head">
+    <div><p class="experience-eyebrow">The biological questions</p><h2 id="pathway-map-title">Follow a question.<br />Inspect the bridge.</h2></div>
+    <p>{PATHWAY.description}</p>
+  </header>
+
+  <div class="pathway-legend" aria-label="How to read the pathway">
+    <p><span class="pathway-legend-solid" aria-hidden="true"></span>{PATHWAY.solidLegend}</p>
+    <p><span class="pathway-legend-dashed" aria-hidden="true"></span>{PATHWAY.dashedLegend}</p>
+  </div>
+
+  <nav class="pathway-map" aria-label="Explore the five pathway stages">
+    <ol role="list">
+      {PATHWAY_STAGES.map((stage, index) => (
+        <li>
+          <a class="pathway-node" href={`#pathway-${stage.id}`} data-pathway-link aria-controls={`pathway-${stage.id}`}>
+            <span class="pathway-node-index" aria-hidden="true">0{index + 1}</span>
+            <span class="pathway-node-text">
+              <strong>{stage.label}</strong>
+              <span class="pathway-node-question">{stage.question}</span>
+              <span class="pathway-node-setting">{stage.shortLabel}</span>
+            </span>
+            <span class="pathway-node-action" aria-hidden="true">↗</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+    <p class="pathway-map-caption">These dashed links are questions—not a demonstrated mouth-to-disease chain. Select any stage for the evidence and its limit.</p>
+  </nav>
+
+  <details class="experience-disclosure pathway-open-links">
+    <summary>What is missing between the stages?</summary>
+    <div>
+      <ol role="list">
+        {PATHWAY_STAGES.filter((stage) => stage.bridge).map((stage) => (
+          <li>
+            <strong>{stage.label} <span aria-hidden="true">⇢</span><span class="experience-sr-only">to</span> {stage.bridge!.to}</strong>
+            <p>{stage.bridge!.question}</p>
+          </li>
+        ))}
+      </ol>
+      <p class="pathway-proposal-label">Research questions, not established human links.</p>
+      <a class="experience-reference-link" href="/science/#experiments">Inspect the proposed validation gates <span aria-hidden="true">→</span></a>
+    </div>
+  </details>
+
+  <div class="experience-view-tools" data-pathway-tools hidden>
+    <p role="status" aria-live="polite" aria-atomic="true" data-pathway-status></p>
+    <button class="experience-text-button" type="button" data-pathway-all aria-pressed="false" aria-controls="pathway-evidence">Compare all stages</button>
+  </div>
+  <noscript><p class="experience-fallback">All five stages are readable below. Use the map links to jump to a stage and the native disclosures to inspect its evidence.</p></noscript>
+
+  <div id="pathway-evidence">
+    {PATHWAY_STAGES.map((stage, index) => (
+      <section class="pathway-panel" id={`pathway-${stage.id}`} data-pathway-stage data-label={stage.label} aria-labelledby={`pathway-title-${stage.id}`}>
+        <header class="experience-panel-head">
+          <div>
+            <p class="experience-eyebrow">Stage 0{index + 1} / {stage.label}</p>
+            <h3 id={`pathway-title-${stage.id}`} tabindex="-1" data-pathway-title>{stage.title}</h3>
+          </div>
+          <span class="experience-status-tag">Study setting: {stage.support}</span>
+        </header>
+        <div class="pathway-framing">
+          <p>{stage.framing}</p>
+          <div class="pathway-context-links">
+            {stage.evidence.map((entry) => <a class="experience-reference-link" href={entry.url} target="_blank" rel="noopener noreferrer">Evidence context: {entry.source} <span aria-hidden="true">↗</span></a>)}
+          </div>
+        </div>
+        <div class="pathway-evidence-grid">
+          <div class="pathway-studies">
+            <h4><span class="pathway-legend-solid" aria-hidden="true"></span>Reported in the cited setting</h4>
+            {stage.evidence.map((entry) => (
+              <article class="pathway-study" aria-label={`${entry.name}: ${entry.source}`}>
+                <div class="pathway-study-header"><h5>{entry.name}</h5><span class="experience-setting">{entry.setting}</span></div>
+                <p>{entry.finding}</p>
+                <a class="experience-reference-link" href={entry.url} target="_blank" rel="noopener noreferrer">Original paper: {entry.source} <span aria-hidden="true">↗</span></a>
+                <div class="pathway-study-boundary">
+                  <h5>The boundary</h5>
+                  <p>{entry.boundary}</p>
+                  <a class="experience-reference-link" href={entry.boundaryUrl || entry.url} target="_blank" rel="noopener noreferrer">{entry.boundaryUrl ? 'Marker-specificity discussion' : `Read the study in context: ${entry.source}`} <span aria-hidden="true">↗</span></a>
+                </div>
+                <a class="experience-reference-link" href={`/science/#${entry.id}`}>Mechanism detail in the science spine <span aria-hidden="true">→</span></a>
+                <a class="experience-reference-link" href={`/evidence/#claim-${entry.id}`}>Claim entry in the evidence ledger <span aria-hidden="true">→</span></a>
+              </article>
+            ))}
+          </div>
+          <aside class="pathway-human-question" aria-labelledby={`human-question-${stage.id}`}>
+            <p class="experience-eyebrow">Open human link</p>
+            <h4 id={`human-question-${stage.id}`}>What remains to be shown.</h4>
+            <p class="pathway-open-question">{stage.humanQuestion}</p>
+            <div class="pathway-gate">
+              <h5>A research gate, not a result</h5>
+              <p>{stage.gate}</p>
+              <a class="experience-reference-link" href={`/science/#${stage.scienceAnchor}`}>{stage.scienceLabel} <span aria-hidden="true">→</span></a>
+            </div>
+            <p class="pathway-inference-stop">Do not cross this gap with an individual health prediction.</p>
+          </aside>
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <div class="experience-pagination" data-pathway-pagination hidden>
+    <button class="experience-button" type="button" data-pathway-prev><span aria-hidden="true">←</span> Previous stage</button>
+    <button class="experience-button experience-button--primary" type="button" data-pathway-next>Next stage <span aria-hidden="true">→</span></button>
+    <button class="experience-text-button" type="button" data-pathway-reset>Reset map</button>
+  </div>
+  <p class="experience-privacy">{PATHWAY.scope} The map uses static, cited content. It accepts and stores no health information and makes no API or live-AI requests. Section links contain only public stage names.</p>
+</section>
+<script src="../scripts/pathway-explorer.js"></script>

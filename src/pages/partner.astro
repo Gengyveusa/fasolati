@@ -65,6 +65,12 @@ const description =
       <div class="role-value" id="rv-general"><h2>Product & General Questions</h2><p>Ask about Loria’s current labeling, formulation or purchasing information, or request information about a development concept. Please keep your message to a general inquiry—not personal health advice or medical records.</p></div>
 
       <!-- Contact Fields -->
+      <div class="pf-group"><label class="pf-label" for="pf-topic">Inquiry topic</label><select class="pf-input" id="pf-topic" aria-describedby="topic-note">
+        <option value="general">General inquiry</option>
+        <option value="design-partner">Clinician design-partner interest</option>
+        <option value="loria-dossier">Loria dossier information</option>
+        <option value="evidence-correction">Evidence question or correction</option>
+      </select><p class="pf-note" id="topic-note">A topic may be selected from the page you came from. You can change it before sending; this is not an enrollment or a purchase.</p></div>
       <div class="pf-row">
         <div class="pf-group"><label class="pf-label" for="pf-first">First Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-first" maxlength="100" placeholder="First name" autocomplete="given-name" required></div>
         <div class="pf-group"><label class="pf-label" for="pf-last">Last Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-last" maxlength="100" placeholder="Last name" autocomplete="family-name" required></div>
@@ -79,7 +85,7 @@ const description =
       <button type="submit" class="pf-submit" id="pf-submit" disabled>Select a role above to continue</button>
       </fieldset>
       <p class="form-status" id="partner-status" role="status" aria-live="polite"></p>
-      <p class="pf-note" id="partner-privacy">Submitting asks Fasolati to respond to your inquiry. Your contact details, selected role and message are sent through HubSpot. Service acceptance is confirmed only after a successful response; if an error occurs, your entries remain here so you can retry. Do not submit health records, lab results or sensitive personal information. This is not a clinical or emergency contact channel. <a href="/privacy/">How this website handles information</a>.</p>
+      <p class="pf-note" id="partner-privacy">Submitting asks Fasolati to respond to your inquiry. Your contact details, selected role, inquiry topic and message are sent through HubSpot. Service acceptance is confirmed only after a successful response; if an error occurs, your entries remain here so you can retry. Do not submit health records, lab results or sensitive personal information. This is not a clinical or emergency contact channel. <a href="/privacy/">How this website handles information</a>.</p>
       <noscript><p class="pf-note">This form requires JavaScript to send an inquiry. Enable JavaScript to use it.</p></noscript>
     </form>
 
