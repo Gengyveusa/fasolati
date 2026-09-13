@@ -10,83 +10,85 @@ import Base from '../layouts/Base.astro';
  * `follow` so links out of it still pass through.
  */
 
-const title = 'Partner With Fasolati — Clinicians, Investors, DSOs, Researchers';
+const title = 'Contact Fasolati — Product, Research & Partnership Inquiries';
 const description =
-  'Tell us how you want to connect - pilot the platform in your practice, fund the node network, integrate the therapeutic cascade, or collaborate on clinical studies. We respond within 48 hours.';
+  'Ask about Loria product information, discuss research or clinical collaboration, or explore Fasolati’s development and business direction. General inquiries welcome.';
 ---
 <Base title={title} description={description} path="/partner/" noindex={true}>
   <div class="partner-inner">
 
 
     <div class="partner-hero">
-      <h1>Partner With Us</h1>
-      <p>Whether you're a clinician, investor, DSO operator, or researcher — tell us how you want to connect and we'll get back to you within 48 hours.</p>
+      <h1>Connect With Fasolati</h1>
+      <p>Ask about Loria, discuss a research question or explore a potential collaboration. Clinicians, researchers, business partners, investors and general inquiries are welcome.</p>
     </div>
 
     <!-- FORM -->
-    <div class="partner-form" id="partner-form">
+    <form class="partner-form" id="partner-form">
 
       <!-- Step 1: Role Selection -->
       <div style="margin-bottom:12px"><span class="pf-label">I'm interested as a<span class="req">*</span></span></div>
-      <div class="role-grid" id="role-grid">
-        <div class="role-card" data-role="clinician">
-          <div class="role-icon">⚕</div>
-          <div class="role-name">Clinician</div>
-          <div class="role-desc">Pilot the platform in your practice</div>
-        </div>
-        <div class="role-card" data-role="investor">
-          <div class="role-icon">◆</div>
-          <div class="role-name">Investor</div>
-          <div class="role-desc">Fund the node network</div>
-        </div>
-        <div class="role-card" data-role="dso">
-          <div class="role-icon">⬡</div>
-          <div class="role-name">DSO Partner</div>
-          <div class="role-desc">Integrate the therapeutic cascade</div>
-        </div>
-        <div class="role-card" data-role="researcher">
-          <div class="role-icon">⊛</div>
-          <div class="role-name">Researcher</div>
-          <div class="role-desc">Collaborate on clinical studies</div>
-        </div>
-        <div class="role-card" data-role="general" style="grid-column:1/-1">
-          <div class="role-icon">→</div>
-          <div class="role-name">General Interest</div>
-          <div class="role-desc">Stay in the loop on Fasolati developments</div>
-        </div>
+      <div class="role-grid" id="role-grid" role="group" aria-label="Inquiry role">
+        <button type="button" class="role-card" data-role="clinician">
+          <span class="role-icon" style="display:block" aria-hidden="true">+</span>
+          <span class="role-name" style="display:block">Clinician</span>
+          <span class="role-desc" style="display:block">Discuss clinical questions and development</span>
+        </button>
+        <button type="button" class="role-card" data-role="investor">
+          <span class="role-icon" style="display:block" aria-hidden="true">◆</span>
+          <span class="role-name" style="display:block">Investor</span>
+          <span class="role-desc" style="display:block">Explore the business and research direction</span>
+        </button>
+        <button type="button" class="role-card" data-role="dso">
+          <span class="role-icon" style="display:block" aria-hidden="true">⬡</span>
+          <span class="role-name" style="display:block">DSO Partner</span>
+          <span class="role-desc" style="display:block">Discuss practice-network needs</span>
+        </button>
+        <button type="button" class="role-card" data-role="researcher">
+          <span class="role-icon" style="display:block" aria-hidden="true">⊛</span>
+          <span class="role-name" style="display:block">Researcher</span>
+          <span class="role-desc" style="display:block">Explore a potential research collaboration</span>
+        </button>
+        <button type="button" class="role-card" data-role="general" style="grid-column:1/-1">
+          <span class="role-icon" style="display:block" aria-hidden="true">→</span>
+          <span class="role-name" style="display:block">Product / General Interest</span>
+          <span class="role-desc" style="display:block">Ask about Loria or a Fasolati development</span>
+        </button>
       </div>
 
       <!-- Role-specific value props -->
-      <div class="role-value" id="rv-clinician"><h4>For Clinicians</h4><p>Get early access to Lytica and Loria professional products. Integrate the Fasolati Engine into your practice workflow. See how oral-systemic protocols reduce inflammatory markers in your patient population.</p></div>
-      <div class="role-value" id="rv-investor" style="border-left-color:var(--g)"><h4>For Investors</h4><p>Fasolati sits at the intersection of oral health ($50B), gut health ($71B), and AI-driven precision medicine. We're building the operating system for inflammation prevention — the largest addressable cause of death globally.</p></div>
-      <div class="role-value" id="rv-dso" style="border-left-color:var(--t)"><h4>For DSO Partners</h4><p>Deploy the full Lytica → Loria therapeutic cascade across your network. New high-margin intervention revenue plus recurring Fasolati subscriptions that increase patient lifetime value.</p></div>
-      <div class="role-value" id="rv-researcher" style="border-left-color:var(--g)"><h4>For Researchers</h4><p>Access de-identified longitudinal data from the Fasolati platform. Collaborate on oral-systemic, microbiome, and biomarker studies with real-world evidence from active patient populations.</p></div>
-      <div class="role-value" id="rv-general"><h4>Stay Connected</h4><p>Get updates on product launches, research findings, and partnership opportunities as the Fasolati node network expands.</p></div>
+      <div class="role-value" id="rv-clinician"><h4>For Clinicians</h4><p>Discuss intended uses, product-information needs and the evidence required for future evaluation. This inquiry does not enroll your practice in a live pilot or authorize a treatment protocol.</p></div>
+      <div class="role-value" id="rv-investor" style="border-left-color:var(--g)"><h4>For Investors</h4><p>Discuss the oral, gut and systemic development direction, its assumptions and the milestones needed to test them. Commercial ambition and demonstrated clinical utility are separate questions.</p></div>
+      <div class="role-value" id="rv-dso" style="border-left-color:var(--t)"><h4>For DSO Partners</h4><p>Share practice-network needs and explore potential collaboration. Product availability, implementation, evidence and any commercial terms would need a separate discussion.</p></div>
+      <div class="role-value" id="rv-researcher" style="border-left-color:var(--g)"><h4>For Researchers</h4><p>Discuss analyte definition, assay validation, source attribution or study design. Any future data or specimen collaboration would need appropriate consent, governance and review; this form does not grant data access.</p></div>
+      <div class="role-value" id="rv-general"><h4>Product & General Questions</h4><p>Ask about Loria’s current labeling, formulation or purchasing information, or request information about a development concept. Please keep your message to a general inquiry—not personal health advice or medical records.</p></div>
 
       <!-- Contact Fields -->
       <div class="pf-row">
-        <div class="pf-group"><label class="pf-label">First Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-first" placeholder="First name" required></div>
-        <div class="pf-group"><label class="pf-label">Last Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-last" placeholder="Last name" required></div>
+        <div class="pf-group"><label class="pf-label" for="pf-first">First Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-first" placeholder="First name" autocomplete="given-name" required></div>
+        <div class="pf-group"><label class="pf-label" for="pf-last">Last Name<span class="req">*</span></label><input class="pf-input" type="text" id="pf-last" placeholder="Last name" autocomplete="family-name" required></div>
       </div>
-      <div class="pf-group"><label class="pf-label">Email<span class="req">*</span></label><input class="pf-input" type="email" id="pf-email" placeholder="you@example.com" required></div>
+      <div class="pf-group"><label class="pf-label" for="pf-email">Email<span class="req">*</span></label><input class="pf-input" type="email" id="pf-email" placeholder="you@example.com" autocomplete="email" required></div>
       <div class="pf-row">
-        <div class="pf-group"><label class="pf-label">Phone</label><input class="pf-input" type="tel" id="pf-phone" placeholder="(555) 123-4567"></div>
-        <div class="pf-group"><label class="pf-label">Company / Practice</label><input class="pf-input" type="text" id="pf-company" placeholder="Organization name"></div>
+        <div class="pf-group"><label class="pf-label" for="pf-phone">Phone (optional)</label><input class="pf-input" type="tel" id="pf-phone" placeholder="Phone number" autocomplete="tel"></div>
+        <div class="pf-group"><label class="pf-label" for="pf-company">Company / Practice (optional)</label><input class="pf-input" type="text" id="pf-company" placeholder="Organization name" autocomplete="organization"></div>
       </div>
-      <div class="pf-group"><label class="pf-label">Message</label><textarea class="pf-textarea" id="pf-message" placeholder="Tell us what you're looking for, what excites you, or any questions you have..."></textarea></div>
+      <div class="pf-group"><label class="pf-label" for="pf-message">Message (optional)</label><textarea class="pf-textarea" id="pf-message" aria-describedby="partner-privacy" placeholder="Your product, research or business question. Do not include medical records, lab results or other sensitive health information."></textarea></div>
 
-      <button class="pf-submit" id="pf-submit" disabled>Select a role above to continue</button>
-      <p class="pf-note">Your information is encrypted and never shared. We'll respond within 48 hours.</p>
-    </div>
+      <button type="submit" class="pf-submit" id="pf-submit" disabled>Select a role above to continue</button>
+      <p class="form-status" id="partner-status" role="status" aria-live="polite"></p>
+      <p class="pf-note" id="partner-privacy">Submitting asks Fasolati to respond to your inquiry. Your contact details, selected role and message are sent through HubSpot. Delivery is confirmed only after the service accepts the request; if an error occurs, your entries remain here so you can retry. Do not submit health records, lab results or sensitive personal information. This is not a clinical or emergency contact channel.</p>
+      <noscript><p class="pf-note">This form requires JavaScript to send an inquiry. Enable JavaScript to use it.</p></noscript>
+    </form>
 
     <!-- Success State -->
-    <div class="partner-success" id="partner-success">
-      <div class="ps-icon">✓</div>
-      <div class="ps-title">We've Got It</div>
-      <p class="ps-body">Thanks for reaching out. Your information has been received and someone from the Fasolati team will be in touch within 48 hours. In the meantime, explore the platform:</p>
+    <div class="partner-success" id="partner-success" role="status" aria-live="polite">
+      <div class="ps-icon" aria-hidden="true">✓</div>
+      <div class="ps-title">Thank You for Reaching Out</div>
+      <p class="ps-body">Your inquiry was accepted by our contact service. While you wait for a reply, explore the platform and research direction:</p>
       <div style="display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap">
-        <a href="https://claude.ai/public/artifacts/4bb92b11-5a4b-4fb9-bd72-46cab7f1b752" class="btn bp" target="_blank">Launch Engine UI</a>
-        <a href="https://claude.ai/public/artifacts/fddec7f6-4bf5-4888-b8a3-89bd80287d18" class="btn bs" target="_blank">View Deep Dive</a>
+        <a href="/science/" class="btn bp">Read the Science Spine</a>
+        <a href="/platform/" class="btn bs">Explore the Platform</a>
       </div>
     </div>
 
@@ -95,4 +97,3 @@ const description =
 
   <script src="../scripts/partner-form.js"></script>
 </Base>
-

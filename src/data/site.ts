@@ -13,9 +13,9 @@
 export const SITE = 'https://fasolati.life';
 
 export const DEFAULTS = {
-  title: 'Fasolati™ — The Inflammation Operating System',
+  title: 'Fasolati | Oral health, in the whole picture',
   description:
-    'Fasolati — AI-driven platform treating mouth and gut as origin nodes of systemic inflammation. Oral therapeutics, gut repair, and biomarker-driven protocols in one operating system.',
+    'An evidence-led oral-systemic health platform in development. Explore the OMV science spine, research questions, and Life Board concept.',
   ogImage: `${SITE}/og-image.png`,
   author: 'S. Thaddeus Connelly, DDS, MD, PhD, FACS',
 };
@@ -27,8 +27,8 @@ export const ORGANIZATION = {
   alternateName: 'Fasolati™',
   url: `${SITE}/`,
   description:
-    'An AI-driven platform treating the mouth and gut as origin nodes of systemic inflammation, combining oral therapeutics, gut repair, and biomarker-driven protocols in a single operating system.',
-  slogan: 'The Inflammation Operating System',
+    'An oral-systemic health research and product-development program connecting oral observations, gut context, and independently measured host response.',
+  slogan: 'Oral health, in the whole picture',
   founder: { '@id': `${SITE}/#founder` },
   parentOrganization: {
     '@type': 'Organization',
@@ -42,6 +42,7 @@ export const ORGANIZATION = {
     'Gut microbiome',
     'Hyaluronic acid mucosal barriers',
     'Biofilm disruption',
+    'Bacterial extracellular vesicles',
   ],
 };
 
@@ -74,7 +75,7 @@ export const WEBSITE = {
   url: `${SITE}/`,
   name: 'Fasolati',
   description:
-    'The inflammation operating system — oral therapeutics, gut repair, and biomarker-driven protocols.',
+    'Evidence-led oral-systemic health research, product programs, and the Life Board concept.',
   publisher: { '@id': `${SITE}/#organization` },
   inLanguage: 'en-US',
 };

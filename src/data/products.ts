@@ -1,60 +1,18 @@
 /**
- * The Fasolati product catalogue.
- *
- * One source for the shop index, the individual product pages, and the
- * Product/Offer schema on each. Before this, the products existed only as
- * markup inside a shop overlay panel that shared a single URL — so nothing
- * could be linked, advertised, or cited on its own, and Loria, the only
- * revenue-generating product in the portfolio, was invisible to every
- * product-aware surface.
- *
- * ACCURACY RULES — these markup claims are commercial statements:
- *   • An `Offer` is emitted only when the item is purchasable *at the URL the
- *     Offer names*. "Coming soon" and "waitlist" get none, because an Offer
- *     asserts something is on sale. Neither does Loria: it is genuinely
- *     available, but it sells under a different brand and fasolati.life has no
- *     checkout, so an Offer pointing at /loria/ would promise Google Shopping
- *     a purchase path that does not exist. Restore it when there is one.
- *   • No price appears anywhere on the site, so no price is asserted here.
- *     Inventing one to win a rich result would be a lie about a medical
- *     product.
- *   • Copy is carried over verbatim from the shop panel. Rewriting for the
- *     consumer register is a separate pass, deliberately not mixed with the
- *     move to real URLs.
+ * Product information and development concepts, shared by the portfolio and
+ * individual pages. Status describes the page's purpose, not inventory.
+ * No prices, offers, subscriptions or operational software are asserted.
  */
-
-export type Availability = 'available' | 'coming-soon' | 'waitlist' | 'beta';
-
 export type Product = {
-  /** Permanent URL segment — /loria/, /lytica/. Never rename once shipped. */
   slug: string;
   name: string;
-  /** Short label used on cards and in nav. */
   shortName: string;
   status: string;
-  availability: Availability;
-  /** One line. Used as the card blurb and the meta description seed. */
+  stage: 'information' | 'development' | 'research';
   tagline: string;
-  /** The full description as it appears on the shop panel. */
   body: string;
-  /** Spec rows, rendered as a definition list. */
   specs?: { label: string; value: string }[];
-  /**
-   * Call to action on the product page.
-   *
-   * `href` means "this is a link somewhere real"; its absence means the CTA is
-   * the waitlist form. Loria's Order button was `href="#"` on the live site.
-   * It points at the contact form because the product sells under a separate
-   * brand that is deliberately not linked from here yet — a holding pattern,
-   * not a destination. The label is still "Order", which the copy pass should
-   * revisit; a button that says Order and opens a contact form is a small lie
-   * about what happens next.
-   */
   cta: { label: string; note?: string; href?: string };
-  /** schema.org type — most are Product; the Engine is software. */
-  schemaType: 'Product' | 'SoftwareApplication';
-  category: string;
-  /** Palette variable the product is identified by across the site. */
   accent: string;
 };
 
@@ -64,109 +22,95 @@ export const PRODUCTS: Product[] = [
     accent: 'var(--loria)',
     name: 'Loria™ Daily Oral Rinse',
     shortName: 'Loria',
-    status: 'Available Now',
-    availability: 'available',
-    tagline:
-      'The original Fasolati oral formulation. Barrier, heal, hydrate, hold — every day.',
+    status: 'Product Information',
+    stage: 'information',
+    tagline: 'Daily oral care within the Fasolati vision.',
     body:
-      'Dual-weight hyaluronic acid mucosal barrier system. Replaces chlorhexidine with intelligent ecological remodeling. High MW HA blocks bacterial adhesion while low MW HA stimulates fibroblast proliferation and accelerates wound healing. Bio-adhesive film ensures hours of therapeutic residence — not the 30 seconds of a standard rinse.',
+      'Request current product details, labeling and purchasing information for Loria. Product-specific evidence should guide any use; the wider oral-systemic research program is not a claim of benefit from this rinse.',
     specs: [
-      { label: 'Format', value: '240mL bottle · 30-day supply' },
-      { label: 'Use', value: 'Twice daily · Rinse 60 seconds' },
-      { label: 'Key Actives', value: 'Dual-weight HA · Castor oil · CPC · Pullulan' },
+      { label: 'Product Details', value: 'Ask about the current formulation, labeling and directions.' },
+      { label: 'Purchasing', value: 'Contact us for current ordering information.' },
+      { label: 'Evidence', value: 'Ask for evidence specific to the finished formulation and intended use.' },
     ],
     cta: {
-      label: 'Order Loria™',
-      note: 'Free shipping on subscription · Cancel anytime',
-      href: '/partner/',
+      label: 'Ask About Loria™',
+      note: 'A product-information inquiry, not an order or subscription.',
+      href: '/partner/#partner-form',
     },
-    schemaType: 'Product',
-    category: 'Oral care',
   },
   {
     slug: 'lytica',
     accent: 'var(--lytica)',
-    name: 'Lytica™ Biofilm Intervention System',
+    name: 'Lytica™ Biofilm Intervention Concept',
     shortName: 'Lytica',
-    status: 'Coming Soon — Rx Required',
-    availability: 'coming-soon',
-    tagline:
-      'Two-stage enzyme + phage biofilm disruption. Ask your periodontist about Lytica.',
+    status: 'Development Concept',
+    stage: 'development',
+    tagline: 'An enzyme-and-phage approach to oral biofilm, in development.',
     body:
-      'Professional-dispensed tray application system. Stage 1 enzymatic matrix degradation followed by Stage 2 targeted bacteriophages. For active periodontal disease, peri-implantitis, and refractory cases. Available through the Maxoral professional channel.',
-    cta: { label: 'Get Notified' },
-    schemaType: 'Product',
-    category: 'Professional dental therapeutics',
+      'Lytica is a development concept exploring a staged enzyme-and-phage approach to oral biofilm. Formulation, delivery, safety, clinical benefit and intended use still require evaluation. This is not a treatment protocol.',
+    specs: [
+      { label: 'Proposed Direction', value: 'Evaluate biofilm intervention as a defined, testable formulation.' },
+      { label: 'Before Clinical Use', value: 'Establish safety, performance, appropriate evidence and intended-use requirements.' },
+    ],
+    cta: {
+      label: 'Request Lytica Updates',
+      note: 'An expression of interest, not a reservation or promise of access.',
+    },
   },
   {
     slug: 'gut-stack',
     accent: 'var(--g)',
-    name: 'Gut Restoration Stack',
+    name: 'Fasolati Gut Stack',
     shortName: 'Gut Stack',
-    status: 'Coming Soon',
-    availability: 'waitlist',
-    tagline: 'Magisnat · Biolumen · Monch Monch — the second origin node, addressed.',
+    status: 'Research & Development',
+    stage: 'research',
+    tagline: 'A gut-health research direction, not a barrier-restoration promise.',
     body:
-      'Anti-inflammatory nutraceuticals, precision prebiotic fibers, and metabolic snacks designed to restore gut barrier integrity and microbiome diversity. Three products, one protocol — matched to your Fasolati Engine gut integrity score.',
-    cta: { label: 'Join Waitlist' },
-    schemaType: 'Product',
-    category: 'Nutraceuticals',
+      'The Gut Stack explores which nutrition or microbiome interventions merit testing alongside oral and independently measured host-response channels. Components, dosing and benefits remain to be established; this is not a personalized regimen or a validated gut-integrity score.',
+    specs: [
+      { label: 'Research Question', value: 'When does a gut-focused intervention add meaningful benefit?' },
+      { label: 'Development Standard', value: 'Define the intervention, comparator and outcome before assigning a benefit.' },
+    ],
+    cta: {
+      label: 'Request Gut Stack Updates',
+      note: 'An expression of interest, not a product order.',
+    },
   },
   {
     slug: 'engine',
     accent: 'var(--t)',
-    name: 'Fasolati Engine Subscription',
+    name: 'Fasolati Engine — Life Board',
     shortName: 'Fasolati Engine',
-    status: 'Beta Access',
-    availability: 'beta',
-    tagline:
-      'Three-vector scoring, SciAgent AI protocols, biomarker tracking — your personal inflammation operating system.',
+    status: 'In Development',
+    stage: 'development',
+    tagline: 'What changed? How confident are we? What next step is justified?',
     body:
-      'Connect your labs, wearables, and oral exam data. SciAgent builds your personal inflammatory model and writes daily protocol orders. Subscription includes Engine access, protocol updates, and priority access to new products as they launch.',
-    cta: { label: 'Request Beta Access' },
-    schemaType: 'SoftwareApplication',
-    category: 'Health software',
+      'The Life Board is the proposed front end of the Fasolati Engine. It is being developed to keep measurements, uncertainty and supporting evidence inspectable, with oral, gut and systemic observations shown separately. It is not a live clinical service, an autonomous prescriber or one averaged health score.',
+    specs: [
+      { label: 'What Changed?', value: 'Show the measured result, specimen, date and comparison—not an inferred organ score.' },
+      { label: 'How Confident?', value: 'Show measurement quality, variation and missing evidence; allow “not interpretable yet.”' },
+      { label: 'Next Justified Step', value: 'Explain what the evidence supports, including when professional review is appropriate.' },
+    ],
+    cta: {
+      label: 'Request Life Board Updates',
+      note: 'Development updates only; no beta access or subscription is offered here.',
+    },
   },
 ];
 
 export const productBySlug = Object.fromEntries(PRODUCTS.map((p) => [p.slug, p]));
 
-/**
- * schema.org node for a product.
- *
- * No `offers` block is emitted for anything, deliberately.
- *
- * schema.org treats an Offer as an assertion that the thing is on sale at the
- * URL the Offer names, and every shopping and answer surface reads it that
- * way. fasolati.life has no checkout on any page, so there is currently no
- * product here for which that assertion is true — including Loria, which is
- * genuinely available but sells under a separate brand not linked from this
- * site.
- *
- * When a real buy path exists, add `offerUrl` to the product and re-emit;
- * the availability field is already carried and unchanged.
- */
+/** Describe the information page, not an offer or a currently operating app. */
 export function productSchema(p: Product, site: string) {
-  const id = `${site}/${p.slug}/`;
-  const base: Record<string, unknown> = {
-    '@type': p.schemaType,
-    '@id': `${id}#product`,
+  const url = `${site}/${p.slug}/`;
+  return {
+    '@type': 'WebPage',
+    '@id': url,
     name: p.name,
-    description: p.body,
-    url: id,
-    brand: { '@id': `${site}/#organization` },
+    description: `${p.status}. ${p.tagline} ${p.body}`,
+    url,
+    isPartOf: { '@id': `${site}/#website` },
+    about: { '@id': `${site}/#organization` },
     publisher: { '@id': `${site}/#organization` },
   };
-
-  if (p.schemaType === 'SoftwareApplication') {
-    base.applicationCategory = 'HealthApplication';
-    base.operatingSystem = 'Web';
-  } else {
-    base.category = p.category;
-  }
-
-  const size = p.specs?.find((s) => s.label === 'Format')?.value;
-  if (size) base.size = size;
-
-  return base;
 }

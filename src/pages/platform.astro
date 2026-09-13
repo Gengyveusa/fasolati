@@ -2,19 +2,9 @@
 import Base from '../layouts/Base.astro';
 import { SITE, breadcrumb } from '../data/site.ts';
 
-/**
- * The therapeutic platform - Lytica, Loria, the distribution tiers, and the
- * cascade that ties them together.
- *
- * This was the `products-overlay` panel. It is the densest mechanism-level
- * content on the site (enzyme targets, phage specificity, log reduction) and
- * it had no URL, so nothing here could be cited by an answer engine or linked
- * to from a clinical conversation.
- */
-
-const title = 'The Fasolati Therapeutic Platform — Lytica, Loria & the Cascade';
+const title = 'The Fasolati Platform — Products, Concepts & Research';
 const description =
-  'Three product lines, three mechanisms, one architecture. Lytica two-stage enzyme and phage biofilm intervention, Loria dual-weight hyaluronic acid barrier system, and the Maxoral Rx / Fasolati OTC distribution tiers.';
+  'Explore Loria product information, the Lytica development concept, Gut Stack research and the proposed Life Board. Clear evidence gates before clinical claims.';
 
 const schema = [
   {
@@ -26,60 +16,71 @@ const schema = [
     isPartOf: { '@id': `${SITE}/#website` },
     about: { '@id': `${SITE}/#organization` },
   },
-  breadcrumb('Therapeutic Platform', '/platform/'),
+  breadcrumb('Platform', '/platform/'),
 ];
 ---
 <Base title={title} description={description} path="/platform/" schema={schema}>
   <div class="products-inner">
-
     <div class="p-hero">
-      <h1>The Fasolati Therapeutic Platform</h1>
-      <p>Three product lines. Three mechanisms. One unified architecture. A surgeon‑engineered system that treats the mouth as a controllable origin node of systemic inflammation.</p>
+      <h1>The Fasolati Platform</h1>
+      <p>Oral care, gut-health research and a clearer view of systemic observations. One direction—with a separate evidence standard for every product, measurement and proposed action.</p>
     </div>
+
     <div class="prod" id="p-lytica">
-      <div class="prod-head"><span class="prod-name" style="color:var(--lytica)">Lytica</span><span class="prod-badge" style="color:var(--lytica);border-color:rgba(255,107,107,.3)">Precision Ecological Rescue</span></div>
-      <p class="prod-tagline">From Greek lysis — targeted dissolution. Hunt and eliminate. Spare everything else.</p>
-      <p class="prod-body">A two‑stage tray‑applied biofilm intervention system. Stage 1 (BREACH) uses hydrogen peroxide effervescence plus enzymatic matrix degradation — DNase I, Dispersin B, Proteinase K — to collapse biofilm architecture in 5–10 minutes. Stage 2 (HUNT) deploys bacteriophages targeting P. gingivalis, T. forsythia, and A. actinomycetemcomitans, plus recombinant endolysins and lactoferrin, delivered in a dual‑weight hyaluronic acid matrix for sustained contact and tissue support.</p>
+      <div class="prod-head"><h2 class="prod-name" style="color:var(--lytica)">Lytica</h2><span class="prod-badge" style="color:var(--lytica);border-color:var(--lytica)">Development Concept</span></div>
+      <p class="prod-tagline">A staged approach to oral biofilm, designed to be tested.</p>
+      <p class="prod-body">Lytica explores an enzyme-and-phage intervention concept. The development task is to define the finished formulation and delivery method, then evaluate safety and performance. The concept is not a prescription, an established clinical protocol or a promise of selective pathogen removal.</p>
       <div class="prod-mechs">
-        <div class="prod-mech"><h4 style="color:var(--lytica)">Stage 1 — Breach</h4><p>H₂O₂ effervescence disrupts biofilm oxygen gradients. DNase I degrades extracellular DNA scaffold. Dispersin B hydrolyzes PNAG adhesin matrix. Proteinase K cleaves surface-bound adhesion proteins. Combined: 4.5 log colony reduction.</p></div>
-        <div class="prod-mech"><h4 style="color:var(--lytica)">Stage 2 — Hunt</h4><p>Species-specific bacteriophages bind exclusively to bacterial surface receptors. Recombinant endolysins degrade peptidoglycan from outside. Lactoferrin sequesters iron from pathogen metabolism. HA carrier ensures 4+ hours mucosal residence time.</p></div>
+        <div class="prod-mech"><h4 style="color:var(--lytica)">Define the Intervention</h4><p>Specify the composition, exposure, delivery and intended use before assigning a result to Lytica. Candidate ingredients are not evidence that the combined product works.</p></div>
+        <div class="prod-mech"><h4 style="color:var(--lytica)">Test the Finished Formulation</h4><p>Evaluate tolerability, local outcomes and analytical interference with an appropriate comparator. Any future systemic claim would need its own evidence.</p></div>
       </div>
-      <div class="prod-targets"><h4 style="color:var(--lytica)">Clinical Targets</h4><div class="pt" style="--c:var(--lytica)"><span>Active periodontal disease — stages III and IV</span></div><div class="pt" style="--c:var(--lytica)"><span>Peri-implantitis — biofilm on titanium surfaces</span></div><div class="pt" style="--c:var(--lytica)"><span>Post-surgical infection control</span></div><div class="pt" style="--c:var(--lytica)"><span>Refractory cases non-responsive to SRP + antibiotics</span></div></div>
+      <p class="prod-body"><a href="/lytica/">Explore Lytica and request development updates →</a></p>
     </div>
+
     <div class="prod" id="p-loria">
-      <div class="prod-head"><span class="prod-name" style="color:var(--loria)">Loria</span><span class="prod-badge" style="color:var(--loria);border-color:rgba(74,237,196,.3)">Molecular Purification</span></div>
-      <p class="prod-tagline">From Latin luere — to purify. The original Fasolati formulation. Physical barrier, heal, hydrate, and hold.</p>
-      <p class="prod-body">Loria replaces chlorhexidine's indiscriminate kill with intelligent ecological remodeling. Biofilm‑dispersing enzymes dismantle the extracellular polysaccharide scaffold. Dual‑weight hyaluronic acid creates a physical barrier while driving fibroblast proliferation by 35% within 7 days. Castor oil reduces IL‑1β and TNF‑α while reinforcing pellicle lipid barriers. Bio‑adhesive film formation via pullulan and PVP ensures hours of therapeutic residence.</p>
+      <div class="prod-head"><h2 class="prod-name" style="color:var(--loria)">Loria</h2><span class="prod-badge" style="color:var(--loria);border-color:var(--loria)">Product Information</span></div>
+      <p class="prod-tagline">An oral-care product deserves product-specific information.</p>
+      <p class="prod-body">Ask about Loria’s current formulation, labeling, directions and purchasing details. We keep those questions separate from the broader research ambition: this page does not claim that Loria lowers bacterial vesicles or systemic inflammation, replaces prescribed care, or delivers benefits inferred from ingredient studies.</p>
       <div class="prod-mechs">
-        <div class="prod-mech"><h4 style="color:var(--loria)">Barrier + Heal</h4><p>High MW HA forms protective scaffolding on mucosal surface. Low MW HA penetrates deeper tissue, stimulates fibroblast proliferation, drives re-epithelialization (8/9 wounds healed in 24 hours vs 0/9 saline).</p></div>
-        <div class="prod-mech"><h4 style="color:var(--loria)">Hydrate + Hold</h4><p>Dual-weight HA retains moisture at mucosal surfaces. Pullulan + PVP create cross-linked adhesion network for extended therapeutic residence. CPC at 0.05% provides selective antimicrobial baseline.</p></div>
+        <div class="prod-mech"><h4 style="color:var(--loria)">Know the Product</h4><p>Request information for the exact formulation and intended use. Follow its current labeling and discuss clinical questions with your dental professional.</p></div>
+        <div class="prod-mech"><h4 style="color:var(--loria)">Keep Evidence in Scope</h4><p>Our product-development standard is to test the finished formulation rather than assemble an efficacy story from its ingredients.</p></div>
       </div>
-      <div class="prod-targets"><h4 style="color:var(--loria)">Clinical Targets</h4><div class="pt"><span>Daily oral ecology maintenance — chlorhexidine replacement</span></div><div class="pt"><span>Biofilm management — prevent recolonization after treatment</span></div><div class="pt"><span>Post-surgical mucosal healing support</span></div><div class="pt"><span>Xerostomia (dry mouth) — sustained hydration</span></div></div>
+      <p class="prod-body"><a href="/loria/">Loria product information and inquiries →</a></p>
     </div>
+
     <div class="prod" id="p-fasolati-tier">
-      <div class="prod-head"><span class="prod-name" style="color:var(--w)">Distribution Architecture</span></div>
-      <p class="prod-tagline">Maxoral and Fasolati are not products. They're distribution tiers that determine formulation strength, regulatory class, and channel strategy.</p>
+      <div class="prod-head"><h2 class="prod-name" style="color:var(--w)">Development & Collaboration</h2></div>
+      <p class="prod-tagline">Clinical and consumer contexts need their own intended-use review.</p>
       <div class="tier-grid">
-        <div class="tier" style="border-top-color:var(--maxoral)"><h4 style="color:var(--maxoral)">Maxoral</h4><span class="tier-badge" style="color:var(--maxoral)">Rx Grade — Professional Channel</span><p>Prescription-strength formulations. Higher enzyme concentrations, full phage payloads (when cleared), extended-release tray application. Distributed through DSOs, periodontists, oral surgeons via Henry Schein, Patterson, Benco.</p></div>
-        <div class="tier" style="border-top-color:var(--fasolati-green)"><h4 style="color:var(--fasolati-green)">Fasolati</h4><span class="tier-badge" style="color:var(--fasolati-green)">OTC Grade — Consumer Channel</span><p>Consumer formulations optimized within OTC regulatory limits. D2C, Amazon, pharmacy, subscription. Daily Loria maintenance, Stage 1 Lytica enzyme gel. The recurring revenue engine.</p></div>
+        <div class="tier" style="border-top-color:var(--maxoral)"><h4 style="color:var(--maxoral)">Maxoral</h4><span class="tier-badge" style="color:var(--maxoral)">Professional-Channel Concept</span><p>Maxoral is a proposed professional-channel direction. Formulations, intended uses and distribution arrangements require definition and review; no prescription classification or distribution partnership is asserted here.</p></div>
+        <div class="tier" style="border-top-color:var(--fasolati-green)"><h4 style="color:var(--fasolati-green)">Fasolati</h4><span class="tier-badge" style="color:var(--fasolati-green)">Consumer-Facing Direction</span><p>The consumer-facing ambition is accessible product information and clearer evidence. A concept does not establish an OTC classification, a retail channel or a subscription offer.</p></div>
       </div>
+      <p class="prod-body">Research-use and general-wellness guidance do not themselves classify a proposed assay, software feature or product claim. <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/distribution-in-vitro-diagnostic-products-labeled-research-use-only-or-investigational-use-only" target="_blank" rel="noopener noreferrer">FDA research-use guidance</a> and <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/general-wellness-policy-low-risk-devices" target="_blank" rel="noopener noreferrer">FDA general-wellness guidance</a> inform that review.</p>
     </div>
+
     <div class="prod">
-      <div class="prod-head"><span class="prod-name" style="color:var(--t)">The Therapeutic Cascade</span></div>
-      <p class="prod-tagline">Lytica and Loria are not two separate products. They are a clinical protocol.</p>
-      <div class="cascade">
-        <div class="cascade-step"><span class="cascade-num" style="color:var(--lytica)">1</span><div class="cascade-content"><h4 style="color:var(--lytica)">Lytica Hunts</h4><p>Clear the active infection. Breach the biofilm. Eliminate keystone pathogens. Reset the ecology.</p></div></div>
-        <div class="cascade-arrow">↓</div>
-        <div class="cascade-step"><span class="cascade-num" style="color:var(--loria)">2</span><div class="cascade-content"><h4 style="color:var(--loria)">Loria Purifies</h4><p>Maintain the ecology daily. Disrupt biofilm reformation. Barrier, heal, hydrate, hold. Indefinitely.</p></div></div>
-      </div>
-      <p class="prod-body" style="margin-top:28px">DSOs deploy this as a complete system of care. Lytica is the high-margin intervention. Loria is the recurring subscription revenue stream.</p>
+      <div class="prod-head"><h2 class="prod-name" style="color:var(--g)">Gut Stack</h2><span class="prod-badge" style="color:var(--g);border-color:var(--g)">Research & Development</span></div>
+      <p class="prod-tagline">Ask when a gut-focused approach adds value—not assume it always does.</p>
+      <p class="prod-body">The Gut Stack is a research direction for evaluating defined nutrition or microbiome interventions. Its components and benefits remain to be established. It is not a barrier-restoration protocol and is not matched to a personal gut-integrity score.</p>
+      <p class="prod-body"><a href="/gut-stack/">Explore the Gut Stack direction →</a></p>
     </div>
-  
+
+    <div class="prod">
+      <div class="prod-head"><h2 class="prod-name" style="color:var(--t)">Fasolati Engine</h2><span class="prod-badge" style="color:var(--t);border-color:var(--t)">Life Board Development</span></div>
+      <p class="prod-tagline">What changed? How confident are we? What next step is justified?</p>
+      <p class="prod-body">The proposed Life Board would keep oral, gut and systemic observations distinct—not average them into a health score. Its design calls for visible measurement quality, uncertainty and supporting evidence, including the ability to say “not interpretable yet.” It is not a live clinical service or an autonomous prescribing system.</p>
+      <div class="cascade">
+        <div class="cascade-step"><span class="cascade-num" style="color:var(--t)">1</span><div class="cascade-content"><h4 style="color:var(--t)">Measure Before Interpreting</h4><p>Establish what the assay measures and how reliably it detects change.</p></div></div>
+        <div class="cascade-arrow" aria-hidden="true">↓</div>
+        <div class="cascade-step"><span class="cascade-num" style="color:var(--t)">2</span><div class="cascade-content"><h4 style="color:var(--t)">Earn the Next Decision</h4><p>Test whether the result adds useful information and whether acting on it improves a meaningful outcome.</p></div></div>
+      </div>
+      <p class="prod-body"><a href="/science/#experiments">Read the proposed experiments in the Science Spine →</a></p>
+    </div>
   </div>
 
   <nav class="page-next" aria-label="Related pages">
-    <a href="/lytica/"><h3>Lytica™</h3><p>The two-stage biofilm intervention, on its own page.</p></a>
-    <a href="/loria/"><h3>Loria™</h3><p>The daily rinse — available now.</p></a>
-    <a href="/science/"><h3>Inside the Black Box</h3><p>How SciAgent reasons, verifies, and learns.</p></a>
+    <a href="/shop/"><h3>Products & Concepts</h3><p>Explore the portfolio and product-information paths.</p></a>
+    <a href="/science/"><h3>Science Spine</h3><p>The evidence, limitations and proposed validation work.</p></a>
+    <a href="/partner/"><h3>Partner With Us</h3><p>Discuss research, clinical and commercial questions.</p></a>
   </nav>
 </Base>

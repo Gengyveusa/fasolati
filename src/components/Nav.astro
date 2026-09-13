@@ -1,56 +1,43 @@
 ---
 import { NAV, MENU_COLUMNS } from '../data/nav.ts';
 ---
-<nav class="nav" id="nav">
-  <a class="nav-logo" id="nav-logo" href="/">Fasolati<sup>™</sup></a>
-
+<nav class="nav" id="nav" aria-label="Main navigation">
+  <a class="nav-logo" id="nav-logo" href="/" aria-label="Fasolati home">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M8 26V6h18M8 15h13" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="24" r="3" fill="currentColor"/></svg>
+    Fasolati<sup>™</sup>
+  </a>
   <div class="topnav" id="topnav">
     {NAV.map((menu) => (
-      <div class="topnav-item" data-dd={menu.id}>
-        <button class="topnav-trigger" aria-expanded="false">
-          {menu.label}
-          <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-        </button>
-        <div class="topnav-drop" style={menu.minWidth ? `min-width:${menu.minWidth}` : undefined}>
+      <details class="topnav-item" name="desktop-nav">
+        <summary class="topnav-trigger">{menu.label}<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></summary>
+        <div class="topnav-drop">
           {menu.groups.map((group, gi) => (
-            <>
-              {gi > 0 && <div class="dd-divider" />}
-              {group.tag && <div class="dd-tag" style="color:var(--t)">{group.tag}</div>}
+            <>{gi > 0 && <div class="dd-divider" />}{group.tag && <div class="dd-tag">{group.tag}</div>}
               {group.items.map((item) => (
-                <a
-                  class="dd-item"
-                  href={item.href}
-                  target={item.external ? '_blank' : undefined}
-                  rel={item.external ? 'noopener' : undefined}
-                >
-                  <div class="dd-title" style={item.color ? `color:${item.color}` : undefined}>{item.label}</div>
-                  <div class="dd-desc">{item.desc}</div>
+                <a class="dd-item" href={item.href} target={item.external ? '_blank' : undefined} rel={item.external ? 'noopener noreferrer' : undefined}>
+                  <div class="dd-title">{item.label}</div><div class="dd-desc">{item.desc}</div>
                 </a>
               ))}
             </>
           ))}
         </div>
-      </div>
+      </details>
     ))}
   </div>
-
-  <div class="hamburger" id="hamburger" role="button" tabindex="0" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></div>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle" aria-label="Switch color theme" title="Switch color theme">◐</button>
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-controls="menu-overlay" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
 </nav>
-
-<div class="menu-overlay" id="menu-overlay">
+<div class="menu-overlay" id="menu-overlay" role="dialog" aria-modal="true" aria-label="Site menu" inert>
+  <button type="button" class="menu-close" id="menu-close">Close menu ×</button>
   <div class="menu-inner">
     {MENU_COLUMNS.map((col) => (
       <div class="menu-col">
         <div class={`menu-col-label ${col.className}`}>{col.label}</div>
         {col.items.map((item) => (
-          <a
-            class="menu-item"
-            href={item.href}
-            target={item.external ? '_blank' : undefined}
-            rel={item.external ? 'noopener' : undefined}
-          >
-            <div class="mi-title">{item.label}</div>
-            <div class="mi-desc">{item.desc}</div>
+          <a class="menu-item" href={item.href} target={item.external ? '_blank' : undefined} rel={item.external ? 'noopener noreferrer' : undefined}>
+            <div class="mi-title">{item.label}</div><div class="mi-desc">{item.desc}</div>
           </a>
         ))}
       </div>

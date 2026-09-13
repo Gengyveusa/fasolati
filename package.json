@@ -1,7 +1,7 @@
 {
   "name": "fasolati",
   "version": "1.0.0",
-  "description": "Fasolati \u2014 the inflammation operating system (fasolati.life)",
+  "description": "Fasolati: evidence-led oral, gut and systemic health research and development (fasolati.life)",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
