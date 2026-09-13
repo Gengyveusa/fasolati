@@ -1,0 +1,138 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, breadcrumb } from '../data/site.ts';
+import { LORIA_REVIEW, LORIA_SOURCES, LORIA_FIELDS, LORIA_ASSET_REQUIREMENTS } from '../data/loria-dossier.ts';
+import '../styles/dossier-program.css';
+
+const title = 'Loria™ Product Dossier — Label, Evidence & Open Questions | Fasolati';
+const description = 'A transparent Loria product-information record: what Fasolati publishes, what remains unverified, and the label and evidence questions to ask before a product decision.';
+const schema = [{
+  '@type': 'WebPage', '@id': `${SITE}/loria-dossier/`, url: `${SITE}/loria-dossier/`,
+  name: title, description, dateModified: LORIA_REVIEW.date,
+  isPartOf: { '@id': `${SITE}/#website` }, publisher: { '@id': `${SITE}/#organization` },
+}, breadcrumb('Loria product dossier', '/loria-dossier/')];
+---
+<Base title={title} description={description} path="/loria-dossier/" schema={schema}>
+  <article class="dp-page">
+    <a class="dp-back" href="/loria/">← Loria product information</a>
+    <header class="dp-hero">
+      <div>
+        <p class="section-kicker">Loria™ / Product dossier 01</p>
+        <h1>The product.<br /><span>Not the inference.</span></h1>
+        <p class="dp-lede">A clear record of what is published, what is still needed, and what to ask next about Loria.</p>
+        <p>Fasolati lists “Loria™ Daily Oral Rinse” as product information and invites requests for its current details. <a class="dp-cite" href={LORIA_SOURCES[0].url}>Fasolati product page</a></p>
+        <div class="dp-actions">
+          <a class="btn bp" href={LORIA_REVIEW.inquiry}>Request Loria details <span aria-hidden="true">↗</span></a>
+          <a class="dp-text-link" href="#product-record">Inspect the record <span aria-hidden="true">↓</span></a>
+        </div>
+        <p class="dp-small">An information request. Not an order, prescription or promise of availability.</p>
+      </div>
+      <aside class="dp-folio" aria-labelledby="folio-title">
+        <div class="dp-folio-head"><span>Publication record</span><span>01 / Loria</span></div>
+        <h2 id="folio-title">Clarity before<br />a product decision.</h2>
+        <dl class="dp-folio-list">
+          <div><dt>Published identity</dt><dd>Loria™ Daily Oral Rinse<br /><a href={LORIA_SOURCES[0].url}>Fasolati’s own description</a></dd></div>
+          <div><dt>Current dossier</dt><dd>Information review<br />Not a finished label</dd></div>
+          <div><dt>Reviewed</dt><dd><time datetime={LORIA_REVIEW.date}>{LORIA_REVIEW.displayDate}</time></dd></div>
+        </dl>
+        <p class="dp-small">No substitute bottle imagery. No borrowed formulation. The open fields below are intentional.</p>
+      </aside>
+    </header>
+
+    <nav class="dp-index" aria-label="Loria dossier sections">
+      <a href="#product-record"><span>01</span> Product record</a>
+      <a href="#evidence-boundary"><span>02</span> Evidence boundary</a>
+      <a href="#required-assets"><span>03</span> Required materials</a>
+      <a href="#source-notes"><span>04</span> Source notes</a>
+    </nav>
+
+    <section class="dp-section" id="product-record" aria-labelledby="record-title">
+      <div class="dp-section-heading">
+        <p class="section-kicker">01 / Current record</p>
+        <h2 id="record-title">The useful details.<br />Including the gaps.</h2>
+        <p>“Published by Fasolati” identifies a first-party statement, not independent verification. “Not yet published here” identifies a missing dossier field, not proof that a document does not exist.</p>
+      </div>
+      <div class="dp-record">
+        {LORIA_FIELDS.map((field) => (
+          <section class="dp-record-row" aria-labelledby={`field-${field.id}`}>
+            <div>
+              <h3 id={`field-${field.id}`}>{field.title}</h3>
+              <span class:list={['dp-status', { 'dp-status-published': field.published }]}>{field.status}</span>
+            </div>
+            <div>
+              <p>{field.description} {'source' in field && <a class="dp-cite" href={field.source.url}>Fasolati product page</a>}</p>
+              <p class="dp-request"><strong>Ask next</strong> {field.request}</p>
+            </div>
+          </section>
+        ))}
+      </div>
+      <div class="dp-download">
+        <div><p class="section-kicker">Take the questions with you</p><h3>Loria evidence checklist</h3><p>A practical list for a product, label or purchasing conversation.</p></div>
+        <a class="btn bs" href={LORIA_REVIEW.checklist} download="loria-evidence-checklist.md">Download checklist <span class="dp-file-type">MD</span></a>
+      </div>
+    </section>
+
+    <section class="dp-section" id="evidence-boundary" aria-labelledby="boundary-title">
+      <div class="dp-section-heading">
+        <p class="section-kicker">02 / Evidence boundary</p>
+        <h2 id="boundary-title">A mechanism is not<br />a product result.</h2>
+        <p>For this dossier, evidence must stay attached to the thing actually studied. We do not use the broader Fasolati research program to assign a benefit to Loria.</p>
+      </div>
+      <ol class="dp-evidence-levels">
+        <li><span class="dp-step-number">01</span><h3>Biological background</h3><p>Useful for framing a question. Not a demonstration that a rinse changes an oral, gut or systemic outcome.</p></li>
+        <li><span class="dp-step-number">02</span><h3>Ingredient literature</h3><p>Read the ingredient, concentration and study conditions. Do not treat an ingredient paper as a study of the complete Loria formulation.</p></li>
+        <li><span class="dp-step-number">03</span><h3>Finished-product evidence</h3><p>Require an identifiable formula version, intended use and full report before evaluating a product-specific claim.</p></li>
+      </ol>
+      <details class="dp-detail">
+        <summary>What about Gengyve information?</summary>
+        <div>
+          <p>GengyveUSA publishes ingredient descriptions and directions for a product named Gengyve. <a class="dp-cite" href={LORIA_SOURCES[1].url}>Gengyve product page</a></p>
+          <p>The reviewed Loria and Gengyve product pages do not establish that their finished formulations, labels or packaging are identical. <a class="dp-cite" href={LORIA_SOURCES[0].url}>Loria information</a>; <a class="dp-cite" href={LORIA_SOURCES[1].url}>Gengyve information</a></p>
+          <p>We therefore do not transfer Gengyve ingredients, directions, photographs, reviews, professional endorsements or benefit claims to Loria. A documented product-identity bridge would be needed before considering any such material.</p>
+        </div>
+      </details>
+      <details class="dp-detail">
+        <summary>Does “Daily Oral Rinse” establish how to use it?</summary>
+        <div><p>No directions are supplied by this dossier. The name comes from Fasolati’s product page, which asks readers to request current labeling and directions. <a class="dp-cite" href={LORIA_SOURCES[0].url}>Fasolati product page</a></p><p>Do not infer dose, frequency, age suitability, procedure use or safety from a product name. Obtain the applicable current label and appropriate professional advice.</p></div>
+      </details>
+      <a class="dp-text-link" href="/evidence/#claim-product-specific-evidence">Inspect the product-evidence claim boundary →</a>
+    </section>
+
+    <section class="dp-section" id="required-assets" aria-labelledby="assets-title">
+      <div class="dp-section-heading">
+        <p class="section-kicker">03 / Publication requirements</p>
+        <h2 id="assets-title">What closes<br />the open fields?</h2>
+        <p>These are the specific materials requested from the product owner before adding packaging, formulation or finished-product claims.</p>
+      </div>
+      <div class="dp-requirements">
+        {LORIA_ASSET_REQUIREMENTS.map((asset, index) => (
+          <section><span class="dp-step-number">0{index + 1}</span><h3>{asset.title}</h3><p>{asset.body}</p></section>
+        ))}
+      </div>
+      <p class="dp-editorial-note">This is an editorial product-information dossier, not a mockup of a finished pack. Unknowns are left explicit rather than filled with a different product’s assets.</p>
+    </section>
+
+    <section class="dp-section" id="source-notes" aria-labelledby="sources-title">
+      <div class="dp-section-heading">
+        <p class="section-kicker">04 / Source notes</p>
+        <h2 id="sources-title">Read the underlying pages.</h2>
+        <p>A bounded first-party review, not a systematic literature review or regulatory determination. Reviewed <time datetime={LORIA_REVIEW.date}>{LORIA_REVIEW.displayDate}</time>.</p>
+      </div>
+      <div class="dp-sources">
+        {LORIA_SOURCES.map((source) => (
+          <section id={`source-${source.id}`} aria-labelledby={`source-title-${source.id}`}>
+            <p class="dp-small">{source.kind}</p>
+            <h3 id={`source-title-${source.id}`}><a href={source.url}>{source.name} <span aria-hidden="true">↗</span></a></h3>
+            <p>{source.observation} <a class="dp-cite" href={source.url}>Read the publisher’s page</a></p>
+            <p class="dp-small">{source.boundary}</p>
+          </section>
+        ))}
+      </div>
+    </section>
+
+    <section class="dp-close" aria-labelledby="loria-close-title">
+      <div><p class="section-kicker">A better next question</p><h2 id="loria-close-title">Ask for the record,<br />not the promise.</h2><p>Tell us which label, formulation, evidence or purchasing question you need clarified. Do not include personal health information.</p></div>
+      <div class="dp-close-actions"><a class="btn bp" href={LORIA_REVIEW.inquiry}>Request Loria details <span aria-hidden="true">↗</span></a><a class="dp-text-link" href="/design-partners/">Clinician design-review program →</a></div>
+    </section>
+  </article>
+</Base>

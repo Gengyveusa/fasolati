@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import GuidedLifeBoard from '../components/GuidedLifeBoard.astro';
+import { SITE, breadcrumb } from '../data/site';
+import '../styles/experience.css';
+
+const title = 'The Guided Life Board | A fictional case, real evidence boundaries | Fasolati';
+const description = 'Follow four fictional visits through a Life Board: initial observation, local change, discordance, and missing data. Separate channels. No personal-risk score.';
+const schema = [
+  {
+    '@type': 'WebPage',
+    '@id': `${SITE}/life-board/`,
+    url: `${SITE}/life-board/`,
+    name: title,
+    description,
+    isPartOf: { '@id': `${SITE}/#website` },
+    publisher: { '@id': `${SITE}/#organization` },
+    about: { '@type': 'Thing', name: 'Fictional educational Life Board demonstration' },
+  },
+  breadcrumb('Guided Life Board', '/life-board/'),
+];
+---
+<Base title={title} description={description} path="/life-board/" schema={schema}>
+  <article class="experience-page">
+    <nav class="experience-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Fasolati</a><span aria-hidden="true">/</span><span aria-current="page">Guided Life Board</span>
+    </nav>
+    <header class="experience-hero">
+      <div>
+        <p class="experience-eyebrow">The guided Life Board / Fictional design example</p>
+        <h1>What changed.<br /><span>What did not follow.</span></h1>
+      </div>
+      <div class="experience-hero-copy">
+        <p>A lower oral readout. An unchanged host observation. Then disagreement—and a missing visit.</p>
+        <p>Explore an entirely fictional record that makes uncertainty visible instead of making a score. No patient data. No health input. No diagnosis.</p>
+        <a class="experience-reference-link" href="#guided-board-title">Begin the fictional case <span aria-hidden="true">↓</span></a>
+      </div>
+    </header>
+    <GuidedLifeBoard />
+    <section class="experience-next" aria-labelledby="life-board-next">
+      <div><p class="experience-eyebrow">Keep the evidence in view</p><h2 id="life-board-next">The gaps belong<br />in the picture.</h2></div>
+      <div>
+        <p>This is an educational expression of the proposed Life Board, not an operational clinical service. The science spine sets out the measurement and validation questions behind the concept.</p>
+        <div class="experience-next-links"><a href="/science/#life-board">Read the Life Board principles <span aria-hidden="true">↗</span></a><a href="/pathway/">Explore the biological pathway <span aria-hidden="true">→</span></a></div>
+      </div>
+    </section>
+  </article>
+</Base>

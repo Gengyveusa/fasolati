@@ -47,8 +47,12 @@ const schema = [
     )}
 
     {product.slug === 'engine' && (
+      <p class="sp-body"><a class="btn bp" href="/life-board/">Walk through the guided Life Board</a></p>
       <LifeBoardDemo />
       <p class="sp-body"><a href="/science/#life-board">Read the Life Board’s proposed evidence and interpretation requirements in the Science Spine →</a></p>
+    )}
+    {product.slug === 'loria' && (
+      <p class="sp-body"><a class="btn bs" href="/loria-dossier/">Open the Loria product dossier</a></p>
     )}
     <div class="sp-cta">
       {product.cta.href ? (

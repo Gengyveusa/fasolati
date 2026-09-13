@@ -1,0 +1,165 @@
+---
+import { GUIDED_CASE, GUIDED_STAGES } from '../data/guided-case';
+---
+<section class="guided-board" data-guided-board aria-labelledby="guided-board-title">
+  <header class="experience-section-head">
+    <div>
+      <p class="experience-eyebrow">{GUIDED_CASE.name} / Four fictional visits</p>
+      <h2 id="guided-board-title">The same record.<br />Four different limits.</h2>
+    </div>
+    <p>{GUIDED_CASE.description}</p>
+  </header>
+
+  <div class="experience-disclaimer">
+    <strong>Fictional at every step.</strong>
+    <p>{GUIDED_CASE.disclaimer}</p>
+  </div>
+
+  <nav class="experience-step-nav" aria-label="Fictional case visits">
+    <ol role="list">
+      {GUIDED_STAGES.map((stage, index) => (
+        <li>
+          <a href={`#visit-${stage.id}`} data-visit-link aria-controls={`visit-${stage.id}`}>
+            <span class="experience-step-number" aria-hidden="true">0{index + 1}</span>
+            <span><strong>{stage.label}</strong><span>{stage.time}</span></span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+
+  <details class="experience-disclosure guided-sequence">
+    <summary>See the fictional sequence at a glance</summary>
+    <div>
+      <p class="guided-sequence-caption">A qualitative timeline—not a health chart. Every observation is authored. Read across one channel, not across channels as a causal chain.</p>
+      {GUIDED_STAGES[0].channels.map((channel) => (
+        <section class="guided-trace-row" aria-label={`${channel.name}: fictional sequence`}>
+          <h3><span class={`channel-mark channel-mark--${channel.id}`} aria-hidden="true"></span>{channel.name}</h3>
+          <ol role="list">
+            {GUIDED_STAGES.map((stage) => (
+              <li data-trace-visit={stage.id}>
+                <span>{stage.label}</span>
+                <strong>{stage.channels.find((item) => item.id === channel.id)?.status}</strong>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))}
+    </div>
+  </details>
+
+  <div class="experience-view-tools" data-board-tools hidden>
+    <p role="status" aria-live="polite" aria-atomic="true" data-board-status></p>
+    <button class="experience-text-button" type="button" data-board-all aria-pressed="false" aria-controls="guided-visits">Read all visits</button>
+  </div>
+  <noscript><p class="experience-fallback">All four fictional visits are shown below. The visit links jump to each section, and every disclosure opens without JavaScript.</p></noscript>
+
+  <div id="guided-visits" class="guided-visits">
+    {GUIDED_STAGES.map((stage, index) => (
+      <section class="guided-visit" id={`visit-${stage.id}`} data-visit data-label={stage.label} aria-labelledby={`visit-title-${stage.id}`}>
+        <header class="experience-panel-head">
+          <div>
+            <p class="experience-eyebrow">Fictional visit 0{index + 1} / {stage.time}</p>
+            <h3 id={`visit-title-${stage.id}`} tabindex="-1" data-visit-title>{stage.title}</h3>
+          </div>
+          <span class="experience-status-tag">{stage.status}</span>
+        </header>
+        <p class="guided-story">{stage.story}</p>
+
+        <div class="guided-workspace">
+          <div class="guided-observations">
+            <div class="guided-channel-heading">
+              <h4>Fictional observations</h4>
+              <p>Separate channels. Never a composite.</p>
+            </div>
+            <dl class="guided-channel-list">
+              {stage.channels.map((channel) => (
+                <div class="guided-channel" data-channel={channel.id}>
+                  <dt><span class={`channel-mark channel-mark--${channel.id}`} aria-hidden="true"></span>{channel.name}</dt>
+                  <dd>
+                    <strong>{channel.status}</strong>
+                    <p>{channel.observation}</p>
+                    <p class="guided-comparison"><span>Comparison limit</span>{channel.comparison}</p>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div class="guided-reading">
+            <p class="experience-eyebrow">Authored interpretation / Not medical advice</p>
+            <h4>What this fictional visit allows.</h4>
+            <p class="guided-interpretation">{stage.interpretation}</p>
+            <dl class="guided-decision">
+              <div><dt>Keep in the record</dt><dd>{stage.retained}</dd></div>
+              <div><dt>Do not conclude</dt><dd>{stage.withheld}</dd></div>
+            </dl>
+            <div class="guided-question">
+              <h4>The next research question</h4>
+              <p>{stage.nextQuestion}</p>
+              <span>Not a test order or a care recommendation.</span>
+            </div>
+            <details class="experience-disclosure">
+              <summary>Why not a stronger conclusion?</summary>
+              <div>
+                <p>{stage.whyNot}</p>
+                <a class="experience-reference-link" href={`/science/#${stage.scienceAnchor}`}>{stage.scienceLabel} <span aria-hidden="true">↗</span></a>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="guided-research">
+          <div class="guided-research-heading">
+            <h4>Original research, not this fictional case.</h4>
+            <p>Published findings inform the boundary. They do not validate the invented observations above.</p>
+          </div>
+          {stage.evidence.map((entry) => (
+            <details class="experience-source">
+              <summary>
+                <span><strong>{entry.name}</strong><span>{entry.source} · Open evidence &amp; boundary</span></span>
+                <span class="experience-setting">Study setting: {entry.setting}</span>
+                <span class="experience-disclosure-sign" aria-hidden="true">+</span>
+              </summary>
+              <div class="experience-source-body">
+                <div>
+                  <h4>What was reported</h4>
+                  <p>{entry.finding}</p>
+                  <a class="experience-reference-link" href={entry.url} target="_blank" rel="noopener noreferrer">Original paper: {entry.source} <span aria-hidden="true">↗</span></a>
+                </div>
+                <div>
+                  <h4>What it cannot establish</h4>
+                  <p>{entry.boundary}</p>
+                  <a class="experience-reference-link" href={entry.boundaryUrl || entry.url} target="_blank" rel="noopener noreferrer">{entry.boundaryUrl ? 'Marker-specificity discussion' : `Inspect the study limits: ${entry.source}`} <span aria-hidden="true">↗</span></a>
+                </div>
+                <div class="experience-source-deep-link">
+                  <a class="experience-reference-link" href={`/science/#${entry.id}`}>This mechanism in the science spine <span aria-hidden="true">→</span></a>
+                  <a class="experience-reference-link" href={`/evidence/#claim-${entry.id}`}>Inspect the claim in the evidence ledger <span aria-hidden="true">→</span></a>
+                </div>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <div class="experience-pagination" data-board-pagination hidden>
+    <button class="experience-button" type="button" data-board-prev><span aria-hidden="true">←</span> Previous visit</button>
+    <button class="experience-button experience-button--primary" type="button" data-board-next>Next visit <span aria-hidden="true">→</span></button>
+    <button class="experience-text-button" type="button" data-board-reset>Reset the case</button>
+  </div>
+
+  <div class="experience-takeaway" data-board-complete hidden>
+    <strong>The case ends. The uncertainty does not disappear.</strong>
+    <p>No score, diagnosis, or invented resolution is waiting at the end. Review the complete record or inspect the biological questions behind it.</p>
+    <a class="experience-reference-link" href="/pathway/">Explore the evidence pathway <span aria-hidden="true">→</span></a>
+  </div>
+
+  <div class="experience-export">
+    <div><strong>A record you can read away from the board.</strong><p>The complete fictional narrative, including original paper URLs. Plain text; no personal information.</p></div>
+    <a class="experience-button" href="/guided-case.txt" download="fasolati-fictional-life-board.txt">Download narrative (.txt) <span aria-hidden="true">↓</span></a>
+  </div>
+  <p class="experience-privacy">{GUIDED_CASE.privacy}</p>
+</section>
+<script src="../scripts/guided-life-board.js"></script>
