@@ -32,6 +32,8 @@ The additions use the existing Fasolati visual identity, self-hosted typography 
 | Inquiry tests | Ten intercepted mock requests covering errors, retry, acceptance and topic payload; zero live submissions |
 | Data exports | JSON claims match rendered content; five RSS revision entries align with the JSON history; XML parses successfully |
 | Repository formatting | `git diff --check` passed |
+| Deployed private preview | All five new destinations, two inquiry intents, interactive visit/stage selection and claim filtering verified on the hosted version |
+| Hosted static files | Claims JSON, revision RSS, fictional narrative and both Markdown downloads returned HTTP 200; self-hosted fonts loaded |
 
 Desktop/mobile screenshots were inspected separately from the automated checks. Additional visual inspection covered discordant observations, exposure-route boundaries and an expanded human-evidence claim on narrow screens; no clipping or misleading visual merging of the three observation channels was found.
 
@@ -69,7 +71,7 @@ Nothing in the kit represents a booked conversation or permission to contact som
 
 ## Release procedure and recovery
 
-The source candidate is on the local `next-phase` branch. Its starting production commit is `3e28299`, the previously published quality-pass release; no push or production deployment is part of this handoff.
+The implementation is saved as local commit `237366f` on the `next-phase` branch, with this final hosted-preview verification recorded in a subsequent documentation commit. Its starting production commit is `3e28299`, the previously published quality-pass release; no push or production deployment is part of this handoff.
 
 Before an approved production release:
 
