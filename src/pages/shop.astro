@@ -3,18 +3,11 @@ import Base from '../layouts/Base.astro';
 import { PRODUCTS } from '../data/products.ts';
 import { SITE, breadcrumb } from '../data/site.ts';
 
-/**
- * The shop index.
- *
- * Rendered from src/data/products.ts rather than hand-written markup, so the
- * cards here, the four product pages, and the Product/Offer schema on each can
- * no longer disagree with one another. Every card is now a link to a real
- * page instead of a section of an overlay.
- */
+/** Product information and development concepts, rendered from shared data. */
 
-const title = 'Shop — Fasolati Oral & Gut Health Products';
+const title = 'Products & Concepts — Fasolati Oral, Gut & Life Board';
 const description =
-  'Clinical-grade oral and gut health from Fasolati. Loria daily oral rinse available now; Lytica, the Gut Restoration Stack, and Fasolati Engine beta access open for waitlist.';
+  'Explore Loria product information and the Lytica, Gut Stack and Life Board development directions. Ask a product question or request development updates.';
 
 const schema = [
   {
@@ -28,7 +21,7 @@ const schema = [
   {
     '@type': 'ItemList',
     '@id': `${SITE}/shop/#products`,
-    name: 'Fasolati products',
+    name: 'Fasolati products and development concepts',
     itemListElement: PRODUCTS.map((p, i) => ({
       '@type': 'ListItem',
       position: i + 1,
@@ -36,20 +29,20 @@ const schema = [
       url: `${SITE}/${p.slug}/`,
     })),
   },
-  breadcrumb('Shop', '/shop/'),
+  breadcrumb('Products & Concepts', '/shop/'),
 ];
 ---
 <Base title={title} description={description} path="/shop/" schema={schema}>
   <div class="shop-inner">
     <div class="shop-hero">
-      <h1>The Fasolati Shop</h1>
-      <p>Clinical-grade oral and gut health — available now or join the waitlist for early access to products in development.</p>
+      <h1>Products & Concepts</h1>
+      <p>Explore Loria product information and Fasolati’s development directions. Ask about current product details or request updates on the work ahead. These pages are inquiry paths, not checkout or enrollment.</p>
     </div>
 
     {PRODUCTS.map((p) => (
-      <article class={`shop-product${p.availability === 'available' ? ' featured' : ''}`}>
-        <span class={`sp-badge ${p.availability === 'available' ? 'live' : 'soon'}`}>
-          {p.availability === 'available' ? '● ' : ''}{p.status}
+      <article class={`shop-product${p.stage === 'information' ? ' featured' : ''}`}>
+        <span class="sp-badge" style={`color:${p.accent};border-color:${p.accent}`}>
+          {p.status}
         </span>
         <h2 class="sp-name" style={`color:${p.accent}`}>{p.name}</h2>
         <p class="sp-tagline">{p.tagline}</p>
@@ -68,7 +61,7 @@ const schema = [
 
         <div class="sp-cta">
           <a class="btn bp" href={`/${p.slug}/`}>
-            {p.availability === 'available' ? `About ${p.shortName} →` : `${p.cta.label} →`}
+            {`Explore ${p.shortName} →`}
           </a>
         </div>
       </article>
@@ -76,9 +69,8 @@ const schema = [
   </div>
 
   <nav class="page-next" aria-label="Related pages">
-    <a href="/platform/"><h3>Therapeutic Platform</h3><p>The mechanisms behind each formulation.</p></a>
-    <a href="/science/"><h3>Inside the Black Box</h3><p>How the AI that writes your protocol works.</p></a>
-    <a href="/about/"><h3>About Fasolati</h3><p>Who built this, and why.</p></a>
+    <a href="/platform/"><h3>The Platform</h3><p>How the product and research directions fit together.</p></a>
+    <a href="/science/"><h3>Science Spine</h3><p>Evidence and the proposed validation work.</p></a>
+    <a href="/about/"><h3>About Fasolati</h3><p>The founder and the purpose.</p></a>
   </nav>
 </Base>
-

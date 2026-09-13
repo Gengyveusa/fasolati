@@ -2,18 +2,9 @@
 import Base from '../layouts/Base.astro';
 import { SITE, breadcrumb } from '../data/site.ts';
 
-/**
- * The origin story, the mission, and the 2006-2026 timeline.
- *
- * An AboutPage whose mainEntity is the founder's Person node is what lets a
- * search or answer engine connect "Fasolati" to a named, credentialed,
- * verifiable surgeon-scientist rather than treating it as an anonymous brand
- * - the strongest trust signal a company this small can emit.
- */
-
-const title = 'About Fasolati — From the OR to the Operating System';
+const title = 'About Fasolati — Oral Health, Better Questions, Clearer Decisions';
 const description =
-  'Fasolati was built by an oral and maxillofacial surgeon who got tired of operating on problems that should have been intercepted upstream. The origin story, the mission, and the milestones from 2006 to 2026.';
+  'Meet the purpose behind Fasolati: an oral, gut and systemic research direction founded by Thad Connelly, oral and maxillofacial surgeon and Gengyve founder.';
 
 const schema = [
   {
@@ -31,59 +22,46 @@ const schema = [
 ---
 <Base title={title} description={description} path="/about/" schema={schema}>
   <div class="about-inner">
-
     <div class="about-hero">
-      <h1>Turning an Unlit Corner On</h1>
-      <p>Fasolati started with a simple observation in an operating room: the mouth and the body have never been treated as one connected system. We're changing that.</p>
+      <h1>Better Questions.<br />Clearer Decisions.</h1>
+      <p>Fasolati’s ambition is to make oral, gut and systemic research useful—without turning a promising mechanism into a personal health claim before the evidence is there.</p>
     </div>
 
-    <!-- ORIGIN STORY -->
     <div class="ab-section" id="origin">
-      <div class="ab-section-num" style="color:var(--t)">The Origin</div>
-      <h2>From the OR to the Operating System</h2>
-      <p class="ab-body">For nearly two decades, Dr. Thad Connely has operated at the intersection of the mouth and the body — as an oral and maxillofacial surgeon performing total joint reconstructions, treating the most severe manifestations of what happens when oral disease goes systemic.</p>
-      <p class="ab-body">The pattern was always the same: patients arriving with advanced disease that started as inflammation nobody monitored. Periodontitis that seeded systemic infection. Gut dysbiosis that accelerated joint destruction. Biomarkers that were never checked until the damage was done.</p>
-      <p class="ab-body">The insight wasn't that these systems were connected — the literature has shown that for decades. The insight was that nobody had built the infrastructure to treat them as one system. No product line spanned both origin nodes. No AI correlated the data across domains. No protocol existed that told a patient what to rinse, swallow, and avoid — today, based on their specific inflammatory profile.</p>
-      <p class="ab-body">Fasolati is that infrastructure. Built by a surgeon who got tired of operating on problems that should have been intercepted upstream.</p>
+      <div class="ab-section-num" style="color:var(--t)">The Founder</div>
+      <h2>Thad Connelly</h2>
+      <p class="ab-body">Thad Connelly is an oral and maxillofacial surgeon and the founder of Gengyve. Fasolati brings an oral-health starting point to a broader research and product-development direction.</p>
+      <p class="ab-body">The central question: can better measurement of oral bacterial activity add useful information beyond routine examination and existing measures—and help justify a better next step?</p>
     </div>
 
-    <!-- MISSION -->
     <div class="ab-section" id="mission">
       <div class="ab-section-num" style="color:var(--g)">The Mission</div>
-      <h2>Make Inflammation Visible, Controllable, and Preventable</h2>
-      <p class="ab-body">Three out of five people die of chronic inflammatory diseases. The mouth and the gut are the two origin nodes where that inflammation begins — and the two places where it can actually be intercepted before it becomes cardiovascular disease, neurodegeneration, metabolic syndrome, or autoimmune destruction.</p>
+      <h2>Make the Next Step More Informed</h2>
+      <p class="ab-body">We want fewer demands on the person and more discipline in the engine. Oral, gut and systemic observations belong in a connected research program, but they should keep their own meaning rather than disappear into one averaged score.</p>
       <div class="ab-values">
-        <div class="ab-val"><h4 style="color:var(--t)">Treat the Network, Not the Symptom</h4><p>The body is a connected system. Oral health, gut health, and systemic inflammation are not three separate problems — they're one network. Fasolati is built to treat the network.</p></div>
-        <div class="ab-val"><h4 style="color:var(--g)">Protocols Over Advice</h4><p>Vague wellness recommendations fail. Specific, daily, data-driven protocols succeed. SciAgent doesn't suggest you "eat better" — it tells you exactly what to do today based on your data.</p></div>
-        <div class="ab-val"><h4 style="color:var(--t)">Surgeon-Grade Science, Patient-Grade Access</h4><p>The same mechanisms used in the operating room — enzymatic biofilm disruption, phage therapy, HA tissue engineering — delivered as daily consumer products anyone can use.</p></div>
-        <div class="ab-val"><h4 style="color:var(--g)">Transparency as Architecture</h4><p>Every recommendation comes with a "why." Every data point is yours. Every algorithm is auditable. We built "Inside the Black Box" because trust isn't a feature — it's the foundation.</p></div>
+        <div class="ab-val"><h4 style="color:var(--t)">Evidence Before Inference</h4><p>Our standard is to distinguish a measured result, a validated association, an experimental mechanism and an untested hypothesis.</p></div>
+        <div class="ab-val"><h4 style="color:var(--g)">Uncertainty in View</h4><p>The proposed Life Board should answer what changed, how confident we are and what next step is justified—including when a result is not interpretable yet.</p></div>
+        <div class="ab-val"><h4 style="color:var(--t)">Clinical Judgment Matters</h4><p>Development concepts are not instructions for care. The intended role is to support informed discussion, not automate prescribing or replace dental and medical evaluation.</p></div>
+        <div class="ab-val"><h4 style="color:var(--g)">Outcomes Over a Story</h4><p>We aim to test defined interventions against meaningful outcomes, retain unfavorable results and change the model when the evidence calls for it.</p></div>
       </div>
     </div>
 
-    <!-- TIMELINE -->
     <div class="ab-section" id="milestones">
-      <div class="ab-section-num" style="color:var(--t)">The Journey</div>
-      <h2>Milestones</h2>
-      <div class="ab-timeline">
-        <div class="ab-tl"><span class="ab-year" style="color:var(--t)">2006–2015</span><h4>Clinical Foundation</h4><p>Nearly a decade of oral and maxillofacial surgery across thousands of cases. Pattern recognition: the mouth-body disconnect in clinical practice is systemic, not anecdotal. The problem isn't knowledge — it's infrastructure.</p></div>
-        <div class="ab-tl"><span class="ab-year" style="color:var(--g)">2016–2019</span><h4>Oral Formulation Development</h4><p>Development of the dual-weight hyaluronic acid platform. First prototypes of what would become Loria — a chlorhexidine replacement that heals instead of kills. Early clinical validation of the mucosal barrier approach.</p></div>
-        <div class="ab-tl"><span class="ab-year" style="color:var(--t)">2020–2022</span><h4>From Product to Platform</h4><p>The realization that a single oral rinse wasn't enough. The mouth-gut-systemic framework takes shape. Partnerships with Magisnat (nutraceuticals), phage therapy researchers, and the Mata lab at Nottingham for enamel regeneration.</p></div>
-        <div class="ab-tl"><span class="ab-year" style="color:var(--g)">2023–2024</span><h4>Fasolati Architecture</h4><p>The platform crystallizes: two oral product lines (Lytica, Loria), three gut products (Magisnat, Biolumen, Monch Monch), two distribution tiers (Maxoral Rx, Fasolati OTC), and the SciAgent AI engine tying it all together.</p></div>
-        <div class="ab-tl"><span class="ab-year" style="color:var(--t)">2025</span><h4>ELR Breakthrough</h4><p>Mata's ELR enamel regeneration technology published in Nature Communications. A significant advance in biomimetic enamel reconstruction research.</p></div>
-        <div class="ab-tl"><span class="ab-year" style="color:var(--g)">2026</span><h4>Node Network Launch</h4><p>Loria goes to market. Fasolati Engine enters beta. DSO partnerships activate. The node network goes from architecture to operating system. The unlit corner starts to glow.</p></div>
-      </div>
+      <div class="ab-section-num" style="color:var(--t)">The Work Ahead</div>
+      <h2>Build What the Evidence Can Support</h2>
+      <p class="ab-body">The research priorities are to define the analyte, establish repeatable measurement, test whether it adds information beyond simpler measures, and evaluate the finished intervention. These are development gates, not completed milestones.</p>
+      <p class="ab-body">Loria has a product-information inquiry path. Lytica, the Gut Stack and the Life Board have distinct development questions. A shared brand does not give them a shared efficacy claim.</p>
     </div>
 
     <div style="text-align:center;margin-top:40px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
       <a class="btn bp" href="/partner/">Partner With Us</a>
-      <a href="https://claude.ai/public/artifacts/fddec7f6-4bf5-4888-b8a3-89bd80287d18" class="btn bs" target="_blank">View Deep Dive</a>
+      <a href="/science/" class="btn bs">Read the Science Spine</a>
     </div>
-  
   </div>
 
   <nav class="page-next" aria-label="Related pages">
-    <a href="/platform/"><h3>Therapeutic Platform</h3><p>What was built, and how it works.</p></a>
-    <a href="/science/"><h3>Inside the Black Box</h3><p>Transparency as architecture, in detail.</p></a>
-    <a href="/partner/"><h3>Partner With Us</h3><p>Clinicians, investors, DSOs, researchers.</p></a>
+    <a href="/platform/"><h3>The Platform</h3><p>Product information and development directions.</p></a>
+    <a href="/science/"><h3>Science Spine</h3><p>Evidence, limitations and the proposed research plan.</p></a>
+    <a href="/partner/"><h3>Partner With Us</h3><p>Clinical, research, business and product inquiries.</p></a>
   </nav>
 </Base>

@@ -1,135 +1,109 @@
 ---
 import Base from '../layouts/Base.astro';
 import { SITE, breadcrumb } from '../data/site.ts';
-
-/**
- * Inside the Black Box - how SciAgent is built, trained, verified, and how it
- * handles a user's data.
- *
- * This is the page most likely to be surfaced by an AI answering "how does
- * this health AI work / is it safe", which is precisely the question it was
- * written to answer - and precisely what it could not do while it lived
- * behind a JS toggle on the home page.
- */
-
-const title = 'Inside the Black Box — How SciAgent AI Works | Fasolati';
-const description =
-  'How the SciAgent clinical reasoning engine is built and trained, the three verification layers every recommendation passes through, how it builds a personal model over time, and what happens to your health data.';
-
-const schema = [
-  {
-    '@type': 'MedicalWebPage',
-    '@id': `${SITE}/science/`,
-    url: `${SITE}/science/`,
-    name: title,
-    description,
-    isPartOf: { '@id': `${SITE}/#website` },
-    publisher: { '@id': `${SITE}/#organization` },
-    author: { '@id': `${SITE}/#founder` },
-    about: { '@type': 'MedicalCondition', name: 'Chronic inflammation' },
-  },
-  breadcrumb('Inside the Black Box', '/science/'),
-];
+import { MECHANISMS } from '../data/science.ts';
+const title = 'The Fasolati Science Spine | OMVs, evidence, and the human bridge';
+const description = 'Explore the OMV-to-systemic-effect map: what vesicle experiments show, what human evidence supports, and what remains to be validated for personal use.';
+const schema = [{
+  '@type': 'WebPage', '@id': `${SITE}/science/`, url: `${SITE}/science/`, name: title,
+  description, isPartOf: { '@id': `${SITE}/#website` }, publisher: { '@id': `${SITE}/#organization` },
+  dateModified: '2026-09-12', about: { '@type': 'Thing', name: 'Oral bacterial extracellular vesicle research' }
+}, breadcrumb('Science Spine', '/science/')];
 ---
 <Base title={title} description={description} path="/science/" schema={schema}>
-  <div class="bb-inner">
+  <article class="science-article">
+    <header class="science-hero">
+      <p class="section-kicker">Research architecture / Updated September 12, 2026</p>
+      <h1>The science<br /><span>behind the connection.</span></h1>
+      <p class="science-lede">Not just which bacteria are present.<br />What they release. Where it goes. What it does.</p>
+      <p class="section-intro">Fasolati’s science spine asks whether a well-characterized oral bacterial effector measurement can add useful information beyond a periodontal examination, bacterial burden, and conventional risk measures.</p>
+      <div class="boundary-note"><strong>Development status.</strong> The OMV assay and individualized systemic-effect interpretations described here remain research proposals. The evidence on this page does not validate a Fasolati oral-rinse test for cardiovascular, neurological, cancer, or other personal disease-risk prediction.</div>
+    </header>
+    <nav class="science-index" aria-label="Science page contents">
+      <a href="#mapping">Mechanism map</a><a href="#human-evidence">Human evidence</a><a href="#measurement">Measurement</a><a href="#experiments">Experiments</a><a href="#life-board">Life Board</a>
+    </nav>
 
-
-    <div class="bb-hero">
-      <h1>Inside the <span class="bb-accent">Black Box</span></h1>
-      <p>You deserve to know exactly how the AI that manages your health actually works — what it knows, where it learned it, how it checks itself, and how it gets smarter the longer you use it.</p>
-    </div>
-
-    <!-- 01 — FOUNDATION -->
-    <div class="bb-section">
-      <div class="bb-section-num" style="color:var(--t)">01 — The Brain</div>
-      <h2>What Powers SciAgent</h2>
-      <p class="bb-tagline">Not a chatbot. A clinical reasoning engine trained on the science of inflammation.</p>
-      <p class="bb-body">SciAgent is built on a large language model — the same class of AI behind the most advanced reasoning systems in the world — but fine-tuned specifically for oral-systemic health. Think of the base model as a medical school graduate: broad knowledge, strong reasoning. Our fine-tuning is the residency — years of specialized training in the exact pathways that connect your mouth, your gut, and your systemic inflammation.</p>
-      <div class="bb-cards">
-        <div class="bb-card"><h4 style="color:var(--t)">Foundation Model</h4><p>A state-of-the-art language model provides the reasoning backbone — the ability to read your data, recognize patterns, weigh tradeoffs, and explain its thinking in plain language. We don't build this from scratch. We build on the best.</p></div>
-        <div class="bb-card"><h4 style="color:var(--t)">Domain Fine-Tuning</h4><p>We then train the model on oral-systemic health specifically: periodontal pathology, gut barrier dynamics, inflammatory cascades, biomarker interpretation, pharmacology of our product lines. It doesn't guess about inflammation. It reasons from mechanism.</p></div>
-        <div class="bb-card"><h4 style="color:var(--g)">Constrained Outputs</h4><p>SciAgent can only recommend interventions from the Fasolati product ecosystem. It cannot prescribe medications, diagnose diseases, or replace your doctor. It operates within strict clinical guardrails — what to rinse, swallow, and avoid. Not medical advice. Protocol guidance.</p></div>
-        <div class="bb-card"><h4 style="color:var(--g)">Explainable Reasoning</h4><p>Every recommendation SciAgent makes comes with a "why." Not a black box output — a transparent chain of reasoning you can read, question, and share with your clinician. If it suggests increasing your Loria frequency, it tells you exactly which data point triggered that change.</p></div>
+    <section class="science-block" id="mapping">
+      <div class="section-kicker">The biological map</div>
+      <h2>Promising mechanisms.<br />Specific boundaries.</h2>
+      <p>Outer membrane vesicles are a subset of bacterial extracellular vesicles, or bEVs. Vesicle identity requires more than a particle’s size, and an enriched preparation can contain non-vesicular material. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10850029/" target="_blank" rel="noopener noreferrer">MISEV2023 guidance</a>.</p>
+      <p>This map distinguishes the preparation tested, the reported response, and the claim it cannot support. Open a row to inspect the experimental setting and its limits.</p>
+      <div class="mechanism-list">
+        {MECHANISMS.map((m, i) => (
+          <details class="mechanism">
+            <summary><span class="mechanism-num">0{i + 1}</span><span class="mechanism-name"><strong>{m.name}</strong><span>{m.route}</span></span><span class="evidence-tag">{m.setting}</span><span class="expand-sign" aria-hidden="true">+</span></summary>
+            <div class="mechanism-body">
+              <div><h3>What was observed</h3><p>{m.finding} <a href={m.url} target="_blank" rel="noopener noreferrer">{m.source}</a>.</p></div>
+              <div><h3>What that does not establish</h3><p>{m.boundary}</p></div>
+              <div class="mechanism-use"><h3>Research use</h3><p>{m.use}</p></div>
+            </div>
+          </details>
+        ))}
       </div>
-    </div>
+      <p class="boundary-note">An experimental effect is not a diagnosis. Evidence about whole bacteria or an isolated molecule is not automatically evidence about an intact vesicle carrying that molecule.</p>
+    </section>
 
-    <!-- 02 — TRAINING DATA -->
-    <div class="bb-section">
-      <div class="bb-section-num" style="color:var(--t)">02 — The Education</div>
-      <h2>Where It Learned What It Knows</h2>
-      <p class="bb-tagline">Trained on peer-reviewed science. Not internet health forums. Not sponsored content.</p>
-      <p class="bb-body">The quality of an AI is only as good as the quality of its training data. SciAgent's knowledge base is built from curated, peer-reviewed clinical literature — the same sources your periodontist and gastroenterologist rely on. We don't scrape the internet. We curate the science.</p>
-      <div class="bb-cards">
-        <div class="bb-card"><h4 style="color:var(--t)">Clinical Literature</h4><p>Thousands of peer-reviewed papers on periodontitis, gut permeability, inflammatory biomarkers, microbiome ecology, and the oral-systemic connection. Sources include The Lancet, Nature, Journal of Clinical Periodontology, Gut, and specialized inflammation research.</p></div>
-        <div class="bb-card"><h4 style="color:var(--t)">Biomarker Databases</h4><p>Reference ranges, population distributions, and clinical significance thresholds for hs-CRP, HbA1c, zonulin, calprotectin, LPS-binding protein, and other inflammatory markers. SciAgent knows what your numbers mean in context — not just whether they're "high" or "low."</p></div>
-        <div class="bb-card"><h4 style="color:var(--g)">Product Pharmacology</h4><p>Deep knowledge of every Fasolati formulation — mechanisms, dosing, interactions, contraindications, expected response curves. When SciAgent adjusts your Lytica protocol, it understands the enzymatic and phage mechanisms at the molecular level.</p></div>
-        <div class="bb-card"><h4 style="color:var(--g)">Clinical Practice Guidelines</h4><p>Current treatment guidelines from the American Academy of Periodontology, American Gastroenterological Association, and the European Federation of Periodontology. SciAgent's recommendations align with — never contradict — established standards of care.</p></div>
+    <section class="science-block" id="human-evidence">
+      <div class="section-kicker">The human bridge</div>
+      <h2>Human evidence exists.<br />Oral-source validation is a separate question.</h2>
+      <div class="evidence-pair">
+        <div><span class="evidence-tag">Human measurement</span><h3>Circulating bacterial vesicles</h3><p>Tulkens and colleagues characterized bacterial-EV-associated plasma fractions in 49 people, including groups with intestinal-barrier dysfunction. The study provides a measurement precedent, not a human oral-to-blood source trace. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6943244/" target="_blank" rel="noopener noreferrer">Tulkens et al.</a></p><p>Ou and colleagues used single-particle LPS/LTA analysis in human cohorts alongside mouse source-discrimination experiments. The paper also discusses residual lipoprotein contamination and unresolved transport questions. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10696524/" target="_blank" rel="noopener noreferrer">Ou et al.</a></p></div>
+        <div><span class="evidence-tag">Human intervention</span><h3>Periodontal care and systemic markers</h3><p>A Cochrane review found a 0.43 percentage-point reduction in HbA1c at three to four months after periodontal treatment in people with diabetes and periodontitis, with moderate-certainty evidence. This is not evidence that OMVs mediated the effect. <a href="https://pubmed.ncbi.nlm.nih.gov/35420698/" target="_blank" rel="noopener noreferrer">Simpson et al., 2022</a>.</p><p>A separate meta-analysis reported lower CRP after periodontal treatment, with substantial heterogeneity. It does not establish that a Fasolati formulation changes inflammation through a vesicle mechanism. <a href="https://pubmed.ncbi.nlm.nih.gov/35946825/" target="_blank" rel="noopener noreferrer">Luthra et al., 2023</a>.</p></div>
       </div>
-      <p class="bb-body" style="margin-top:24px;font-size:.82rem;opacity:.7">What SciAgent is never trained on: social media health claims, supplement marketing, anecdotal testimonials, or unreviewed preprints. If it's not in the peer-reviewed literature or validated clinical databases, SciAgent doesn't know it — and that's by design.</p>
-    </div>
+      <details class="research-detail">
+        <summary>A clinical counterweight: the GAIN trial</summary>
+        <div><p>The gingipain-inhibitor GAIN trial enrolled 643 participants and missed both co-primary endpoints in the overall cohort. A sponsor-reported salivary-Pg-positive subgroup signal on cognition did not establish benefit on the functional co-primary, and the program encountered liver-safety concerns and a full IND hold. <a href="https://www.sec.gov/Archives/edgar/data/1662774/000095017022009040/crtx-20220331.htm" target="_blank" rel="noopener noreferrer">Cortexyme’s 2022 filing</a>.</p><p>This does not disprove all oral-systemic mechanisms. It does show why mechanistic plausibility cannot stand in for successful human treatment, and the subgroup does not validate OMV-based stratification.</p></div>
+      </details>
+      <p>Within the literature reviewed for this spine, no verified human calibration from a Fasolati oral-rinse vesicle measurement to an individual systemic outcome was located. That is a bounded review finding, not proof that no relevant unpublished or unlocated study exists.</p>
+    </section>
 
-    <!-- 03 — VERIFICATION -->
-    <div class="bb-section">
-      <div class="bb-section-num" style="color:var(--t)">03 — The Fact-Check</div>
-      <h2>How It Verifies Everything</h2>
-      <p class="bb-tagline">Every recommendation runs through three layers of verification before it reaches you.</p>
-      <p class="bb-body">We built SciAgent with a fundamental assumption: AI makes mistakes. The question isn't whether errors happen — it's whether the system catches them before they reach you. Our answer is a three-layer verification architecture that treats every output as unproven until confirmed.</p>
+    <section class="science-block" id="measurement">
+      <div class="section-kicker">The first-principles lens</div>
+      <h2>Measure the thing<br />you say you measure.</h2>
+      <p>A local sample, a transported exposure, and a host response are different quantities. The proposed architecture keeps four questions distinct until data justify a particular connection.</p>
+      <ol class="measurement-steps">
+        <li><span>01</span><div><h3>Source ecology</h3><p>Which organisms and local conditions are present? A periodontal examination and bacterial burden provide context, not a direct measure of vesicle activity.</p></div></li>
+        <li><span>02</span><div><h3>Effector phenotype</h3><p>What biologically active material is released? Test characterized vesicle-enriched and depleted fractions rather than assuming the effect belongs to vesicles.</p></div></li>
+        <li><span>03</span><div><h3>Delivered exposure</h3><p>What reaches a relevant compartment and remains active? Demonstrate the carrier and source instead of relabeling a local rinse signal as systemic load.</p></div></li>
+        <li><span>04</span><div><h3>Host response</h3><p>What changes in the recipient? Measure the response independently, then test whether the additional information improves a defined decision.</p></div></li>
+      </ol>
+      <details class="research-detail"><summary>Why a particle count is not an OMV count</summary><div><p>Nanoparticle tracking analysis detects particles; it does not by itself identify them as bacterial vesicles. Host vesicles, non-vesicular particles, and co-isolated material require appropriate separation and characterization. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10850029/" target="_blank" rel="noopener noreferrer">MISEV2023</a>.</p><p>The proposed assay work must establish identity, recovery, precision, specificity, interference, stability, and a quantifiable range. Neither a bacterial sequence in a mixed fraction nor an inflammatory reporter signal resolves all those questions.</p></div></details>
+      <details class="research-detail"><summary>Why fewer particles might not mean less activity</summary><div><p>The development program must compare abundance, cargo, and functional activity separately. A change in sample dilution, analytical recovery, active material per particle, or non-vesicular activity could change the interpretation.</p><p>For oral-rinse intervention studies, residual formulation must be tested for interference with the assay or reporter cells. An apparent reduction in activity is not enough if the rinse itself suppresses the readout.</p></div></details>
+      <details class="research-detail"><summary>Why AI cannot fill a missing causal link</summary><div><p>The evidence engine should distinguish a measured result, a validated association, an experimental mechanism, and an untested hypothesis. A fluent explanation cannot turn one category into another.</p><p>SciAgent’s proposed role is to organize evidence and explain uncertainty, not to invent missing measurements or issue autonomous treatment orders. Claims about operational safeguards require verification in the implemented system.</p></div></details>
+    </section>
 
-      <div class="bb-flow">
-        <div class="bb-flow-step"><h4 style="color:var(--t)">Layer 1</h4><p><strong style="color:var(--w)">Evidence Match</strong><br>Every claim is cross-referenced against its source literature. If SciAgent says "hs-CRP above 3.0 correlates with increased cardiovascular risk," it must cite the specific studies.</p></div>
-        <span class="bb-flow-arrow">→</span>
-        <div class="bb-flow-step"><h4 style="color:var(--g)">Layer 2</h4><p><strong style="color:var(--w)">Clinical Guardrails</strong><br>Rule-based safety checks catch anything outside established parameters. Dosing limits, contraindication flags, interaction warnings — hard-coded, not learned. The AI cannot override these.</p></div>
-        <span class="bb-flow-arrow">→</span>
-        <div class="bb-flow-step"><h4 style="color:var(--t)">Layer 3</h4><p><strong style="color:var(--w)">Confidence Scoring</strong><br>Every recommendation carries a confidence score. High confidence: act on it. Medium: SciAgent explains the uncertainty. Low: it flags the question for your clinician instead of guessing.</p></div>
+    <section class="science-block" id="experiments">
+      <div class="section-kicker">The falsification lens</div>
+      <h2>What result would<br />change our minds?</h2>
+      <div class="flagship-question"><span>The flagship experiment</span><p>Does characterized vesicle-associated activity add useful information beyond periodontal examination and bacterial count?</p></div>
+      <p>These are proposed development gates, not completed Fasolati studies. The sequence is designed to find the weak link before turning it into a customer claim.</p>
+      <div class="experiment-list">
+        <div><h3>Identity before interpretation</h3><p>Define the analyte, validate the assay in the actual sample matrix, and establish repeatability. Stop personal interpretation if analytical variation overwhelms the signal.</p></div>
+        <div><h3>Fraction before mechanism</h3><p>Compare enriched and depleted fractions, then use cargo-specific perturbations and appropriate rescue controls. If the activity is predominantly non-vesicular, follow that result rather than protect the OMV label.</p></div>
+        <div><h3>Source before systemic attribution</h3><p>Test oral attribution against gut and other competing sources. Model exposure separately from the recipient’s susceptibility.</p></div>
+        <div><h3>Incremental value before a score</h3><p>In a prospective study, test whether the measurement adds information beyond ordinary clinical measures. If it does not, do not add a test merely because it is technologically interesting.</p></div>
+        <div><h3>Intervention before efficacy</h3><p>Evaluate the defined finished formulation against an appropriate comparator. Pre/post changes are temporal associations unless the study design supports a causal conclusion.</p></div>
+        <div><h3>Utility before routine use</h3><p>Test whether acting on the information helps people more than the alternatives, including ordinary clinical care without the extra test.</p></div>
       </div>
+    </section>
 
-      <div class="bb-trust">
-        <div class="bb-trust-item"><div class="bb-trust-icon" style="color:var(--t)">⊘</div><h4>Never Invents</h4><p>SciAgent cannot fabricate studies or statistics. It retrieves from its verified knowledge base or says "I don't know."</p></div>
-        <div class="bb-trust-item"><div class="bb-trust-icon" style="color:var(--g)">⟐</div><h4>Never Overreaches</h4><p>If your data suggests something outside its scope — a possible diagnosis, a medication question — it routes you to your doctor, not a guess.</p></div>
-        <div class="bb-trust-item"><div class="bb-trust-icon" style="color:var(--t)">↻</div><h4>Always Auditable</h4><p>Every recommendation is logged with its reasoning chain. Your clinician can review exactly why SciAgent made each suggestion.</p></div>
+    <section class="science-block" id="life-board">
+      <div class="section-kicker">The translation rule</div>
+      <h2>The customer gets clarity.<br />The evidence keeps its limits.</h2>
+      <p>The proposed Life Board should answer three questions: what changed, how sure the measurement is, and what next step is justified. It should not average discordant oral and systemic results into a reassuring composite score.</p>
+      <div class="evidence-pair">
+        <div><h3>On the surface</h3><p>The observation, date, measurement status, and an intelligible next step. Unvalidated measurements remain labeled as research, with no individualized organ-risk interpretation.</p></div>
+        <div><h3>One layer deeper</h3><p>The original source, experimental setting, carrier and cargo attribution, dose and route, limitations, and what would be required to support a stronger claim.</p></div>
       </div>
-    </div>
-
-    <!-- 04 — PERSONALIZATION -->
-    <div class="bb-section">
-      <div class="bb-section-num" style="color:var(--g)">04 — Your Model</div>
-      <h2>How It Learns You</h2>
-      <p class="bb-tagline">The longer you use Fasolati, the smarter your personal model becomes.</p>
-      <p class="bb-body">SciAgent starts with population-level science — what works for most people. But you're not most people. Over weeks and months, it builds a model of your specific inflammatory patterns, your response curves, your habits, and your triggers. This is where it transforms from a general tool into your personal health engine.</p>
-
-      <div class="bb-timeline">
-        <div class="bb-tl-item"><h4>Week 1 — Baseline</h4><p>SciAgent ingests your initial data: lab results, oral exam findings, any wearable data you connect. It establishes your personal baseline across the three vectors — Oral Ecology, Gut Integrity, Systemic Inflammation — and sets starting protocols based on population evidence.</p></div>
-        <div class="bb-tl-item"><h4>Weeks 2–4 — Response Mapping</h4><p>As you use the products and log data, SciAgent begins tracking how your body responds. How quickly does your hs-CRP drop after a Lytica intervention? Does your sleep quality correlate with gut protocol adherence? It's building your personal response curves.</p></div>
-        <div class="bb-tl-item"><h4>Months 2–3 — Pattern Recognition</h4><p>With enough data, SciAgent starts identifying your unique patterns. Maybe your inflammation spikes every time you travel. Maybe your oral ecology dips on weekends. Maybe Biolumen works faster for you than population averages predict. These insights shape increasingly precise protocols.</p></div>
-        <div class="bb-tl-item"><h4>Month 4+ — Predictive Protocols</h4><p>This is where the model matures. SciAgent begins anticipating inflammatory events before they show up in your biomarkers — adjusting protocols proactively based on behavioral patterns, seasonal trends, and your established response curves. It moves from reactive to predictive.</p></div>
-        <div class="bb-tl-item"><h4>Ongoing — Continuous Refinement</h4><p>Your model never stops learning. Every new lab result, every oral exam, every week of wearable data sharpens the picture. And as the broader Fasolati user base grows, anonymized population insights feed back into the system — your model benefits from the collective without ever exposing your data.</p></div>
-      </div>
-    </div>
-
-    <!-- 05 — YOUR DATA -->
-    <div class="bb-section" style="border-bottom:none">
-      <div class="bb-section-num" style="color:var(--g)">05 — Your Data</div>
-      <h2>What Happens to Your Information</h2>
-      <p class="bb-tagline">Your health data is yours. Period.</p>
-      <div class="bb-cards">
-        <div class="bb-card"><h4 style="color:var(--t)">Encrypted at Rest</h4><p>Your personal health data is encrypted with AES-256 encryption — the same standard used by banks and defense systems. Even our engineers cannot read your individual records.</p></div>
-        <div class="bb-card"><h4 style="color:var(--t)">Never Sold</h4><p>Your data is never sold, rented, or shared with advertisers, insurance companies, or employers. Fasolati's business model is products and subscriptions — not your information.</p></div>
-        <div class="bb-card"><h4 style="color:var(--g)">You Control It</h4><p>Export your complete health record anytime. Delete your data anytime. Pause data collection anytime. Your model, your data, your decision.</p></div>
-        <div class="bb-card"><h4 style="color:var(--g)">De-identified Research</h4><p>If you opt in, anonymized and de-identified patterns from your data contribute to population-level research that improves the system for everyone. No identifying information ever leaves your account.</p></div>
-      </div>
-
-      <div style="text-align:center;margin-top:48px">
-        <a href="https://claude.ai/public/artifacts/4bb92b11-5a4b-4fb9-bd72-46cab7f1b752" class="btn bp" target="_blank">See SciAgent in Action →</a>
-      </div>
-    </div>
-
-  
-  </div>
-
-  <nav class="page-next" aria-label="Related pages">
-    <a href="/engine/"><h3>Fasolati Engine</h3><p>The product SciAgent runs inside.</p></a>
-    <a href="/platform/"><h3>Therapeutic Platform</h3><p>The mechanisms SciAgent prescribes from.</p></a>
-    <a href="/about/"><h3>About Fasolati</h3><p>Why a surgeon built an operating system.</p></a>
-  </nav>
+      <p>Established care does not need to “move your score” before it is worthwhile. Product benefit, assay validity, predictive validity, and clinical utility are separate questions that must earn separate answers.</p>
+      <p class="boundary-note">This page describes a research program and product direction. It is not a diagnostic service, a treatment protocol, or a substitute for clinical evaluation.</p>
+    </section>
+    <section class="science-block science-close">
+      <div class="section-kicker">Research collaboration</div>
+      <h2>Help test the next link.</h2>
+      <p>Fasolati welcomes conversations about vesicle characterization, oral-source attribution, functional assays, and prospective clinical validation. The aim is a measurement that deserves to influence a decision.</p>
+      <a class="btn bp" href="/partner/">Discuss a research collaboration</a>
+      <p class="review-note">Review scope: selected primary vesicle studies, human bEV measurement studies, clinical intervention reviews, and measurement guidance. This is an evidence-informed research architecture, not an exhaustive systematic review.</p>
+    </section>
+  </article>
 </Base>

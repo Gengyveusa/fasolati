@@ -1,173 +1,90 @@
 ---
 import Base from '../layouts/Base.astro';
-
-/**
- * The home page keeps exactly what it always had: the hero, the Systemic
- * Health Framework mind map, sections 01-05, and the closing call to action.
- *
- * What it no longer carries is six full-screen overlays' worth of markup that
- * shared its URL. The platform breakdown, Inside the Black Box, the shop, the
- * about story and the partner form are pages now. This page is a fraction of
- * the original 140 KB, and every section it links to has an address.
- */
-
-const description =
-  'Fasolati - AI-driven platform treating mouth and gut as origin nodes of systemic inflammation. Oral therapeutics, gut repair, and biomarker-driven protocols in one operating system.';
+const description = 'Fasolati connects oral health, gut context, and host response through an evidence-led research program. Explore the Life Board concept and OMV science spine.';
 ---
-<Base
-  title="Fasolati™ — The Inflammation Operating System"
-  description={description}
-  path="/"
-  interior={false}
->
-<section class="hero">
-  <p class="h-label mo">Oral · Gut · Systemic</p>
-  <h1 class="h1 mo mo-d1">Fasolati<sup>™</sup></h1>
-  <p class="h-tag mo mo-d2">"Oral health is the last unlit corner of systemic health."</p>
-  <p class="h-sub mo mo-d3">Fasolati is an AI‑driven platform that treats the mouth and gut as origin nodes of systemic inflammation, wiring oral therapeutics, gut repair, and biomarker‑driven protocols into a single operating system for human health.</p>
-  <p class="h-mic mo mo-d4">Not advice, an engine. Not a product line, a node network.</p>
-  <div class="h-btns mo mo-d4">
-    <a class="btn bp" href="https://claude.ai/public/artifacts/4bb92b11-5a4b-4fb9-bd72-46cab7f1b752" target="_blank" style="cursor:pointer">Launch Fasolati Engine UI</a>
-    <a class="btn bs" href="https://claude.ai/public/artifacts/fddec7f6-4bf5-4888-b8a3-89bd80287d18" target="_blank" style="cursor:pointer">View Fasolati Deep Dive</a>
-  </div>
-</section>
-
-<section class="map-section" id="framework">
-<div class="fw mo">
-  <div class="fw-head">
-    <div class="fw-title">Systemic Health Framework</div>
-    <div class="fw-sub">Click nodes to explore · Terminal pills reveal clinical depth</div>
-  </div>
-
-  <!-- 01 -->
-  <div><button class="nd-h" type="button"><span class="nd-num" style="color:var(--t)">01</span><span class="nd-lab">The Inflammation Case</span><span class="nd-chev" style="color:var(--t)">›</span></button>
-  <div class="nd-body" style="display:none;padding:8px 0 12px 28px;position:relative"><div style="position:absolute;left:20px;top:0;bottom:12px;width:1px;background:linear-gradient(to bottom,rgba(0,232,204,.2),transparent)"></div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">Core Stats</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">3 of 5 deaths from chronic inflammation</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Chronic inflammatory diseases — cardiovascular disease, cancer, diabetes, Alzheimer's, autoimmune disorders — account for 3 in 5 deaths globally. This isn't a comorbidity. It's the primary mechanism. Fasolati treats inflammation not as a symptom to suppress but as a network failure with identifiable origin nodes: the mouth and the gut.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">34.6% with elevated hs-CRP</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">High-sensitivity C-reactive protein is the gold-standard serum marker for systemic inflammation. Over a third of US adults have elevated levels — most unaware. The Fasolati Engine uses hs-CRP as a primary input in its Three-Vector Score, correlating it with oral ecology and gut integrity data for real-time inflammatory load tracking.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">90% of spend downstream of inflammation</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">The healthcare system spends 90% of its $4.1 trillion annual budget treating downstream consequences of chronic inflammation. Almost nothing is spent on interception at origin. Fasolati's thesis: move upstream. Target the controllable nodes where inflammation begins, at a fraction of the cost of treating where it ends.</div>
+<Base title="Fasolati | Oral health, in the whole picture" description={description} path="/" interior={false}>
+  <section class="hero">
+    <p class="h-label mo">Oral · Gut · Systemic</p>
+    <h1 class="h1 mo mo-d1">Fasolati<sup>™</sup></h1>
+    <p class="h-tag mo mo-d2">“Oral health is the last unlit corner of systemic health.”</p>
+    <p class="h-sub mo mo-d3">We’re building a clearer picture of how oral health fits into the health of the whole person. Simple enough to use. Deep enough to question.</p>
+    <p class="h-mic mo mo-d4">An evidence-led platform in development</p>
+    <div class="h-btns mo mo-d4">
+      <a class="btn bp" href="/science/">Explore the science spine</a>
+      <a class="btn bs" href="#s4">Meet the Life Board</a>
     </div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">Key Concepts</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Chronic inflammation as primary death mechanism</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">The paradigm shift. Inflammation isn't a side effect of disease — it IS the disease mechanism. From atherosclerotic plaque formation to tumor microenvironment signaling to neuroinflammatory cascades in Alzheimer's, the same mediators (IL-6, TNF-α, CRP) drive the pathology. Fasolati treats the body as a network where inflammation propagates from origin nodes. Control the nodes, control the network.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">hs-CRP as early warning</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">hs-CRP is produced by the liver in response to IL-6 signaling — a systemic alarm bell. SciAgent AI integrates hs-CRP trends with oral biomarker data (pocket depth, bleeding on probing) and gut markers (zonulin, calprotectin) to detect inflammatory acceleration early — when intervention is still cheap and effective.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Mouth and Gut as controllable origin nodes</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">The mouth harbors 700+ bacterial species in biofilm communities millimeters from the bloodstream. The gut epithelium is a single cell layer separating trillions of microbes from systemic circulation. Fasolati's architecture — Lytica and Loria for the mouth; Magisnat, Biolumen, Monch Monch for the gut — targets the two highest-leverage intervention points in human health.</div>
+  </section>
+
+  <section class="sp-section" id="s1">
+    <div class="section-kicker">The proposition</div>
+    <div class="editorial-split">
+      <h2>The mouth belongs<br />in the picture.</h2>
+      <div class="prose">
+        <p>Periodontal treatment can improve some systemic markers in defined patient groups. A Cochrane review found improved blood-glucose control in people with both diabetes and periodontitis. <a href="https://pubmed.ncbi.nlm.nih.gov/35420698/" target="_blank" rel="noopener noreferrer">Read the clinical review</a>.</p>
+        <p>That is a reason to investigate the connection, not permission to attribute every inflammatory signal to the mouth. Fasolati’s question is more specific: can we measure something about oral bacterial activity that adds useful information beyond a periodontal exam and bacterial count?</p>
+      </div>
     </div>
-  </div></div>
+  </section>
 
-  <!-- 02 -->
-  <div><button class="nd-h" type="button"><span class="nd-num" style="color:var(--t)">02</span><span class="nd-lab">Origin Node: Mouth</span><span class="nd-chev" style="color:var(--t)">›</span></button>
-  <div class="nd-body" style="display:none;padding:8px 0 12px 28px;position:relative"><div style="position:absolute;left:20px;top:0;bottom:12px;width:1px;background:linear-gradient(to bottom,rgba(0,232,204,.2),transparent)"></div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">Pathophysiology</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Periodontitis as systemic disease</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Periodontitis isn't a dental problem — it's a systemic inflammatory disease with oral manifestations. The ulcerated pocket epithelium exposes roughly 72 cm² of wound surface to 500+ bacterial species. P. gingivalis, T. denticola, and A. actinomycetemcomitans have been found in atherosclerotic plaques, synovial fluid, amniotic fluid, and Alzheimer's brain tissue.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Biofilm entry via ulcerated epithelium</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Dental biofilm is a structured polymicrobial community protected by an extracellular matrix resisting both immune response and conventional antimicrobials. When the gingival epithelium ulcerates, biofilm organisms gain direct hematogenous access. Lytica™ addresses this with enzymatic matrix disruption followed by targeted bacteriophages that eliminate keystone pathogens without disrupting commensal ecology.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Pathogen link to Brain, Heart, and Placenta</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">P. gingivalis in Alzheimer's brain tissue — gingipain proteases driving tau phosphorylation. F. nucleatum in colorectal tumors and placental tissue, linked to preterm birth. T. denticola in atherosclerotic plaques. These aren't correlations — established mechanistic pathways. Eliminate the oral reservoir, cut off the systemic seeding.</div>
+  <section class="sp-section" id="framework">
+    <div class="section-kicker">The science spine</div>
+    <h2>Four questions.<br />No invisible leaps.</h2>
+    <p class="section-intro">A research map, not a proven chain in an individual. Each step needs its own measurement and evidence.</p>
+    <div class="question-map">
+      <a href="/science/#measurement"><span class="map-index">01 / Source ecology</span><h3>What is there?</h3><p>Organisms, bacterial burden, and the local oral environment.</p><span class="map-link">Define the source ↗</span></a>
+      <a href="/science/#mapping"><span class="map-index">02 / Effector activity</span><h3>What does it release?</h3><p>Vesicles, associated cargo, and other biologically active material.</p><span class="map-link">Explore the mechanisms ↗</span></a>
+      <a href="/science/#human-evidence"><span class="map-index">03 / Delivered exposure</span><h3>What gets through?</h3><p>Material that reaches another compartment, with its source established.</p><span class="map-link">Examine the human bridge ↗</span></a>
+      <a href="/science/#experiments"><span class="map-index">04 / Host response</span><h3>What changes?</h3><p>A separately measured response, and a test of whether the information helps.</p><span class="map-link">See the next experiments ↗</span></a>
     </div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">Oral Therapeutic Stack</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Lytica: Enzyme and Phage hunt/clear</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Lytica™ — precision ecological rescue. Stage 1: dispersin B and DNase I enzymatically degrade the biofilm's extracellular polymeric matrix. Stage 2: targeted bacteriophages against P. gingivalis, A. actinomycetemcomitans, T. forsythia selectively eliminate keystone pathogens while preserving commensals. Not a broad-spectrum kill — ecological surgery.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Loria: Biofilm barrier and rinse</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Loria™ — dual-weight hyaluronic acid mucosal barrier. High-MW HA (1.2–1.8 MDa) blocks bacterial adhesion and LPS translocation. Low-MW HA (20–200 kDa) stimulates fibroblast proliferation and accelerates wound healing. Castor oil delivery for sustained release. The daily habit loop that holds ecological gains.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Maxoral: Professional Rx interventions</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Maxoral™ — clinical authority channel. Higher-concentration therapeutic rinses, prescription-strength phage cocktails, advanced HA delivery for in-office application. FDA-regulated claims dispensed through dental and periodontal practices. Clinical efficacy for complex cases plus professional endorsement that builds trust in the Fasolati ecosystem.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Fasolati: Consumer OTC habit loops</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Fasolati™ consumer products — clinical-grade science translated into daily OTC habit loops. Maintenance rinses, daily biofilm management, Fasolati Engine app integration. Behavioral anchors that maintain ecological gains while generating continuous biomarker data back into the SciAgent AI platform.</div>
+    <p class="boundary-note">An oral measurement is not a circulating concentration. A biological mechanism is not a personal disease-risk score.</p>
+  </section>
+
+  <section class="sp-section" id="s2">
+    <div class="section-kicker">The oral research program</div>
+    <div class="editorial-split">
+      <h2>Beyond the<br />bacterial census.</h2>
+      <div class="prose">
+        <p>Outer membrane vesicles, or OMVs, are one type of bacterial extracellular vesicle. Experimental studies show that periodontal-bacterial vesicles can carry active material and trigger different immune responses. <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0151967" target="_blank" rel="noopener noreferrer">Cecil et al., 2016</a>.</p>
+        <p>Fasolati is interested in function as well as composition: not only which bacteria are present, but what their released material does. The first job is to establish exactly what an assay measures and whether vesicle-associated activity adds information.</p>
+        <a class="text-link" href="/science/#mapping">Follow the OMV-to-effect map →</a>
+      </div>
     </div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">Therapeutic Cascade</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Hunt: Lytica</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Phase 1. Enzymatic biofilm disruption followed by phage-mediated pathogen elimination. Ecological rescue for a dysbiotic oral microbiome. You can't rebuild on a contaminated foundation. Lytica creates the clean slate.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Maintain: Loria</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Phase 3. Daily mucosal barrier protection, sustained HA delivery, biofilm management. Where the habit loop lives, adherence meets data collection, and the Fasolati Engine gets continuous signal for AI-driven protocol optimization.</div>
+  </section>
+
+  <section class="sp-section" id="s3">
+    <div class="section-kicker">The gut and systemic context</div>
+    <div class="editorial-split">
+      <h2>Connected does<br />not mean identical.</h2>
+      <div class="prose">
+        <p>Human studies have characterized bacterial-vesicle-associated material in blood, including associations with intestinal-barrier dysfunction. They do not establish that a particular person’s circulating material came from the mouth. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6943244/" target="_blank" rel="noopener noreferrer">Tulkens et al.</a></p>
+        <p>Our proposed architecture keeps oral observations, gut context, and host-response markers distinct. Agreement can suggest a question worth testing. Disagreement is information too, not something to hide inside a single score.</p>
+      </div>
     </div>
-  </div></div>
+  </section>
 
-  <!-- 03 -->
-  <div><button class="nd-h" type="button"><span class="nd-num" style="color:var(--g)">03</span><span class="nd-lab">Origin Node: Gut</span><span class="nd-chev" style="color:var(--g)">›</span></button>
-  <div class="nd-body" style="display:none;padding:8px 0 12px 28px;position:relative"><div style="position:absolute;left:20px;top:0;bottom:12px;width:1px;background:linear-gradient(to bottom,rgba(224,180,74,.2),transparent)"></div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--g)">Pathophysiology</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Barrier failure and LPS translocation</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none">The gut epithelium — one cell thick — separates the largest microbial community on earth from systemic circulation. When tight junctions fail, LPS from gram-negative bacteria translocates into the bloodstream, triggering TLR4-mediated NF-κB activation. Metabolic endotoxemia drives insulin resistance, fatty liver disease, and cardiovascular inflammation.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Metabolic and neuro disease drivers</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none">Gut-derived LPS drives neuroinflammation via vagal and hematogenous routes — depression, anxiety, neurodegeneration. SCFA deficiency impairs blood-brain barrier integrity and microglial homeostasis. Gut permeability drives insulin resistance independent of caloric intake. Biolumen and Magisnat target these specific pathways.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Oral-gut microbiome link</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none">1.5 liters of saliva swallowed daily — carrying oral microbes into the GI tract. With PPI use or high oral pathogen loads, F. nucleatum and P. gingivalis colonize the gut, driving intestinal inflammation. Fasolati treats this as one connected system: oral intervention reduces pathogenic load reaching the gut.</div>
+  <section class="sp-section life-board-section" id="s4">
+    <div class="section-kicker">The Life Board / Product concept</div>
+    <div class="editorial-split">
+      <div><h2>Simple on the surface.<br />Inspectable underneath.</h2><p class="section-intro">The proposed Life Board is organized around three questions, not a mysterious health number. This is a design direction, not a live clinical dashboard.</p><a class="text-link" href="/engine/">Explore the Life Board concept →</a></div>
+      <div class="board-concept">
+        <div class="board-head"><span>Fasolati / Life Board</span><span>Concept</span></div>
+        <div class="board-row"><span>01</span><div><h3>What changed?</h3><p>The actual measurement, its date, and a comparable prior result. Missing data stays missing.</p></div></div>
+        <div class="board-row"><span>02</span><div><h3>How sure are we?</h3><p>Measurement quality and repeatability, kept separate from the strength of the underlying science.</p></div></div>
+        <div class="board-row"><span>03</span><div><h3>What is the next justified step?</h3><p>A useful question, a repeat measurement when warranted, or a conversation with a clinician.</p></div></div>
+        <a href="/science/#life-board" class="board-evidence">Open the evidence rules ↗</a>
+      </div>
     </div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--g)">Gut Therapeutic Stack</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Magisnat: Anti-inflammatory nutraceuticals</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none">Magisnat™ — targeted anti-inflammatory compounds: liposomal curcumin, specialized pro-resolving mediators (SPMs), polyphenol complexes. Promotes resolution of inflammation through endogenous lipid mediator pathways rather than broad-spectrum immune suppression.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Biolumen: Engineered prebiotic fibers</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none">Biolumen™ — precision prebiotic fibers selectively feeding Akkermansia muciniphila (barrier integrity), Faecalibacterium prausnitzii (butyrate production), and Bifidobacterium (immune modulation). Targets specific populations that influence tight junction protein expression and mucosal immune tone.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Monch Monch: Metabolic snacks for adherence</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none">Monch Monch™ — the behavioral bridge. Functional snacks delivering prebiotic fibers and anti-inflammatory compounds in formats people actually eat. The best gut protocol fails without adherence. Monch Monch converts clinical nutrition into daily habit. Compliance through pleasure, not discipline.</div>
+  </section>
+
+  <section class="sp-section" id="s5">
+    <div class="section-kicker">Build with us</div>
+    <div class="editorial-split">
+      <h2>Earn every<br />connection.</h2>
+      <div class="prose">
+        <p>We’re looking for collaborators who can help test the hard parts: assay identity, source attribution, functional activity, and clinical usefulness. A result that changes the hypothesis is progress.</p>
+        <p>Our oral-care and broader platform programs belong alongside that research, not ahead of it. Product-specific benefit must be established for the finished intervention and the intended use.</p>
+        <div class="inline-actions"><a class="btn bp" href="/partner/">Start a conversation</a><a class="text-link" href="/platform/">Explore the programs →</a></div>
+      </div>
     </div>
-  </div></div>
-
-  <!-- 04 -->
-  <div><button class="nd-h" type="button"><span class="nd-num" style="color:var(--t)">04</span><span class="nd-lab">Fasolati Engine</span><span class="nd-chev" style="color:var(--t)">›</span></button>
-  <div class="nd-body" style="display:none;padding:8px 0 12px 28px;position:relative"><div style="position:absolute;left:20px;top:0;bottom:12px;width:1px;background:linear-gradient(to bottom,rgba(0,232,204,.2),transparent)"></div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">Three-Vector Score</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Oral Ecology</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Vector 1. Aggregates clinical periodontal data, microbiome composition from salivary diagnostics, and daily self-reported data. SciAgent AI weights these into a composite score reflecting real-time oral inflammatory potential — how much systemic inflammation your mouth is currently generating.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Gut Integrity</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Vector 2. Tracks barrier function through biomarkers (zonulin, calprotectin, LPS-binding protein), microbiome diversity metrics, and daily input data. Reflects the gut's capacity to contain its microbial load — a direct measure of endotoxin leakage into systemic circulation.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Systemic Inflammation Control</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Vector 3 — the output metric. Integrates hs-CRP trends, wearable-derived HRV and sleep data, and available lab work. SciAgent correlates oral and gut vector changes with systemic inflammatory response, building a personalized model. Improve the mouth and gut, watch systemic inflammation fall.</div>
-    </div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--t)">SciAgent AI</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Inputs: Labs, wearables, photos</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Multi-modal data ingestion: laboratory results, continuous wearable data (HRV, sleep, activity from Oura/Apple Watch/Whoop), and intraoral photographs analyzed by computer vision for gingival inflammation scoring and plaque visualization. Designed to function with minimal data and improve as more streams connect.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Patterns: Correlation and response curves</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Pattern recognition across three vectors. Identifies correlations invisible to clinicians: how hs-CRP responds to Lytica intervention, how Biolumen cycles affect sleep quality via gut-brain axis, how stress events create predictable inflammatory spikes. Builds personalized response curves — a dynamic model of each user's inflammatory network.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Protocols: Daily checklist and adjustments</span><span class="pill-plus" style="color:var(--t)">+</span></div><div class="pill-exp" style="display:none">Translates pattern analysis into actionable daily protocols: which products, what dosage, what sequence. If oral ecology dips, protocol adjusts — increasing frequency, flagging for clinical follow-up. If gut integrity improves, tapers Magisnat, increases Monch Monch maintenance. Closed-loop: sense, analyze, adjust, verify.</div>
-    </div>
-  </div></div>
-
-  <!-- 05 -->
-  <div><button class="nd-h" type="button"><span class="nd-num" style="color:var(--g)">05</span><span class="nd-lab">Node Network & Business</span><span class="nd-chev" style="color:var(--g)">›</span></button>
-  <div class="nd-body" style="display:none;padding:8px 0 12px 28px;position:relative"><div style="position:absolute;left:20px;top:0;bottom:12px;width:1px;background:linear-gradient(to bottom,rgba(224,180,74,.2),transparent)"></div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--g)">Channel Model</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Professional: Authority and acquisition</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none;background:rgba(224,180,74,.03);border-color:rgba(224,180,74,.1)">The professional channel (Maxoral) drives clinical authority and patient acquisition. Practitioners prescribe Maxoral products, establishing credibility that flows downstream to consumer adoption. The professional channel generates the highest-quality data that trains SciAgent AI. Every professional interaction builds platform intelligence while acquiring patients who convert to long-term Fasolati subscribers.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Home/OTC: Retention and recurring data</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none;background:rgba(224,180,74,.03);border-color:rgba(224,180,74,.1)">The consumer channel (Fasolati OTC) is the retention and data engine. Daily product usage generates continuous behavioral and biological data. Subscription models create recurring revenue while maintaining therapeutic continuity. Professional authority acquires; consumer convenience retains and learns.</div>
-    </div>
-    <div class="br"><div class="br-line"></div><div class="br-tick"></div><div class="br-name" style="color:var(--g)">Future Nodes</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">Noxx Systemic Monitoring</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none;background:rgba(224,180,74,.03);border-color:rgba(224,180,74,.1)">Noxx™ — continuous systemic inflammation monitoring. Nitric oxide detection through Raman spectroscopy of muscle tissue, continuous glucose monitoring correlation with inflammatory markers, real-time cytokine profiling. Turns the Three-Vector Score into an N-Vector Score as new nodes come online.</div>
-      <div class="pill" role="button" tabindex="0"><span class="pill-dot"></span><span style="flex:1">FasolatiCascade Diagnostics</span><span class="pill-plus" style="color:var(--g)">+</span></div><div class="pill-exp" style="display:none;background:rgba(224,180,74,.03);border-color:rgba(224,180,74,.1)">FasolatiCascade™ — diagnostic intelligence layer. Population-level models of inflammatory cascade propagation from longitudinal de-identified data. Which oral microbiome signatures predict cardiovascular events? Which gut permeability patterns precede autoimmune flares? Transforms Fasolati from therapeutic platform into diagnostic and prognostic engine.</div>
-    </div>
-  </div></div>
-
-</div>
-</section>
-
-<!-- ═══ SECTIONS ═══ -->
-<section class="fs" id="s1"><div class="fs-inner">
-  <p class="s-num tn mo">01 — The Case</p>
-  <h2 class="s-title mo mo-d1">The Inflammation Case</h2>
-  <p class="s-intro mo mo-d2">Three out of five people die of chronic inflammatory diseases. The mechanism is distributed, poorly surveilled, and rarely discussed with the precision of something like LDL—even though hs‑CRP is a validated, cheap, and underused early warning.</p>
-  <div class="stats"><div class="stat mo mo-d1"><div class="stat-n tc">34.6%</div><div class="stat-d">of adults have elevated hs‑CRP — almost none are told explicitly</div></div><div class="stat mo mo-d2"><div class="stat-n tc">90%+</div><div class="stat-d">of healthcare spend flows downstream of chronic inflammation</div></div><div class="stat mo mo-d3"><div class="stat-n gc">2</div><div class="stat-d">controllable origin nodes: the mouth and the gut</div></div></div>
-  <div class="mo mo-d4" style="text-align:center;margin-top:32px"><a href="https://claude.ai/public/artifacts/fddec7f6-4bf5-4888-b8a3-89bd80287d18" class="tl" target="_blank">See the full inflammation thesis</a></div>
-</div></section>
-
-<section class="fs" id="s2"><div class="fs-inner">
-  <p class="s-num gn mo">02 — Origin Node One</p>
-  <h2 class="s-title mo mo-d1">The Mouth</h2>
-  <p class="s-intro mo mo-d2">The periodontal pocket is not a local nuisance; it is a vascularized wound that leaks inflammatory signals and pathogens into systemic circulation, liver, endothelium, placenta, and brain.</p>
-  <div class="gl mo mo-d2"><div class="mb">Periodontitis behaves as a systemic inflammatory disease with local manifestations.</div><div class="mb">Oral pathogens like P. gingivalis are found in atherosclerotic plaques, brain tissue, and placental tissue.</div><div class="mb">Pocket epithelium is thin, ulcerated, and bathed in high‑load biofilm—an engineered portal of entry.</div></div>
-  <div class="sub mo mo-d3"><h3>The Oral Node: Therapeutics Platform</h3><p class="sl">A surgeon‑engineered oral therapeutics line that treats the mouth as a controllable origin node of systemic inflammation.</p><div class="mb gd">Three product lines: daily ecology control, episodic rescue, and professional‑grade interventions.</div><div class="mb gd">Two distribution tiers: consumer and clinician, wired into the same data layer.</div><div class="mb gd">One precision architecture: the right intervention at the right node, gated by protocol, not marketing.</div></div>
-</div></section>
-
-<section class="fs" id="s3"><div class="fs-inner">
-  <p class="s-num tn mo">03 — Origin Node Two</p>
-  <h2 class="s-title mo mo-d1">The Gut</h2>
-  <p class="s-intro mo mo-d2">The intestinal barrier is a dynamic border. When it fails—through diet, dysbiosis, or oral pathogen seeding—lipopolysaccharides and inflammatory mediators leak into circulation, driving hepatic inflammation, insulin resistance, and neurodegeneration.</p>
-  <div class="gl mo mo-d2"><div class="mb">Oral dysbiosis and swallowed biofilm reshape the gut microbiome.</div><div class="mb">LPS translocation is a direct driver of hepatic and vascular inflammation.</div><div class="mb">Peripheral inflammation crosses the blood–brain barrier and accelerates neurodegenerative trajectories.</div></div>
-  <div class="sub mo mo-d3"><h3>The Gut Node: Barrier and Metabolism</h3><p class="sl">Mediterranean nutraceuticals, prebiotic fibers, and metabolic snacks built to restore barrier integrity and microbiome diversity, not just macronutrients.</p><div class="mb gd">Magisnat: Mediterranean‑pattern nutraceuticals tuned for anti‑inflammatory signaling.</div><div class="mb gd">Biolumen: engineered prebiotic fibers to feed the right taxa and dilute dietary error.</div><div class="mb gd">Monch Monch: metabolic snacks as behaviorally‑realistic interventions instead of discipline theater.</div></div>
-</div></section>
-
-<section class="fs" id="s4"><div class="fs-inner">
-  <p class="s-num gn mo">04 — The Engine</p>
-  <h2 class="s-title mo mo-d1">Surveillance and Protocols</h2>
-  <p class="s-intro mo mo-d2">The Fasolati Engine treats hs‑CRP, nitric oxide, and HbA1c like actual vital signs. It ingests biomarker panels, oral exams, and lifestyle signals, then uses SciAgent to convert those into protocol‑level instructions instead of vague advice.</p>
-  <div class="mo mo-d2"><p class="s-num tn" style="margin-bottom:14px">Three Vectors, One Score</p><div class="vg"><div class="vc"><h4>Oral</h4><p>Oral Ecology, Biofilm Load, Gingival Health.</p></div><div class="vc"><h4>Gut</h4><p>Gut Integrity, Barrier Function, Microbiome Diversity.</p></div><div class="vc gv"><h4>Systemic</h4><p>Inflammation Control, Nitric Oxide Bioavailability, Mitochondrial Function.</p></div></div></div>
-  <div class="mo mo-d3" style="margin-top:48px"><p class="s-num gn">SciAgent: Inputs → Patterns → Protocols</p><p style="font-size:.88rem;margin:12px 0 24px;line-height:2">SciAgent correlates patterns like CRP spikes with poor sleep, dietary errors, or missed rinses and writes simple daily orders: what to rinse, swallow, and avoid—today.</p><div class="pipe"><div class="pi"><h4>Inputs</h4><p>Labs, wearables, oral photographs, clinical notes.</p></div><span class="pa">→</span><div class="pi"><h4>Patterns</h4><p>Multi‑week correlations, threshold crossings, response curves.</p></div><span class="pa">→</span><div class="pi"><h4>Protocols</h4><p>A living checklist for today, this week, this quarter.</p></div></div></div>
-  <div class="mo mo-d4" style="text-align:center;margin-top:36px"><a class="btn bp" href="https://claude.ai/public/artifacts/4bb92b11-5a4b-4fb9-bd72-46cab7f1b752" target="_blank" style="cursor:pointer">Launch Fasolati Engine UI →</a></div>
-</div></section>
-
-<section class="fs" id="s5"><div class="fs-inner">
-  <p class="s-num tn mo">05 — The Network</p>
-  <h2 class="s-title mo mo-d1">Fasolati Node Network</h2>
-  <p class="s-intro mo mo-d2">Fasolati is not a single product. It is a network of nodes—oral, gut, systemic—plugged into a shared data and protocol layer.</p>
-  <div><div class="ni mo mo-d1"><strong class="tc">Loria / Maxoral</strong> — oral ecology and pocket control.</div><div class="ni mo mo-d2"><strong class="gc">Magisnat / Biolumen / Monch Monch</strong> — gut barrier and metabolic inputs.</div><div class="ni mo mo-d3"><strong class="tc">Noxx</strong> — nitric oxide and vascular surveillance.</div><div class="ni mo mo-d4"><strong class="gc">FasolatiCascade and future nodes</strong> — the framework to add new interventions without breaking the architecture.</div></div>
-  <div class="mo" style="text-align:center;margin-top:32px"><a class="btn bs" href="https://claude.ai/public/artifacts/fddec7f6-4bf5-4888-b8a3-89bd80287d18" target="_blank" style="cursor:pointer">View Full Fasolati Deep Dive →</a></div>
-</div></section>
-
-<section class="fs" id="cta"><div class="fs-inner">
-  <h2 class="s-title mo" style="text-align:center">Turn an Unlit Corner On</h2>
-  <div class="cta-g"><div class="cta-c ct mo mo-d1"><h3>Clinicians & Researchers</h3><p>Pilot Fasolati in your practice or study. Wire oral exams, gut protocols, and biomarker panels into one engine and watch inflammatory risk become visible.</p></div><div class="cta-c cg mo mo-d2"><h3>Strategic Partners & Investors</h3><p>Help build the node network: scale Fasolati across oral health, metabolic clinics, digital health platforms, and chronic disease prevention programs.</p></div></div>
-  <div class="mo mo-d3" style="text-align:center;margin-top:40px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap"><a class="btn bp" href="https://claude.ai/public/artifacts/4bb92b11-5a4b-4fb9-bd72-46cab7f1b752" target="_blank" style="cursor:pointer">Launch Fasolati Engine UI</a><a class="btn bs" href="https://claude.ai/public/artifacts/fddec7f6-4bf5-4888-b8a3-89bd80287d18" target="_blank" style="cursor:pointer">View Deep Dive</a></div>
-</div></section>
-
-  <script src="../scripts/framework.js"></script>
+  </section>
 </Base>
-
